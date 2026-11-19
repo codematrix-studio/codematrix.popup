@@ -1,7 +1,7 @@
 var managerPopup={
-	type:'action', //selected type popup
-	imgType:'IMG_1_SRC', //selected type image for change
-	selectedImages:{}, //selected images {type1:id1, ....}
+	type:'action', // Выбранный тип всплывающего окна.
+	imgType:'IMG_1_SRC', // Выбранный тип изображения для замены.
+	selectedImages:{}, // Выбранные изображения в формате {тип: идентификатор}.
 	updateImgBox:function(imgId){
 		$.ajax({
 			url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=get_img',

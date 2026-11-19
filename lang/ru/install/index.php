@@ -3,20 +3,20 @@
  * Copyright (c) 27/10/2020 Created By/Edited By ASDAFF asdaff.asad@yandex.ru
  */
 
-$MESS["fly.popup_PARTNER_NAME"] = "NULLED";
-$MESS["fly.popup_MODULE_NAME"] = 'Всплывающие окна FLY';
-$MESS["fly.popup_MODULE_DESCRIPTION"] = 'Модуль «Всплывающие окна FLY» - позволяет создавать на Вашем сайте неограниченное число всплывающих окон, которые позволят Вам решать всевозможные задачи.';
-$MESS["fly.popup_PARTNER_URI"] = 'https://nulled.io/';
-$MESS['fly.popup_EVENT_NAME']='Отправка купона';
-$MESS['fly.popup_EVENT_NAME_ROULETTE']='Отправка результата рулетки';
-$MESS['fly.popup_EVENT_DESCRIPTION']='#EMAIL# - Email
+$MESS["codematrix.popup_PARTNER_NAME"] = "NULLED";
+$MESS["codematrix.popup_MODULE_NAME"] = 'Всплывающие окна CODEMATRIX';
+$MESS["codematrix.popup_MODULE_DESCRIPTION"] = 'Модуль «Всплывающие окна CODEMATRIX» - позволяет создавать на Вашем сайте неограниченное число всплывающих окон, которые позволят Вам решать всевозможные задачи.';
+$MESS["codematrix.popup_PARTNER_URI"] = 'https://nulled.io/';
+$MESS['codematrix.popup_EVENT_NAME']='Отправка купона';
+$MESS['codematrix.popup_EVENT_NAME_ROULETTE']='Отправка результата рулетки';
+$MESS['codematrix.popup_EVENT_DESCRIPTION']='#EMAIL# - Email
 #COUPON# - Купон';
-$MESS['fly.popup_EVENT_DESCRIPTION_ROULETTE']='#EMAIL# - Email
+$MESS['codematrix.popup_EVENT_DESCRIPTION_ROULETTE']='#EMAIL# - Email
 #RESULT_TEXT# - Результат рулетки
 #COUPON# - Купон';
-$MESS['fly.popup_TEMPLATE_SUBJECT']='Ваш купон на сайте #SITE_NAME#';
-$MESS['fly.popup_TEMPLATE_SUBJECT_ROULETTE']='Поздравляем, вы выиграли в рулетку на сайте #SITE_NAME#!';
-$MESS['fly.popup_TEMPLATE_MESSAGE']='
+$MESS['codematrix.popup_TEMPLATE_SUBJECT']='Ваш купон на сайте #SITE_NAME#';
+$MESS['codematrix.popup_TEMPLATE_SUBJECT_ROULETTE']='Поздравляем, вы выиграли в рулетку на сайте #SITE_NAME#!';
+$MESS['codematrix.popup_TEMPLATE_MESSAGE']='
 <style type="text/css">
 .bx-mailpost{font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; font-size: 14px;}
 </style>
@@ -34,7 +34,7 @@ $MESS['fly.popup_TEMPLATE_MESSAGE']='
 					<td style="padding: 5px; vertical-align: top;">
 						<h2 style="line-height: 1.5em;">Наш сайт #SITE_NAME#, дарит вам подарочный купон!</h2>
 						<p style="text-align: center;">
- <img width="128" src="/bitrix/components/fly/popup.pro/templates/coupon_type1/img/2.png" height="128">
+ <img width="128" src="/bitrix/components/codematrix/popup.pro/templates/coupon_type1/img/2.png" height="128">
 						</p>
 						<p style="text-align: center; margin: 30px 0;">
  <span style="color: #3498db; border: 2px solid #3498db; border-radius: 5px; padding: 15px 20px; text-transform: uppercase; text-decoration: none; font-size: 18px;">#COUPON#</span>
@@ -58,7 +58,7 @@ $MESS['fly.popup_TEMPLATE_MESSAGE']='
 </tr>
 </tbody>
 </table>';
-$MESS['fly.popup_TEMPLATE_MESSAGE_ROULETTE']='
+$MESS['codematrix.popup_TEMPLATE_MESSAGE_ROULETTE']='
 <style type="text/css">
 .bx-mailpost{font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; font-size: 14px;}
 </style>
@@ -76,7 +76,7 @@ $MESS['fly.popup_TEMPLATE_MESSAGE_ROULETTE']='
 					<td style="padding: 5px; vertical-align: top;">
 						<h2 style="line-height: 1.5em;">Поздравляем, Вы выиграли в рулетку!</h2>
 						<p style="text-align: center;">
- <img width="128" src="/bitrix/components/fly/popup.pro/templates/coupon_type1/img/2.png" height="128">
+ <img width="128" src="/bitrix/components/codematrix/popup.pro/templates/coupon_type1/img/2.png" height="128">
 						</p>
 						<p style="text-align:center;margin:30px 0;">
 							Ваш подарок - «#RESULT_TEXT#»!

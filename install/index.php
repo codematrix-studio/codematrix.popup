@@ -4,10 +4,10 @@
  */
 use Bitrix\Main;
 IncludeModuleLangFile(__FILE__);
-Class fly_popup extends CModule
+Class codematrix_popup extends CModule
 {
-	const MODULE_ID = 'fly.popup';
-	var $MODULE_ID = 'fly.popup';
+	const MODULE_ID = 'codematrix.popup';
+	var $MODULE_ID = 'codematrix.popup';
 	var $MODULE_VERSION;
 	var $MODULE_VERSION_DATE;
 	var $MODULE_NAME;
@@ -20,16 +20,16 @@ Class fly_popup extends CModule
 		include(dirname(__FILE__)."/version.php");
 		$this->MODULE_VERSION = $arModuleVersion["VERSION"];
 		$this->MODULE_VERSION_DATE = $arModuleVersion["VERSION_DATE"];
-		$this->MODULE_NAME = GetMessage("fly.popup_MODULE_NAME");
-		$this->MODULE_DESCRIPTION = GetMessage("fly.popup_MODULE_DESCRIPTION");
+		$this->MODULE_NAME = GetMessage("codematrix.popup_MODULE_NAME");
+		$this->MODULE_DESCRIPTION = GetMessage("codematrix.popup_MODULE_DESCRIPTION");
 
-		$this->PARTNER_NAME = GetMessage("fly.popup_PARTNER_NAME");
-		$this->PARTNER_URI = GetMessage("fly.popup_PARTNER_URI");
+		$this->PARTNER_NAME = GetMessage("codematrix.popup_PARTNER_NAME");
+		$this->PARTNER_URI = GetMessage("codematrix.popup_PARTNER_URI");
 	}
 
 	function InstallDB($arParams = array()){
 		global $DB;
-		$DB->Query('CREATE TABLE IF NOT EXISTS fly_popup (
+		$DB->Query('CREATE TABLE IF NOT EXISTS codematrix_popup (
 			id INT NOT NULL AUTO_INCREMENT,
 			sort INT NOT NULL,
 			active VARCHAR(1) DEFAULT NULL,
@@ -43,13 +43,13 @@ Class fly_popup extends CModule
 			cont_posttemplate INT DEFAULT NULL,
 			PRIMARY KEY (id)
 		);');
-		$DB->Query('CREATE TABLE IF NOT EXISTS fly_popup_add_colors (
+		$DB->Query('CREATE TABLE IF NOT EXISTS codematrix_popup_add_colors (
 			id INT NOT NULL AUTO_INCREMENT,
 			template VARCHAR(50) NOT NULL,
 			name VARCHAR(50) DEFAULT NULL,
 			PRIMARY KEY (id));'
 		);
-		$DB->Query('CREATE TABLE IF NOT EXISTS fly_popup_add_templates(
+		$DB->Query('CREATE TABLE IF NOT EXISTS codematrix_popup_add_templates(
 			id INT NOT NULL AUTO_INCREMENT,
 			name VARCHAR(50) NOT NULL,
 			type VARCHAR(50) NOT NULL,
@@ -63,9 +63,9 @@ Class fly_popup extends CModule
 
 	function UnInstallDB($arParams = array()){
 		global $DB;
-		$DB->Query('DROP TABLE IF EXISTS fly_popup;');
-		$DB->Query('DROP TABLE IF EXISTS fly_popup_add_colors;');
-		$DB->Query('DROP TABLE IF EXISTS fly_popup_add_templates;');
+		$DB->Query('DROP TABLE IF EXISTS codematrix_popup;');
+		$DB->Query('DROP TABLE IF EXISTS codematrix_popup_add_colors;');
+		$DB->Query('DROP TABLE IF EXISTS codematrix_popup_add_templates;');
 		//UnRegisterModuleDependences("main","OnEpilog", $this->MODULE_ID, "popup","createPopup");
 		//UnRegisterModuleDependences("main","OnEndBufferContent", $this->MODULE_ID, "popup","setBufferContent");
 		return true;
@@ -81,37 +81,37 @@ Class fly_popup extends CModule
 		return true;
 	}
 	function InstallPostEvent(){
-		$keyPost='FLY_POPUP_SEND_COUPON';
+		$keyPost='CODEMATRIX_POPUP_SEND_COUPON';
 		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
 		if(!$arET = $rsET->Fetch()){
 			$obEventType = new CEventType;
 			$obEventType->Add(array(
 				'LID'=>'ru',
 				'EVENT_NAME'=>$keyPost,
-				"NAME"=>GetMessage("fly.popup_EVENT_NAME"),
-				"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("fly.popup_EVENT_DESCRIPTION"))
+				"NAME"=>GetMessage("codematrix.popup_EVENT_NAME"),
+				"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION"))
 			));
 		}
-		$keyPost='FLY_POPUP_ROULETTE_SEND';
+		$keyPost='CODEMATRIX_POPUP_ROULETTE_SEND';
 		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
 		if(!$arET = $rsET->Fetch()){
 			$obEventType = new CEventType;
 			$obEventType->Add(array(
 				'LID'=>'ru',
 				'EVENT_NAME'=>$keyPost,
-				"NAME"=>GetMessage("fly.popup_EVENT_NAME_ROULETTE"),
-				"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("fly.popup_EVENT_DESCRIPTION_ROULETTE"))
+				"NAME"=>GetMessage("codematrix.popup_EVENT_NAME_ROULETTE"),
+				"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION_ROULETTE"))
 			));
 		}	
 	}
 	function UnInstallPostEvent(){
-		$keyPost='FLY_POPUP_SEND_COUPON';
+		$keyPost='CODEMATRIX_POPUP_SEND_COUPON';
 		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
 		if($arET = $rsET->Fetch()){
 			$et = new CEventType;
 			$et->Delete($keyPost);
 		}
-		$keyPost='FLY_POPUP_ROULETTE_SEND';
+		$keyPost='CODEMATRIX_POPUP_ROULETTE_SEND';
 		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
 		if($arET = $rsET->Fetch()){
 			$et = new CEventType;
@@ -125,30 +125,30 @@ Class fly_popup extends CModule
 		$sites=Bitrix\Main\SiteTable::getList();
 		while($s=$sites->Fetch())
 			$template['LID'][]=$s['LID'];
-		$template['EVENT_NAME']="FLY_POPUP_SEND_COUPON";
+		$template['EVENT_NAME']="CODEMATRIX_POPUP_SEND_COUPON";
 		$template['ACTIVE']='Y';
 		$template['EMAIL_FROM']='#DEFAULT_EMAIL_FROM#';
 		$template['EMAIL_TO']='#EMAIL#';
-		$template['SUBJECT']=GetMessage("fly.popup_TEMPLATE_SUBJECT");
+		$template['SUBJECT']=GetMessage("codematrix.popup_TEMPLATE_SUBJECT");
 		$template['BODY_TYPE']='html';
-		$template['MESSAGE']=str_ireplace("\t", '',GetMessage("fly.popup_TEMPLATE_MESSAGE"));
+		$template['MESSAGE']=str_ireplace("\t", '',GetMessage("codematrix.popup_TEMPLATE_MESSAGE"));
 		$obTemplate->Add($template);
-		$template['EVENT_NAME']="FLY_POPUP_ROULETTE_SEND";
+		$template['EVENT_NAME']="CODEMATRIX_POPUP_ROULETTE_SEND";
 		$template['ACTIVE']='Y';
 		$template['EMAIL_FROM']='#DEFAULT_EMAIL_FROM#';
 		$template['EMAIL_TO']='#EMAIL#';
-		$template['SUBJECT']=GetMessage("fly.popup_TEMPLATE_SUBJECT_ROULETTE");
+		$template['SUBJECT']=GetMessage("codematrix.popup_TEMPLATE_SUBJECT_ROULETTE");
 		$template['BODY_TYPE']='html';
-		$template['MESSAGE']=str_ireplace("\t", '',GetMessage("fly.popup_TEMPLATE_MESSAGE_ROULETTE"));
+		$template['MESSAGE']=str_ireplace("\t", '',GetMessage("codematrix.popup_TEMPLATE_MESSAGE_ROULETTE"));
 		$obTemplate->Add($template);
 	}
 	function UnInstallPostTemplate(){
-		$templates = CEventMessage::GetList($by="site_id",$order="desc",array('TYPE_ID'=>'FLY_POPUP_SEND_COUPON'));
+		$templates = CEventMessage::GetList($by="site_id",$order="desc",array('TYPE_ID'=>'CODEMATRIX_POPUP_SEND_COUPON'));
 		$emessage = new CEventMessage;
 		while($template=$templates->GetNext()){
 			$emessage->Delete((int)$template['ID']);
 		}
-		$templates = CEventMessage::GetList($by="site_id",$order="desc",array('TYPE_ID'=>'FLY_POPUP_ROULETTE_SEND'));
+		$templates = CEventMessage::GetList($by="site_id",$order="desc",array('TYPE_ID'=>'CODEMATRIX_POPUP_ROULETTE_SEND'));
 		$emessage = new CEventMessage;
 		while($template=$templates->GetNext()){
 			$emessage->Delete((int)$template['ID']);

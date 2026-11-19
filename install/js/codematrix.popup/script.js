@@ -209,7 +209,7 @@ var managerPopup={
 					this.setPreviewBlock(i);
 				}
 
-				//content block
+				// Блок содержимого.
 				var tmpProp=currentTmplt[i]['props'],
 					currentTmpHeader='',hints='',hints_text='';
 
@@ -342,7 +342,7 @@ var managerPopup={
 		}
 		currentListTemplate+='</select> <a href="javascript:void(0);" class="addCustomTemplate">'+popupMessages.addColorTemplate+'  "<span>'+addTemplateName+'</span>"</a>';
 
-		//colors themes
+		// Цветовые темы.
 		if(templatesType[type]['color_style']){
 			var currentListColors='<select name="color_style">';
 			var tmpColors=templatesType[type]['color_style'];
@@ -617,7 +617,7 @@ $(document).ready(function(){
 		popup.Show();
 	});
 
-	//fix file uploader
+	// Исправление работы загрузчика файлов.
 	$('#popup_manager_files').find('a.file-selectdialog-switcher').trigger('click');
 
 	$('#popup_img_list').on('click', 'img', function(){

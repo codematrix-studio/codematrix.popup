@@ -1,5 +1,5 @@
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<div id="fly_age_default">
+<div id="codematrix_age_default">
 	<img src="<?=$arResult['IMG_1_SRC']?>">
 	<h2><?=$arResult['TITLE']?></h2>
 	<div class="buttons">
@@ -8,7 +8,7 @@
 	</div>
 	<script>
 		setTimeout(function(){
-			var tmpEl=document.querySelector('#fly_age_default .flTargetAction');
+			var tmpEl=document.querySelector('#codematrix_age_default .flTargetAction');
 			tmpEl.addEventListener("click", pop_close);
 			function pop_close(){
 				
@@ -20,7 +20,7 @@
 					scriptsRunFirst:false,
 					timeout:300,
 					onsuccess: function(data){
-						flyPopups.currentPopup.close();
+						codematrixPopups.currentPopup.close();
 					},
 					onfailure: function(data){
 						console.log(data);

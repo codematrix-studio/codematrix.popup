@@ -19,7 +19,7 @@
 				.headerInfoBlock div a.infoButton.review:hover {background: #2ecc71 !important;}
 			
 
-/* popup detail page */
+/* Страница редактирования всплывающего окна. */
 .popup_detail img{max-width:100%;}
 .popup_detail .slide_type{padding:0 40px; overflow:hidden; position:relative; max-width: 1000px; margin: 0 auto;}
 .popup_detail .slide_type .slide{display:inline-block; margin: 0 5px; border:2px solid #bdc3c7; width:calc(33% - 15px); height:230px; margin-bottom: 5px; text-align:center; padding: 5px; box-sizing:border-box; text-decoration:none; vertical-align:top;}

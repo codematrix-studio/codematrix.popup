@@ -9,7 +9,7 @@ use \Bitrix\Main,
 	Loc::loadMessages(__FILE__);
 	
 if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
-	//request...
+	// Получаем параметры AJAX-запроса.
 	$context = Application::getInstance()->getContext();
 	$request = $context->getRequest();
 	$popupsO=new popup;

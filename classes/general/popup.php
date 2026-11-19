@@ -1259,7 +1259,7 @@ class popup{
 
 			$rowPopup=$this->getSetting($tmpPopup);
 
-			//groupId
+			// Идентификатор группы пользователей.
 			$groupList=\Bitrix\Sender\ListTable::GetList(array(
 				'filter'=>array('CODE'=>'codematrixPopup_'.$tmpPopup)
 			));
@@ -1274,7 +1274,7 @@ class popup{
 			}else{
 				$listId = $row['ID'];
 			}
-			//mailId
+			// Идентификатор почтового шаблона.
 			$tmpMail = $conHelper->forSql($mail);
 			$emailList=\Bitrix\Sender\ContactTable::GetList(array(
 				'filter'=>array('EMAIL'=>$tmpMail)
@@ -1293,7 +1293,7 @@ class popup{
 				$mailId = $row['ID'];
 			}
 
-			//add group to mail
+			// Добавить группу пользователей в список рассылки.
 			$unionList=\Bitrix\Sender\ContactListTable::GetList(array(
 				'filter'=>array('LIST_ID'=>$listId, 'CONTACT_ID'=>$mailId)
 			));

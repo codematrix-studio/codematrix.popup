@@ -1,6 +1,6 @@
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?if($arResult['TIMER']=='Y'){
-		$APPLICATION->IncludeComponent('fly:popup.pro.timer','',array(
+		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
 			'LEFT'=>$arResult['TIMER_LEFT'],
@@ -10,7 +10,7 @@
 		),$component);
 	}?>
 <?function inducementWord($number, $wordArr){$cases = array (2, 0, 1, 1, 1, 2);return $wordArr[ ($number%100>4 && $number%100<20)? 2: $cases[min($number%10, 5)] ];}?>
-<div id="fly_coupon_coupon">
+<div id="codematrix_coupon_coupon">
 	<div class="bg" style="background-image:url('<?=$arResult['IMG_1_SRC']?>')">
 		<div>
 			<h2><?=$arResult['TITLE']?></h2>
@@ -49,7 +49,7 @@
 	} 
 	function getCoupon(){
 		var url = "<?=$templateFolder?>/ajax.php?id=<?=$arResult['RULE_ID']?>&avaliable=<?=$arResult['TIMING']?>";
-		var email = BX('fly_coupon_coupon').querySelector('label.input');
+		var email = BX('codematrix_coupon_coupon').querySelector('label.input');
 		var getContinue=true;
 		if(!email.classList.contains('notshow')){
 			email = email.querySelector('input');
@@ -66,13 +66,13 @@
 				onsuccess: function(data){
 					
 					if(data=='not_unique'){
-						BX('fly_coupon_coupon').querySelector('span.not_new').style.display='inline-block';
+						BX('codematrix_coupon_coupon').querySelector('span.not_new').style.display='inline-block';
 					}else{
-						BX('fly_coupon_coupon').querySelector('span.not_new').style.display='none';
-						BX('fly_coupon_coupon').querySelector('label.input').remove()//.style.display='none';
+						BX('codematrix_coupon_coupon').querySelector('span.not_new').style.display='none';
+						BX('codematrix_coupon_coupon').querySelector('label.input').remove()//.style.display='none';
 				
-						BX('fly_coupon_coupon').querySelector('div.coupon_block button').remove()//.style.display='none';
-						var input=BX('fly_coupon_coupon').querySelector('div.coupon_block input[type="text"]');
+						BX('codematrix_coupon_coupon').querySelector('div.coupon_block button').remove()//.style.display='none';
+						var input=BX('codematrix_coupon_coupon').querySelector('div.coupon_block input[type="text"]');
 						input.disabled=false;
 						input.value=data;
 						input.style.display='inline-block';
@@ -86,10 +86,10 @@
 								console.log(err);
 							}
 							window.getSelection().removeRange(range);
-							BX('fly_coupon_coupon').querySelector('div.coupon_block input[type="text"]+span').style.display='inline';
+							BX('codematrix_coupon_coupon').querySelector('div.coupon_block input[type="text"]+span').style.display='inline';
 							<?=$arResult['BUTTON_METRIC']?>
 						});
-						flyPopupTargetAction();
+						codematrixPopupTargetAction();
 					}
 				},
 				onfailure: function(data){
@@ -97,7 +97,7 @@
 				}
 			});
 		}else{
-			BX('fly_coupon_coupon').querySelector('span.not_new').style.display='none';
+			BX('codematrix_coupon_coupon').querySelector('span.not_new').style.display='none';
 			email.className="error";
 			email.focus();
 		}

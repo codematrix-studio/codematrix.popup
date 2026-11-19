@@ -1,5 +1,5 @@
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
-\Bitrix\Main\Loader::IncludeModule("fly.popup");
+\Bitrix\Main\Loader::IncludeModule("codematrix.popup");
 $popup=new popup;
 $res='';
 $email = '';

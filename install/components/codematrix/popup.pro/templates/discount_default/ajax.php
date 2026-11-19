@@ -1,7 +1,7 @@
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 use Bitrix\Main\Application,
 Bitrix\Main\Web\Cookie;
-\Bitrix\Main\Loader::IncludeModule("fly.popup");
+\Bitrix\Main\Loader::IncludeModule("codematrix.popup");
 $popup=new popup;
 $res='';
 $email = '';
@@ -32,7 +32,7 @@ if(isset($_REQUEST['email'])&&isset($_REQUEST['idPopup'])&&$_REQUEST['addtotable
 			$popup->insertToMailList($email,'',$_REQUEST['idPopup']);
             $context = Application::getInstance()->getContext();
             $responce = $context->getResponse();
-			$cookie = new Cookie("flyPopupFilling_".$_REQUEST['idPopup'], 'Y', time()+864000000);
+			$cookie = new Cookie("codematrixPopupFilling_".$_REQUEST['idPopup'], 'Y', time()+864000000);
 			$cookie->setDomain($context->getServer()->getHttpHost());
 			$cookie->setHttpOnly(false);
 			$responce->addCookie($cookie);

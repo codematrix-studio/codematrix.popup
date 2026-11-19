@@ -1,6 +1,6 @@
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?if($arResult['TIMER']=='Y'){
-		$APPLICATION->IncludeComponent('fly:popup.pro.timer','',array(
+		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
 			'LEFT'=>$arResult['TIMER_LEFT'],
@@ -9,7 +9,7 @@
 			'BOTTOM'=>$arResult['TIMER_BOTTOM'],
 		),$component);
 	}?>
-<div class="fly_discount" id="fly_discount">
+<div class="codematrix_discount" id="codematrix_discount">
     <link href="https://fonts.googleapis.com/css?family=Old+Standard+TT" rel="stylesheet">
     <div class="background"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="card">
@@ -91,7 +91,7 @@
 			if($arResult['USE_CONSENT_SHOW']!='N' && count($arResult['AGREEMENTS'])>0){
 			?>
 			<div class="<?=$arResult['USE_CONSENT_SHOW']?> consentBlock">
-			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/fly_agreement.php?ID=<?=$arResult['CONSENT_ID']?>" target="_blank"><?=$arResult['CONSENT_LIST']?></a>
+			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?=$arResult['CONSENT_ID']?>" target="_blank"><?=$arResult['CONSENT_LIST']?></a>
 			</div>
 			<?}?>
 			<div class="clear"></div>
@@ -134,8 +134,8 @@
                         element.setAttribute('class','send');
                         var t = document.createTextNode('<?=GetMessage('flp.discount_send')?>');
                         element.appendChild(t);
-                        document.querySelector('#fly_discount div.content').appendChild(element);
-						flyPopupTargetAction();
+                        document.querySelector('#codematrix_discount div.content').appendChild(element);
+						codematrixPopupTargetAction();
                         <?=$arResult['BUTTON_METRIC']?>
 					}
 				},

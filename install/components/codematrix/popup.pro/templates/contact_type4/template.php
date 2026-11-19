@@ -1,9 +1,9 @@
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<div id="fly_contact_type4">
+<div id="codematrix_contact_type4">
 	<?if(empty($arResult['SUCCESS'])){
 		$param_consent=array();?>
 	<?if($arResult['TIMER']=='Y'){
-		$APPLICATION->IncludeComponent('fly:popup.pro.timer','',array(
+		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
 			'LEFT'=>$arResult['TIMER_LEFT'],
@@ -103,7 +103,7 @@
 			if($arResult['USE_CONSENT_SHOW']!='N' && count($arResult['AGREEMENTS'])>0){
 			?>
 			<div class="<?=$arResult['USE_CONSENT_SHOW']?> consentBlock">
-			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/fly_agreement.php?ID=<?=$arResult['CONSENT_ID']?>" target="_blank"><?=$arResult['CONSENT_LIST']?></a>
+			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?=$arResult['CONSENT_ID']?>" target="_blank"><?=$arResult['CONSENT_LIST']?></a>
 			</div>
 			<?}?>
 			<div class="clear"></div>
@@ -126,7 +126,7 @@
 				scriptsRunFirst:false,
 				timeout:300,
 				onsuccess: function(data){
-					BX("fly_contact_type4").outerHTML=data;
+					BX("codematrix_contact_type4").outerHTML=data;
 					<?=$arResult['BUTTON_METRIC']?>
 				},
 				onfailure: function(data){
@@ -139,7 +139,7 @@
 	<div class="success"><?=GetMessage("POPUP_THANKS")?></div>
 	<script>
 		BX.ready(function(){
-			flyPopups.currentPopup.popupContainer.className+=' success_send';
+			codematrixPopups.currentPopup.popupContainer.className+=' success_send';
 			positionBanner();
 		});
 	</script>

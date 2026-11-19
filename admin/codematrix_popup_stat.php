@@ -1,8 +1,4 @@
 <?
-/**
- * Copyright (c) 27/10/2020 Created By/Edited By ASDAFF asdaff.asad@yandex.ru
- */
-
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 use \Bitrix\Main\Application,
 	Bitrix\Main\Page\Asset,

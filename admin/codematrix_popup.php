@@ -8,10 +8,16 @@ use \Bitrix\Main\Application,
 $module_id='codematrix.popup';
 \Bitrix\Main\Loader::includeModule('codematrix.popup');
 \Bitrix\Main\Loader::includeModule('iblock');
-// Load the module's bundled jQuery before its script.
-CJSCore::Init(array("ajax", "fx", "drag_drop"));
-Asset::getInstance()->addJs("/bitrix/js/".$module_id."/jquery-3.8.0.min.js");
-Asset::getInstance()->addJs("/bitrix/js/".$module_id."/script.js");
+// Register the module's bundled jQuery as an explicit dependency.
+CJSCore::RegisterExt("codematrix_popup_jquery", array(
+	"js" => "/bitrix/js/".$module_id."/jquery-3.8.0.min.js",
+	"skip_core" => true,
+));
+CJSCore::RegisterExt("codematrix_popup", array(
+	"js" => "/bitrix/js/".$module_id."/script.js",
+	"rel" => array("codematrix_popup_jquery", "ajax", "fx", "drag_drop"),
+));
+CJSCore::Init(array("codematrix_popup"));
 //include($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$module_id."/default_option.php");
 
 $context = Application::getInstance()->getContext();

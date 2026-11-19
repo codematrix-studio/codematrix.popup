@@ -217,7 +217,7 @@ $MESS['codematrix.popup_ACTION_COLOR_GRAD_WISTERIA-RED']='Градиент: фи
 
 
 /*Новые цвета*/
-/*Canadian Palette*/
+/* Канадская палитра. */
 $MESS['codematrix.popup_ca_LianHongLotusPink']='Канадский розовый';
 $MESS['codematrix.popup_ca_DoubleDragonSkin']='Канадский оранжевый';
 $MESS['codematrix.popup_ca_Amour']='Канадский красный';

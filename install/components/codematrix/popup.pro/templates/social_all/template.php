@@ -26,7 +26,7 @@ width:<?=$count?>px;
 	</h2>
 	<div class="social_holder">
 		<?if(!empty($arResult['ID_VK'])){?>
-		<!-- VK Widget -->
+		<!-- Виджет ВКонтакте. -->
 		<div id="vk_groups"></div>
 		<script type="text/javascript">
 			var vk_js = document.createElement("script");

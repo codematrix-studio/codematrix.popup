@@ -1,25 +1,25 @@
-#fly_popup_action {
+#codematrix_popup_action {
     background: #ecf0f1;
     }
 
 
-    #fly_popup_action .text {
+    #codematrix_popup_action .text {
         color: #2c3e50;
         }
-        #fly_popup_action .text h2 {
+        #codematrix_popup_action .text h2 {
             color: #2c3e50;
             }
-        #fly_popup_action .text h3 {
+        #codematrix_popup_action .text h3 {
             color: #2c3e50;
             }
-        #fly_popup_action .text .info {
+        #codematrix_popup_action .text .info {
 
             }
-        #fly_popup_action .text .going_link {
+        #codematrix_popup_action .text .going_link {
             background: #2c3e50;
             }
-        #fly_popup_action .text .going_link:hover {
+        #codematrix_popup_action .text .going_link:hover {
             background: #34495e;
             }
 
-.fly_popup_pro_timer{background: #2c3e50;}
+.codematrix_popup_pro_timer{background: #2c3e50;}

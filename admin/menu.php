@@ -23,7 +23,7 @@ if(!empty($request['id'])){
     "url"         => "",  // ссылка на пункте меню
     "text"        => GetMessage("codematrix.popup_MENU_MAIN"),       // текст пункта меню
     "title"       => GetMessage("codematrix.popup_MENU_MAIN_TITLE"), // текст всплывающей подсказки
-    "icon"        => "flp_popup_menu_icon", // малая иконка
+    "icon"        => "codematrix_popup_menu_icon", // малая иконка
    // "page_icon"   => "flp_refsales_page_icon", // большая иконка
     "items_id"    => "codematrix_popup",  // идентификатор ветви
     "items"       => array(// остальные уровни меню сформируем ниже.

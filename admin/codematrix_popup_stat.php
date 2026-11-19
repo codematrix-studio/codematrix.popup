@@ -23,5 +23,5 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_aft
 echo GetMessage("codematrix.popup_STAT_TITLE");
 ?>
 
-popupPro STAT
+CodeMatrix Popup STAT
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");?>

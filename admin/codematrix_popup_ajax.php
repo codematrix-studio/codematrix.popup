@@ -24,16 +24,16 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 	);
 	if(!empty($reqArr['type'])){
 		if($reqArr['type']=='getPopups' && !empty($reqArr['pageUrl'])){
-			if(empty($_SESSION['flp_popup_count_pages'])){
-				$_SESSION['flp_popup_count_pages']=1;
+			if(empty($_SESSION['codematrix_popup_count_pages'])){
+				$_SESSION['codematrix_popup_count_pages']=1;
 			}else{
-				$_SESSION['flp_popup_count_pages']=$_SESSION['flp_popup_count_pages']+1;
+				$_SESSION['codematrix_popup_count_pages']=$_SESSION['codematrix_popup_count_pages']+1;
 			}
 			$retStr=$popupsO->getAvailablePopups(array(
 				'site'=>$reqArr['site'],
 				'dateUser'=>$reqArr['dateUser'],
 				'pageUrl'=>urldecode($reqArr['pageUrl']),
-				'countPages'=>$_SESSION['flp_popup_count_pages']
+				'countPages'=>$_SESSION['codematrix_popup_count_pages']
 			));
 			$retStr=CUtil::PhpToJSObject($retStr);
 			echo str_replace("'", '"', $retStr);

@@ -1,5 +1,5 @@
 <?
-namespace Fly\Popup;
+namespace CodeMatrix\Popup;
 \Bitrix\Main\Loader::includeModule('iblock');
 use Bitrix\Main\Mail\Event;
 class Tools{
@@ -15,7 +15,7 @@ class Tools{
         }
 		return $currentModules;
 	}
-	public static function getMailTemplates($var='FLY_POPUP_SEND_COUPON'){
+	public static function getMailTemplates($var='CODEMATRIX_POPUP_SEND_COUPON'){
 		$template_message=\CEventMessage::GetList($by="site_id", $order="desc", array('TYPE_ID'=>$var));
 		$serviceMessage=array();
 		while($t_m=$template_message->Fetch()){

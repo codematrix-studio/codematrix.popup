@@ -9,7 +9,8 @@ use \Bitrix\Main\Application,
 $module_id='codematrix.popup';
 \Bitrix\Main\Loader::includeModule('codematrix.popup');
 \Bitrix\Main\Loader::includeModule('iblock');
-//head
+// Explicitly initialize jQuery before registering the module script.
+CJSCore::Init(array("jquery", "ajax", "fx", "drag_drop"));
 CJSCore::RegisterExt("codematrix_popup", array(
 	"js" => "/bitrix/js/".$module_id."/script.js",
 	"rel" => array("jquery", "ajax", "fx", "drag_drop"),

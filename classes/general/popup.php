@@ -1746,6 +1746,15 @@ class popup{
 		$res = $DB->Query('select * from '.$this->tableSetting.' where id='.$idPopup.' limit 1;');
 		if($row = $res->Fetch()){
 			$settings=unserialize($row['settings']);
+
+			// Older or incomplete records may not contain the selected template.
+			if(empty($settings['view']['template']) && !empty($settings['view']['type'])){
+				$templates=$this->getTemplatesPreset();
+				if(!empty($templates[$settings['view']['type']][0]['template'])){
+					$settings['view']['template']=$templates[$settings['view']['type']][0]['template'];
+				}
+			}
+
 			$settings['view']['props']['THEME']= $settings['view']['color_style'];
 			$settings['view']['props']['TEMPLATE_NAME']= $settings['view']['type'].'_'.$settings['view']['template'];
 
@@ -1768,10 +1777,13 @@ class popup{
 	}
 
 	public function getHTMLByPopup($idPopup){
-		$settings=$this->getSetting($idPopup);
+		$componentResult=$this->getComponentResult($idPopup);
+		if(empty($componentResult['TEMPLATE_NAME'])){
+			return false;
+		}
 		global $APPLICATION;
 		$APPLICATION->IncludeComponent(
-			"codematrix:popup.pro", $settings['view']['type'].'_'.$settings['view']['template'],
+			"codematrix:popup.pro", $componentResult['TEMPLATE_NAME'],
 			Array(
 				"ID_POPUP" => $idPopup
 			)

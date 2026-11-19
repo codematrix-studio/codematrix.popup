@@ -1,10 +1,10 @@
 BX.ready(function(){
 	BX.ajax({
-		url: '/bitrix/components/fly/popup.pro/ajax.php',
+		url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 		data: {
 			'type':'getPopups',
 			'pageUrl':encodeURIComponent(location.href),
-			'site':flyPopups.site,
+			'site':codematrixPopups.site,
 			'dateUser':Math.round(+new Date()/1000),
 			
 		},
@@ -15,10 +15,10 @@ BX.ready(function(){
 		/* scriptsRunFirst:true, */
 		onsuccess: function(data){
 			if(Object.keys(data).length>0){
-				flyPopups.popups=data;
-				flyPopups.tmpParams={};
+				codematrixPopups.popups=data;
+				codematrixPopups.tmpParams={};
 				for(key in data){
-					flyPopups.tmpParams[key]={};
+					codematrixPopups.tmpParams[key]={};
 				}
 				startConditions();
 			}
@@ -30,11 +30,11 @@ BX.ready(function(){
 })
 
 function startConditions(){
-	if(flyPopups.basket){
+	if(codematrixPopups.basket){
 		BX.addCustomEvent('onAjaxSuccess', function(a,b){
 			if(b && b.url && b.url.indexOf('basket')>-1){
 				BX.ajax({
-					url: '/bitrix/components/fly/popup.pro/ajax.php',
+					url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 					data: {
 						'type':'getBasket'
 					},
@@ -44,7 +44,7 @@ function startConditions(){
 					async: true,
 					/* scriptsRunFirst:true, */
 					onsuccess: function(data){
-						flyPopups.basket=data;
+						codematrixPopups.basket=data;
 						basketCondition();
 					},
 					onfailure: function(data){
@@ -55,8 +55,8 @@ function startConditions(){
 		});
 		basketCondition();
 	}
-	for(key in flyPopups.popups){
-		var nextPopup=flyPopups.popups[key];
+	for(key in codematrixPopups.popups){
+		var nextPopup=codematrixPopups.popups[key];
 		var tmpAnchor=(nextPopup.anchorVisible)?document.querySelectorAll('a[name="'+nextPopup.anchorVisible+'"]'):0;
 		var tmpClassLink=(nextPopup.onClickClassLink)?document.querySelectorAll('.'+nextPopup.onClickClassLink):0;
 		if(nextPopup.repeatTime_type){
@@ -66,11 +66,11 @@ function startConditions(){
 		}
 		//console.log(nextPopup);
 		if(BX.getCookie('flp_popups_'+key) && nextPopup.repeatTime){
-			delete flyPopups.popups[key];
+			delete codematrixPopups.popups[key];
 		}else if(tmpClassLink==0 && nextPopup.onClickClassLink){
-			delete flyPopups.popups[key];
+			delete codematrixPopups.popups[key];
 		}else if(tmpAnchor==0 && nextPopup.anchorVisible){
-			delete flyPopups.popups[key];
+			delete codematrixPopups.popups[key];
 		}else{
 			if(nextPopup.afterTimeSecond){
 				if(nextPopup.afterTimeSecond>0){
@@ -116,7 +116,7 @@ function startConditions(){
 			}
 		}
 	}
-	if(Object.keys(flyPopups.popups).length>0){
+	if(Object.keys(codematrixPopups.popups).length>0){
 		uploadPopups();
 	}
 	
@@ -125,12 +125,12 @@ function startConditions(){
 function uploadPopups(){
 	
 	var tmpKey=[]
-	for(key in flyPopups.popups){
+	for(key in codematrixPopups.popups){
 		tmpKey.push(key);
 	}
 	if(tmpKey.length>0){
 		BX.ajax({
-			url: '/bitrix/components/fly/popup.pro/ajax.php',
+			url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 			data: {
 				'type':'getTemplatePath',
 				'popupIds':tmpKey
@@ -141,7 +141,7 @@ function uploadPopups(){
 			async: true,
 			/* scriptsRunFirst:true, */
 			onsuccess: function(data){
-				flyPopups.popupdata=data;
+				codematrixPopups.popupdata=data;
 				//uploadPopupsHTML();
 				setTimeout(uploadPopupsHTML, 2);
 			},
@@ -153,23 +153,23 @@ function uploadPopups(){
 }
 
 function getPrepolader(){
-	if(!flyPopups.preloadBlock){
+	if(!codematrixPopups.preloadBlock){
 		var preloadBlock=document.createElement('div');
 			preloadBlock.style.position='absolute';
 			preloadBlock.style.left='-1000000px';
 			preloadBlock.style.top='-1000000px';
-			preloadBlock.className='flyPreloadBlock';
+			preloadBlock.className='codematrixPreloadBlock';
 		document.body.appendChild(preloadBlock);
-		flyPopups.preloadBlock=preloadBlock;
+		codematrixPopups.preloadBlock=preloadBlock;
 	}
 }
 
 function uploadPopupsHTML(){
-	for(key in flyPopups.popups){
+	for(key in codematrixPopups.popups){
 		(function(){
 			var currentKey=key;
 			BX.ajax({
-				url: '/bitrix/components/fly/popup.pro/ajax.php',
+				url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 				data: {
 					'type':'getHTML',
 					'popupId':key
@@ -180,14 +180,14 @@ function uploadPopupsHTML(){
 				scriptsRunFirst:true,
 				async: true,
 				onsuccess: function(data){
-					flyPopups.popupdata[currentKey].DATA=data;
+					codematrixPopups.popupdata[currentKey].DATA=data;
 					getPrepolader();
 					var tmpNode=document.createElement('div');
 					tmpNode.innerHTML=data;
 					var tmpImgs=tmpNode.querySelectorAll('img');
 					if(tmpImgs.length>0){
 						for(var i=0; i<tmpImgs.length; i++){
-							flyPopups.preloadBlock.appendChild(tmpImgs[i]);
+							codematrixPopups.preloadBlock.appendChild(tmpImgs[i]);
 						}
 					}
 				},
@@ -201,24 +201,24 @@ function uploadPopupsHTML(){
 
 function showPopup(popupId){
 	popupId=popupId.toString();
-	if(flyPopups.popupdata && flyPopups.popupdata[popupId] && flyPopups.popupdata[popupId].DATA){
-		BX.remove(BX('fly_popup_style'));
-		BX.remove(BX('fly_popup_color'));
+	if(codematrixPopups.popupdata && codematrixPopups.popupdata[popupId] && codematrixPopups.popupdata[popupId].DATA){
+		BX.remove(BX('codematrix_popup_style'));
+		BX.remove(BX('codematrix_popup_color'));
 		var head = document.getElementsByTagName('head')[0];
 		var s_tepmlate = BX.create('link', {'attrs':{
-			'id':'fly_popup_style',
+			'id':'codematrix_popup_style',
 			'type':'text/css',
 			'rel':'stylesheet',
-			'href':flyPopups.popupdata[popupId].STYLE
+			'href':codematrixPopups.popupdata[popupId].STYLE
 		}});
 		head.appendChild(s_tepmlate);
 		
-		if(flyPopups.popupdata[popupId].THEME){
+		if(codematrixPopups.popupdata[popupId].THEME){
 			var s_color = BX.create('link', {'attrs':{
-				'id':'fly_popup_color',
+				'id':'codematrix_popup_color',
 				'type':'text/css',
 				'rel':'stylesheet',
-				'href':flyPopups.popupdata[popupId].THEME
+				'href':codematrixPopups.popupdata[popupId].THEME
 			}});
 			head.appendChild(s_color);
 		}
@@ -241,32 +241,32 @@ function showPopup(popupId){
 			events:{
 				onAfterPopupShow: function(){
 					positionBanner();
-					if(flyPopups.popupdata[popupId].VIDEO_AUTOPLAY){
-						flyPopupTargetAction();
+					if(codematrixPopups.popupdata[popupId].VIDEO_AUTOPLAY){
+						codematrixPopupTargetAction();
 					}
 				}
 			}
 		});
-		popup.setContent(flyPopups.popupdata[popupId].DATA);
+		popup.setContent(codematrixPopups.popupdata[popupId].DATA);
 		
-		if(flyPopups.currentPopup){
-			flyPopups.currentPopup.close();
+		if(codematrixPopups.currentPopup){
+			codematrixPopups.currentPopup.close();
 		}
-		flyPopups.currentPopup=popup;
-		flyPopups.currentPopupId=popupId;
-		flyPopups.currentPopupStartTime=Math.floor(Date.now()/1000);
+		codematrixPopups.currentPopup=popup;
+		codematrixPopups.currentPopupId=popupId;
+		codematrixPopups.currentPopupStartTime=Math.floor(Date.now()/1000);
 		popup.show();
 
 		var targetsAction=popup.contentContainer.querySelectorAll(".flTargetAction");
 		if(targetsAction.length>0){
 			for(var i=0; i<targetsAction.length; i++){
-				targetsAction[i].onclick=flyPopupTargetAction;
+				targetsAction[i].onclick=codematrixPopupTargetAction;
 			}
 		}
 		
 		//statistic open
 		BX.ajax({
-			url: '/bitrix/components/fly/popup.pro/ajax.php',
+			url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 			data: {
 				'type':'statisticShow',
 				'popupId':popupId
@@ -284,9 +284,9 @@ function showPopup(popupId){
 			}
 		});
 		
-		if(popup.contentContainer.querySelector('.fly_popup_pro_timer .timer')!=null){
+		if(popup.contentContainer.querySelector('.codematrix_popup_pro_timer .timer')!=null){
 			function startTimer(){
-				var timer=popup.contentContainer.querySelectorAll('.fly_popup_pro_timer .timer .clock>span:not(.sep)');
+				var timer=popup.contentContainer.querySelectorAll('.codematrix_popup_pro_timer .timer .clock>span:not(.sep)');
 				var d,h,m,s;
 				d=timer.item(0).innerHTML;
 				h=timer.item(1).innerHTML;
@@ -312,7 +312,7 @@ function showPopup(popupId){
 				}
 				else s--;
 				if(s<10) s="0"+s;
-				popup.contentContainer.querySelector('.fly_popup_pro_timer .timer .clock').innerHTML="<span>"+d+"</span><span class='sep'>:</span><span>"+h+"</span><span class='sep'>:</span><span>"+m+"</span><span class='sep'>:</span><span>"+s+"</span>";
+				popup.contentContainer.querySelector('.codematrix_popup_pro_timer .timer .clock').innerHTML="<span>"+d+"</span><span class='sep'>:</span><span>"+h+"</span><span class='sep'>:</span><span>"+m+"</span><span class='sep'>:</span><span>"+s+"</span>";
 				setTimeout(startTimer,1000);
 			}
 			startTimer();
@@ -328,19 +328,19 @@ function showPopup(popupId){
 }
 
 function checkConditions(keyDelete, propDelete){
-	for(key in flyPopups.popups){
+	for(key in codematrixPopups.popups){
 		if(keyDelete==key){
 			if(propDelete=="repeatTime"){
-				flyPopups.tmpParams[keyDelete].repeatTime=flyPopups.popups[keyDelete].repeatTime;
-				flyPopups.tmpParams[keyDelete].repeatTime_type=flyPopups.popups[keyDelete].repeatTime_type;
-				delete flyPopups.popups[key]['repeatTime_type'];
+				codematrixPopups.tmpParams[keyDelete].repeatTime=codematrixPopups.popups[keyDelete].repeatTime;
+				codematrixPopups.tmpParams[keyDelete].repeatTime_type=codematrixPopups.popups[keyDelete].repeatTime_type;
+				delete codematrixPopups.popups[key]['repeatTime_type'];
 			}
-			delete flyPopups.popups[key][propDelete];
+			delete codematrixPopups.popups[key][propDelete];
 			break;
 		}
 	}
-	if(Object.keys(flyPopups.popups[keyDelete]).length==0){
-		if(flyPopups.tmpParams[keyDelete].repeatTime && flyPopups.tmpParams[keyDelete].repeatTime>0){
+	if(Object.keys(codematrixPopups.popups[keyDelete]).length==0){
+		if(codematrixPopups.tmpParams[keyDelete].repeatTime && codematrixPopups.tmpParams[keyDelete].repeatTime>0){
 			var type={
 				hour:3600,
 				day:86400,
@@ -348,7 +348,7 @@ function checkConditions(keyDelete, propDelete){
 				month:2419200,
 				year:31536000,
 				};
-			var tmp_time=type[flyPopups.tmpParams[keyDelete].repeatTime_type]*flyPopups.tmpParams[keyDelete].repeatTime;
+			var tmp_time=type[codematrixPopups.tmpParams[keyDelete].repeatTime_type]*codematrixPopups.tmpParams[keyDelete].repeatTime;
 			BX.setCookie('flp_popups_'+keyDelete, 'Y', {expires: tmp_time, path:'/'});
 		}
 		showPopup(keyDelete);
@@ -356,18 +356,18 @@ function checkConditions(keyDelete, propDelete){
 }
 
 function basketCondition(){
-	for(key in flyPopups.popups){
-		var nextPopup=flyPopups.popups[key];
-		if(nextPopup.saleCountProduct && nextPopup.saleCountProduct<=flyPopups.basket.products.length){
+	for(key in codematrixPopups.popups){
+		var nextPopup=codematrixPopups.popups[key];
+		if(nextPopup.saleCountProduct && nextPopup.saleCountProduct<=codematrixPopups.basket.products.length){
 			checkConditions(key, 'saleCountProduct');
 		}
-		if(nextPopup.saleSummBasket && nextPopup.saleSummBasket<=flyPopups.basket.summ){
+		if(nextPopup.saleSummBasket && nextPopup.saleSummBasket<=codematrixPopups.basket.summ){
 			checkConditions(key, 'saleSummBasket');
 		}
 		if(nextPopup.saleIDProdInBasket){
 			var tmpProdId=true;
 			for(var i=0; i<nextPopup.saleIDProdInBasket.length; i++){
-				if(!BX.util.in_array(nextPopup.saleIDProdInBasket[i], flyPopups.basket.products)){
+				if(!BX.util.in_array(nextPopup.saleIDProdInBasket[i], codematrixPopups.basket.products)){
 					tmpProdId=false;
 					break;
 				}
@@ -385,9 +385,9 @@ function openByClick(popupId){
 }
 
 function showAlreadyGoing(e){
-	if(flyPopups.popups && flyPopups.popups[this].alreadygoing){
+	if(codematrixPopups.popups && codematrixPopups.popups[this].alreadygoing){
 		if(e.clientY<50){
-			if(Object.keys(flyPopups.popups[this]).length==1){
+			if(Object.keys(codematrixPopups.popups[this]).length==1){
 				checkConditions(this, 'alreadygoing');
 			}
 		}
@@ -444,15 +444,15 @@ function timeIntervalStatus(interval){
 	return retArr;
 }
 
-function flyPopupClose(){
+function codematrixPopupClose(){
 	//statistic close
-	if(flyPopups && flyPopups.currentPopupId && flyPopups.currentPopupStartTime){
+	if(codematrixPopups && codematrixPopups.currentPopupId && codematrixPopups.currentPopupStartTime){
 		BX.ajax({
-			url: '/bitrix/components/fly/popup.pro/ajax.php',
+			url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 			data: {
 				'type':'statisticTime',
-				'popupId':flyPopups.currentPopupId.toString(),
-				'popupTime':(Math.floor(Date.now()/1000) - flyPopups.currentPopupStartTime)
+				'popupId':codematrixPopups.currentPopupId.toString(),
+				'popupTime':(Math.floor(Date.now()/1000) - codematrixPopups.currentPopupStartTime)
 			},
 			method: 'POST',
 			dataType: 'html',
@@ -460,8 +460,8 @@ function flyPopupClose(){
 			/* scriptsRunFirst:true, */
 			async: true,
 			onsuccess: function(data){
-				delete flyPopups.currentPopupId;
-				delete flyPopups.currentPopupStartTime;
+				delete codematrixPopups.currentPopupId;
+				delete codematrixPopups.currentPopupStartTime;
 			},
 			onfailure: function(data){
 				console.log(data);
@@ -470,14 +470,14 @@ function flyPopupClose(){
 	}
 }
 
-function flyPopupTargetAction(){
+function codematrixPopupTargetAction(){
 	//statistic close
-	if(flyPopups && flyPopups.currentPopupId){
+	if(codematrixPopups && codematrixPopups.currentPopupId){
 		BX.ajax({
-			url: '/bitrix/components/fly/popup.pro/ajax.php',
+			url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 			data: {
 				'type':'statisticAction',
-				'popupId':flyPopups.currentPopupId.toString()
+				'popupId':codematrixPopups.currentPopupId.toString()
 			},
 			method: 'POST',
 			dataType: 'html',
@@ -495,7 +495,7 @@ function flyPopupTargetAction(){
 }
 
 BX.addCustomEvent('onPopupClose', function(){
-	flyPopupClose();
+	codematrixPopupClose();
 });
 
 BX.addCustomEvent('onPopupShow', function(){
@@ -531,7 +531,7 @@ function getPosition(posObj){
 }
 function setPosition(o, pos){
 	setTimeout(function(){
-		flyPopups.currentPopup.adjustPosition();
+		codematrixPopups.currentPopup.adjustPosition();
 		if(pos.POSITION_BOTTOM){
 			var tmpStyle=getComputedStyle(o);
 			
@@ -550,20 +550,20 @@ function setPosition(o, pos){
 			o.style.right='0';
 		}
 		//o.style.position='fixed';
-		flyPopups.currentPopup.contentContainer.parentNode.style.opacity=1;
+		codematrixPopups.currentPopup.contentContainer.parentNode.style.opacity=1;
 		
 	}, 90);
 }
 
 function positionBanner(){
-	var _this=flyPopups.currentPopup;
+	var _this=codematrixPopups.currentPopup;
 	if(_this.params.className=='flPopup'){
-		var currentPos=getPosition(flyPopups.popupdata[flyPopups.currentPopupId]);
-		var img = flyPopups.currentPopup.contentContainer.querySelectorAll('img');
+		var currentPos=getPosition(codematrixPopups.popupdata[codematrixPopups.currentPopupId]);
+		var img = codematrixPopups.currentPopup.contentContainer.querySelectorAll('img');
 		if(img.length==0){
 			if(currentPos===false){
 				setTimeout(function(){
-					flyPopups.currentPopup.adjustPosition();
+					codematrixPopups.currentPopup.adjustPosition();
 					_this.contentContainer.parentNode.style.opacity=1;
 				}, 90);
 			}else{
@@ -576,16 +576,16 @@ function positionBanner(){
 				for(var i = 0; i<img.length;i++){
 					img[i].addEventListener('load',function(){
 						innerImgs--;
-						flyPopups.currentPopup.adjustPosition();
+						codematrixPopups.currentPopup.adjustPosition();
 						if(innerImgs==0){
 							setTimeout(function(){
-								flyPopups.currentPopup.adjustPosition();
+								codematrixPopups.currentPopup.adjustPosition();
 								container.parentNode.style.opacity=1;
 							}, 50);
 						}
 					});
 				}
-				flyPopups.currentPopup.adjustPosition();
+				codematrixPopups.currentPopup.adjustPosition();
 			}else{
 				setPosition(_this.contentContainer.parentNode, currentPos);
 			}
@@ -595,5 +595,5 @@ function positionBanner(){
 }
 
 window.onbeforeunload = function(){
-	flyPopupClose();
+	codematrixPopupClose();
 };

@@ -4,7 +4,7 @@ var managerPopup={
 	selectedImages:{}, //selected images {type1:id1, ....}
 	updateImgBox:function(imgId){
 		$.ajax({
-			url: '/bitrix/admin/fly_popup.php?ajax=y&command=get_img',
+			url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=get_img',
 			type: "POST",
 			data:{img_type:this.imgType},
 			dataType:'html',
@@ -180,14 +180,14 @@ var managerPopup={
 				if(!currentTmplt[i]['templateHTML']){
 					var activeI=i;
 					$.ajax({
-						url: '/bitrix/admin/fly_popup.php?ajax=y&command=gettemplate',
+						url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=gettemplate',
 						type: "POST",
 						data:{template:type+'_'+currentTmplt[activeI]['template']},
 						dataType:'html',
 						success: function(data){
 							currentTmplt[activeI]['templateHTML']=data;
 							$.ajax({
-								url: '/bitrix/admin/fly_popup.php?ajax=y&command=gettemplatepath',
+								url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=gettemplatepath',
 								type: "POST",
 								data:{template:type+'_'+currentTmplt[activeI]['template']},
 								dataType:'html',
@@ -441,13 +441,13 @@ var addSector = function(data, startAngle, collapse) {
   if (collapse) {
     skewDeg++;
   }
-  var container = document.querySelector('#fly_roulette .container');
+  var container = document.querySelector('#codematrix_roulette .container');
   var sector = document.createElement('div');
   sector.style.background=data.color;
   sector.className ='sector';
   sector.style.transform='rotate(' + rotateDeg + 'deg) skewY(' + skewDeg + 'deg)';
   container.appendChild(sector);
-  var container_text=document.querySelector('#fly_roulette .text');
+  var container_text=document.querySelector('#codematrix_roulette .text');
   var text = document.createElement('div');
   text.style.color='white';
   text.dataset.rule=data.rule;
@@ -653,7 +653,7 @@ $(document).ready(function(){
 				ajaxData.name=inputName.val();
 				inputName.prop('disabled', true);
 				$.ajax({
-					url: '/bitrix/admin/fly_popup.php?ajax=y&command=add_custom_template',
+					url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=add_custom_template',
 					type: "POST",
 					data:ajaxData,
 					dataType:'json',
@@ -690,7 +690,7 @@ $(document).ready(function(){
 				ajaxData.name=inputName.val();
 				inputName.prop('disabled', true);
 				$.ajax({
-					url: '/bitrix/admin/fly_popup.php?ajax=y&command=add_custom_colortheme',
+					url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=add_custom_colortheme',
 					type: "POST",
 					data:ajaxData,
 					dataType:'json',
@@ -733,7 +733,7 @@ function showHideImgs(direct){
 function delPopupImg(o){
 	var _this=$(o);
 	$.ajax({
-		url: '/bitrix/admin/fly_popup.php?ajax=y&command=del_img',
+		url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=del_img',
 		type: "POST",
 		data:{id:_this.data('id')},
 		dataType:'json',

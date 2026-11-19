@@ -150,6 +150,7 @@ $MESS['codematrix.popup_CONTACT_PLACEHOLDER']='Текст подсказки';
 $MESS['codematrix.popup_CONTACT_ADD']='Добавлять в список адресов';
 $MESS['codematrix.popup_CONTACT_ADD_HINT']='Email будет добавлен в список адресов модуля Email-маркетинг<br><br><a href="/bitrix/admin/sender_contact_admin.php?lang=ru" target="_blank">Перейти</a> к списку адресов';
 $MESS['codematrix.popup_CONTACT_EMAIL_TO']='Отправлять шаблон на почту';
+$MESS['codematrix.popup_CONTACT_EMAIL_TO_HINT']='Отправлять выбранный почтовый шаблон на адрес электронной почты, указанный пользователем.';
 $MESS['codematrix.popup_CONTACT_TEMPLATE_HINT']='';
 $MESS['codematrix.popup_CONTACT_TEMPLATE']='Шаблон для отправки купона на почту';
 $MESS['codematrix.popup_CONTACT_TEMPLATE_HINT']='';

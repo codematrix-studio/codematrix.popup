@@ -3,10 +3,10 @@
  * Copyright (c) 27/10/2020 Created By/Edited By ASDAFF asdaff.asad@yandex.ru
  */
 
-$MESS["codematrix.popup_PARTNER_NAME"] = "NULLED";
-$MESS["codematrix.popup_MODULE_NAME"] = 'Всплывающие окна CODEMATRIX';
-$MESS["codematrix.popup_MODULE_DESCRIPTION"] = 'Модуль «Всплывающие окна CODEMATRIX» - позволяет создавать на Вашем сайте неограниченное число всплывающих окон, которые позволят Вам решать всевозможные задачи.';
-$MESS["codematrix.popup_PARTNER_URI"] = 'https://nulled.io/';
+$MESS["codematrix.popup_PARTNER_NAME"] = "CodeMatrix Studio";
+$MESS["codematrix.popup_MODULE_NAME"] = 'Всплывающие окна CodeMatrix';
+$MESS["codematrix.popup_MODULE_DESCRIPTION"] = 'Модуль «Всплывающие окна CodeMatrix» позволяет создавать на Вашем сайте неограниченное число всплывающих окон для решения различных задач.';
+$MESS["codematrix.popup_PARTNER_URI"] = 'https://github.com/codematrix-studio';
 $MESS['codematrix.popup_EVENT_NAME']='Отправка купона';
 $MESS['codematrix.popup_EVENT_NAME_ROULETTE']='Отправка результата рулетки';
 $MESS['codematrix.popup_EVENT_DESCRIPTION']='#EMAIL# - Email

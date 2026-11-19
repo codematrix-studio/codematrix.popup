@@ -327,4 +327,6 @@ $MESS['codematrix.popup_TIME_DAYS'] = 'дней';
 $MESS['codematrix.popup_TIME_HOURS'] = 'ч';
 $MESS['codematrix.popup_TIME_MINUTES'] = 'мин';
 $MESS['codematrix.popup_TIME_SECONDS'] = 'сек';
+$MESS['codematrix.popup_DISCOUNT_IMG_1'] = 'Логотип';
+$MESS['codematrix.popup_DISCOUNT_IMG_2'] = 'Картинка';
 ?>

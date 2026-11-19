@@ -137,3 +137,6 @@ $MESS['codematrix.popup_TEMPLATE_MESSAGE_DISCOUNT']='<style type="text/css">
 </tr>
 </tbody>
 </table>';
+$MESS['codematrix.popup_EVENT_TYPE_NAME'] = 'Заполнена форма codematrix_popup';
+$MESS['codematrix.popup_POST_SEND'] = 'Заполнена форма codematrix_popup';
+$MESS['codematrix.popup_TABCOND_SERVICE_NAME'] = 'Служебное имя';

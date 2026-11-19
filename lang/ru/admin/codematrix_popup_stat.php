@@ -1,3 +1,3 @@
 <?
-$MESS['fly.popup_STAT_TITLE'] = 'Всплывающие окна - статистика';
+$MESS['codematrix.popup_STAT_TITLE'] = 'Всплывающие окна - статистика';
 ?>

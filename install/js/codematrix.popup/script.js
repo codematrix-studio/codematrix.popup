@@ -586,16 +586,14 @@ $(document).ready(function(){
 	
 	
 	var slideRoot=$('.slide_type');
-	if(managerPopup.type){
-		slideRoot.find('a').each(function(){
-			if($(this).hasClass('active')){
-				return;
+	if(!managerPopup.sliderInitialized && managerPopup.type && !slideRoot.find('.wrapper').length){
+		slideRoot.find('a.slide').each(function(){
+			if(!$(this).hasClass('active')){
+				slideRoot.append($(this));
 			}
-			slideRoot.append($(this));
 		});
 	}
-	slideRoot.flpSlider();
-	sliderWorks();
+	selectPreviewTab();
 	selectContactTab();
 
 	$('.popup_detail').on('click', 'a.upload', function(){

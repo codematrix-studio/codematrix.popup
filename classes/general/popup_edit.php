@@ -171,7 +171,7 @@ class popupEdit extends popup{
 			}
 		}
 		
-		//contactsSetting
+		// Настройки формы сбора контактных данных.
 		if($settings['view']['type']=='contact'){
 			$contactSendMail=$request->getPost("contact_send_mail");
 			$contactSaveToIblock=$request->getPost("contact_save_to_iblock");

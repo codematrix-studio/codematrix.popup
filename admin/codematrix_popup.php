@@ -1,6 +1,5 @@
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
 use \Bitrix\Main\Application,
-	Bitrix\Main\Page\Asset,
 	Bitrix\Main\Request,
 	Bitrix\Main\Localization\Loc,
 	Bitrix\Sale\Internals;
@@ -9,10 +8,13 @@ use \Bitrix\Main\Application,
 $module_id='codematrix.popup';
 \Bitrix\Main\Loader::includeModule('codematrix.popup');
 \Bitrix\Main\Loader::includeModule('iblock');
-// Load the bundled jQuery before the module script.
-CJSCore::Init(array("ajax", "fx", "drag_drop"));
-Asset::getInstance()->addJs("/bitrix/js/".$module_id."/jquery-3.8.0.min.js");
-Asset::getInstance()->addJs("/bitrix/js/".$module_id."/script.js");
+// Explicitly initialize jQuery before registering the module script.
+CJSCore::Init(array("jquery", "ajax", "fx", "drag_drop"));
+CJSCore::RegisterExt("codematrix_popup", array(
+	"js" => "/bitrix/js/".$module_id."/script.js",
+	"rel" => array("jquery", "ajax", "fx", "drag_drop"),
+));
+CJSCore::Init(array("codematrix_popup"));
 //include($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$module_id."/default_option.php");
 
 $context = Application::getInstance()->getContext();

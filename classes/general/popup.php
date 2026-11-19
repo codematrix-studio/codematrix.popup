@@ -858,7 +858,7 @@ class popup{
 					)
 				)
 			),
-			/* 8. Îêíî 18+ */
+			/* 8. Окно 18+ */
 			'age'=>array(
 				array(
 					'template'=>'default',

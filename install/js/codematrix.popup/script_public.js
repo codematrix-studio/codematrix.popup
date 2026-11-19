@@ -79,7 +79,7 @@ function startConditions(){
 					checkConditions(key, 'afterTimeSecond');
 				}
 			}else{
-				//if afterTimeSecond==''
+				// Если задержка показа не задана.
 				checkConditions(key, 'afterTimeSecond');
 			}
 			
@@ -142,7 +142,7 @@ function uploadPopups(){
 			/* scriptsRunFirst:true, */
 			onsuccess: function(data){
 				codematrixPopups.popupdata=data;
-				//uploadPopupsHTML();
+				// Загрузка HTML окон выполняется отдельным отложенным вызовом.
 				setTimeout(uploadPopupsHTML, 2);
 			},
 			onfailure: function(data){
@@ -264,7 +264,7 @@ function showPopup(popupId){
 			}
 		}
 		
-		//statistic open
+		// Передать статистику открытия окна.
 		BX.ajax({
 			url: '/bitrix/components/codematrix/popup.pro/ajax.php',
 			data: {
@@ -406,7 +406,7 @@ function showAnchor(){
 	}
 }
 
-//This function defines whether the client gets to the set range and if isn't present - that how many remained to him
+// Определяет, попадает ли текущее время в заданный интервал, а если нет — через сколько начнётся показ.
 function timeIntervalStatus(interval){
 	interval=interval.split('#');
 	
@@ -445,7 +445,7 @@ function timeIntervalStatus(interval){
 }
 
 function codematrixPopupClose(){
-	//statistic close
+	// Передать статистику закрытия окна.
 	if(codematrixPopups && codematrixPopups.currentPopupId && codematrixPopups.currentPopupStartTime){
 		BX.ajax({
 			url: '/bitrix/components/codematrix/popup.pro/ajax.php',
@@ -471,7 +471,7 @@ function codematrixPopupClose(){
 }
 
 function codematrixPopupTargetAction(){
-	//statistic close
+	// Передать статистику целевого действия.
 	if(codematrixPopups && codematrixPopups.currentPopupId){
 		BX.ajax({
 			url: '/bitrix/components/codematrix/popup.pro/ajax.php',

@@ -1470,7 +1470,7 @@ class popup{
 			}
 		}
 	}
-	//PUBLIC PART
+	// Публичная часть модуля.
 
 	public static function convertTimeFromSecond($tm){
 		$tmStr='';
@@ -1493,7 +1493,7 @@ class popup{
 	}
 
 	/**
-	* insertPopups function for show popups in public part
+	* Добавляет данные всплывающих окон для показа в публичной части сайта.
 	*/
 	public static function insertPopups(){
 		if(!defined('ADMIN_SECTION') && empty($_SERVER['HTTP_X_REQUESTED_WITH'])){
@@ -1570,21 +1570,21 @@ class popup{
 
 			$settings=unserialize($row['settings']);
 
-			//do not to show the banner to users who filled out the form
+			// Не показывать окно пользователям, уже заполнившим форму.
 			$cCookie=$request->getCookie("codematrixPopupFilling_".$row['id']);
 			if(!empty($cCookie) &&($settings["view"]["type"]=='contact'||$settings["view"]["type"]=='age'||$settings["view"]["type"]=='roulette'||$settings["view"]["type"]=='discount')){
 				continue;
 			}
 
-			//wrong site...
+			// Окно не предназначено для текущего сайта.
 			if($settings['condition']['sites'][0]!='all' & !in_array($options['site'], $settings['condition']['sites'])){
 				continue;
 			}
-			//wrong dateStart...
+			// Текущая дата не соответствует дате начала показа.
 			if(!empty($settings['condition']['dateStart']) && $settings['condition']['dateStart']>$options['dateUser']){
 				continue;
 			}
-			//wrong dateFinish...
+			// Текущая дата не соответствует дате окончания показа.
 			if(!empty($settings['condition']['dateFinish']) && $settings['condition']['dateFinish']<=$options['dateUser']){
 				continue;
 			}
@@ -1595,7 +1595,7 @@ class popup{
 					continue;
 				}
 			}
-			//wrong user croups...
+			// Группа пользователя не соответствует условиям показа.
 			if(!empty($settings['condition']['groups'])){
 				$userAccess=false;
 				global $USER;
@@ -1614,7 +1614,7 @@ class popup{
 					continue;
 				}
 			}
-			//wrong show by url...
+			// Адрес страницы не соответствует условиям показа.
 			/*$showOnlyPath=true;
 			$hideOnlyPath=false;
 			$maskPriority=(empty($settings['condition']['maskPriority']))?'SHOW':$settings['condition']['maskPriority'];
@@ -1717,7 +1717,7 @@ class popup{
 				}
 			}
 
-			//wrong show after review count page...
+			// Не выполнено условие показа после заданного количества просмотренных страниц.
 			if(!empty($settings['condition']['afterShowCountPages']) && $options['countPages']<=$settings['condition']['afterShowCountPages']){
 				continue;
 			}
@@ -1738,7 +1738,7 @@ class popup{
 	}
 
 	/**
-	* getComponentResult create array for components
+	* Формирует массив данных для компонентов.
 	*/
 	public function getComponentResult($idPopup){
 		if($idPopup==0){return false;}
@@ -1747,7 +1747,7 @@ class popup{
 		if($row = $res->Fetch()){
 			$settings=unserialize($row['settings']);
 
-			// Older or incomplete records may not contain the selected template.
+			// В старых или неполных записях может отсутствовать выбранный шаблон.
 			if(empty($settings['view']['template']) && !empty($settings['view']['type'])){
 				$templates=$this->getTemplatesPreset();
 				if(!empty($templates[$settings['view']['type']][0]['template'])){

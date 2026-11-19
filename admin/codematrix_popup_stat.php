@@ -10,7 +10,7 @@ Loc::loadMessages(__FILE__);
 
 $module_id="codematrix.popup";
 
-//head
+// Подключение административной части страницы статистики.
 \Bitrix\Main\Loader::IncludeModule($module_id);
 $APPLICATION->SetTitle(GetMessage("codematrix.popup_STAT_TITLE"));
 

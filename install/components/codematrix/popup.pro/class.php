@@ -198,7 +198,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				if(count($errors)>0){
 					$tmpRes['ERRORS']=$errors;
 				}elseif($cenderData){
-					//send email, write to iblock, add to marketing list
+					// Отправить письмо, сохранить данные в инфоблоке и добавить адрес в список рассылки.
 					if(!empty($popupSetting['contact'])){
 
 						$postTitle=array('NAME_TITLE', 'EMAIL_TITLE', 'PHONE_TITLE', 'DESCRIPTION_TITLE','LASTNAME_TITLE');
@@ -258,7 +258,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 					$popup->setStatistic($popupSetting['row']['id'], 1, 'stat_action');
 					$tmpRes['SUCCESS']='Y';
 
-					//set cookies so as not to show the banner to users who filled out the form
+					// Установить cookie, чтобы повторно не показывать окно пользователю, отправившему форму.
 					$responce = $context->getResponse();
 					$cookie = new Cookie("codematrixPopupFilling_".$this->arParams['ID_POPUP'], 'Y', time()+864000000);
 					$cookie->setDomain($context->getServer()->getHttpHost());
@@ -310,7 +310,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 			unset($this->arResult['ELEMENTS']['count']);
 			$this->arResult['ELEMENTS_COUNT']=$popupSetting['roulett']['count'];
 		}
-		//consent for
+		// Подготовка данных согласия на обработку персональных данных.
 		if((!empty($popupSetting['view']['type']) && ($popupSetting['view']['type']=='contact'||$popupSetting['view']['type']=='discount')) || $this->arParams['MODE']=='TEMPLATE'){
 			if(!empty($popup)){
 				$agreements=$popup->getAgreements(array('button_caption'=>$popupSetting['view']['props']['BUTTON_TEXT']));
@@ -326,7 +326,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				$this->arResult['CONSENT_ID']=1;
 			}
 		}
-		//e. o. consent for
+		// Завершение подготовки данных согласия.
 		
 		$this->IncludeComponentTemplate($componentPage);
 	}

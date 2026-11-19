@@ -8,11 +8,11 @@ use Bitrix\Main,
 	Bitrix\Main\Application,
 	Bitrix\Main\Web\Cookie,
 	Bitrix\Main\Context;
-\Bitrix\Main\Loader::IncludeModule("fly.popup");
+\Bitrix\Main\Loader::IncludeModule("codematrix.popup");
 function addCookie(){
 	$context = Application::getInstance()->getContext();
 	$responce = $context->getResponse();
-	$cookie = new Cookie("flyPopupFilling_".$_REQUEST['idPopup'], 'Y', time()+864000000);
+	$cookie = new Cookie("codematrixPopupFilling_".$_REQUEST['idPopup'], 'Y', time()+864000000);
 	$cookie->setDomain($context->getServer()->getHttpHost());
 	$cookie->setHttpOnly(false);
 	$responce->addCookie($cookie);

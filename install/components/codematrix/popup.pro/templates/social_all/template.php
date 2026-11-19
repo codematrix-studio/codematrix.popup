@@ -12,7 +12,7 @@ $odnkl = $arResult['ID_ODNKL'];?>
 				$count++;	
 		$count*=300;
 		?>
-<div id="fly_social_all" style="
+<div id="codematrix_social_all" style="
 background: <?=$arResult['COLOR_BG']?>;
 background: -moz-linear-gradient(top,<?=$arResult['COLOR_BG']?> 0%, #fff 200%);
 background: -webkit-linear-gradient(top, <?=$arResult['COLOR_BG']?> 0%,#fff 200%);

@@ -14,7 +14,7 @@ $rand = array_rand($blocks,1);
 $choosen = $blocks[$rand];
 $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'];
 ?>
-<div id="fly_banner_default" style="background:<?=$arResult['COLOR_BG']?>;">
+<div id="codematrix_banner_default" style="background:<?=$arResult['COLOR_BG']?>;">
 	<div class="top_border"></div>
 	<div class="left_border"></div>
 	<h2><?=$arResult['TITLE']?></h2>
@@ -22,17 +22,17 @@ $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'
 		if($choosen == 'ID_VK'){
 	?>
 		<img src="<?=$templateFolder?>/img/<?=$img?>">
-			<div id="fly_vk_groups"></div>
+			<div id="codematrix_vk_groups"></div>
 			<script  type="text/javascript" >
 				var vk_js = document.createElement("script");
 				document.head.appendChild(vk_js);
 				vk_js.src = "https://vk.com/js/api/openapi.js?146";
-				vkEl = document.getElementById('fly_vk_groups');
+				vkEl = document.getElementById('codematrix_vk_groups');
 				if(vkEl){
 					vkEl.innerHTML='';
 				}
 				vk_js.onload = vk_js.onreadystatechange = function () {
-					VK.Widgets.Group('fly_vk_groups', {mode: 5, width:'auto', height:'316'}, '<?=$arResult['ID_VK']?>');
+					VK.Widgets.Group('codematrix_vk_groups', {mode: 5, width:'auto', height:'316'}, '<?=$arResult['ID_VK']?>');
 				}
 			</script>
 	<?}elseif($choosen == 'ID_INST'){

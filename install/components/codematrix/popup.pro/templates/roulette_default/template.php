@@ -1,6 +1,6 @@
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?if($arResult['TIMER']=='Y'){
-		$APPLICATION->IncludeComponent('fly:popup.pro.timer','',array(
+		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
 			'LEFT'=>$arResult['TIMER_LEFT'],
@@ -9,7 +9,7 @@
 			'BOTTOM'=>$arResult['TIMER_BOTTOM'],
 		),$component);
 	}?>
-<div id="fly_roulette">
+<div id="codematrix_roulette">
     <?$deg=100/$arResult['ELEMENTS_COUNT'];?>
     <h2><?=$arResult['TITLE']?></h2>
     <h3><?=$arResult['SUBTITLE']?></h3>
@@ -42,7 +42,7 @@
         }
         function getCoupon(id,text){
           var url = "<?=$templateFolder?>/ajax.php?id="+id+"&avaliable=<?=$arResult['TIMING']?>";
-          var email = BX('fly_roulette').querySelector('label.input');
+          var email = BX('codematrix_roulette').querySelector('label.input');
           var getContinue=true;
             url+="&email="+email.querySelector('input').value+"&idPopup=<?=$arParams['ID_POPUP']?>&addtotable=<?=$arResult['EMAIL_ADD2BASE']?>&unique=<?=$arResult['EMAIL_NOT_NEW']?>&resultText="+text;
             BX.ajax({
@@ -50,12 +50,12 @@
               method:'POST',
               onsuccess: function(data){
                 if(data=='not_unique'){
-                  BX('fly_roulette').querySelector('p.result_roll_not_unique').style.display='inline-block';
+                  BX('codematrix_roulette').querySelector('p.result_roll_not_unique').style.display='inline-block';
                 }else{
-                  BX('fly_roulette').querySelector('p.result_roll_not_unique').style.display='none';
-                  BX('fly_roulette').querySelector('label.input').remove()//.style.display='none';
-                  BX('fly_roulette').querySelector('button.roll_roulette').remove()//.style.display='none';
-                  flyPopupTargetAction();
+                  BX('codematrix_roulette').querySelector('p.result_roll_not_unique').style.display='none';
+                  BX('codematrix_roulette').querySelector('label.input').remove()//.style.display='none';
+                  BX('codematrix_roulette').querySelector('button.roll_roulette').remove()//.style.display='none';
+                  codematrixPopupTargetAction();
                 }
               },
               onfailure: function(data){
@@ -77,7 +77,7 @@
 var maxValue = 25;
 
 function roll_roulette_func(count){
-	var email = BX('fly_roulette').querySelector('label.email');
+	var email = BX('codematrix_roulette').querySelector('label.email');
 	getContinue=validateEmail(email.querySelector('input').value);
   if(email.querySelector('input').value==''){
     email.className+=" blink";
@@ -95,32 +95,32 @@ function roll_roulette_func(count){
 		var res=-(deg*percent*(rand)-center);
 		var sector = rand+1; 
 		if(sector>count) sector=1; //выигрыш
-		document.querySelector('#fly_roulette div.rotate_block').style.transform='rotate('+(res-3600)+'deg)';
+		document.querySelector('#codematrix_roulette div.rotate_block').style.transform='rotate('+(res-3600)+'deg)';
     setTimeout(function(){res_roll(sector)},7000);
 	}else{
-		BX('fly_roulette').querySelector('p.result_roll_not_unique').style.display='none';
+		BX('codematrix_roulette').querySelector('p.result_roll_not_unique').style.display='none';
         email.className+=" error";
         email.focus();
 	}
   
 }
 function res_roll(sector){
-	var text=document.querySelector('#fly_roulette div.rotate_block>.text>div:nth-child('+sector+')').innerHTML;
-	var rule=document.querySelector('#fly_roulette div.rotate_block>.text>div:nth-child('+sector+')').dataset.rule;
-  var not = document.querySelectorAll('#fly_roulette div.rotate_block>.container>div:not(:nth-child('+sector+'))');
+	var text=document.querySelector('#codematrix_roulette div.rotate_block>.text>div:nth-child('+sector+')').innerHTML;
+	var rule=document.querySelector('#codematrix_roulette div.rotate_block>.text>div:nth-child('+sector+')').dataset.rule;
+  var not = document.querySelectorAll('#codematrix_roulette div.rotate_block>.container>div:not(:nth-child('+sector+'))');
   for(var i=0; i<not.length;i++){
     not[i].className+=' negative';
   }
 	
 	if(rule!='nothing'){
-    document.querySelector('#fly_roulette p.result_roll').style.display='';
-    //document.querySelector('#fly_roulette p.result_roll>span').innerHTML=text;
+    document.querySelector('#codematrix_roulette p.result_roll').style.display='';
+    //document.querySelector('#codematrix_roulette p.result_roll>span').innerHTML=text;
 		getCoupon(rule,text);
 	}else{
-    BX('fly_roulette').querySelector('label.input').remove();
-    BX('fly_roulette').querySelector('button.roll_roulette').remove();
-    BX('fly_roulette').querySelector('p.result_roll').remove();
-    BX('fly_roulette').querySelector('p.result_roll_nothing').style.display='';
+    BX('codematrix_roulette').querySelector('label.input').remove();
+    BX('codematrix_roulette').querySelector('button.roll_roulette').remove();
+    BX('codematrix_roulette').querySelector('p.result_roll').remove();
+    BX('codematrix_roulette').querySelector('p.result_roll_nothing').style.display='';
   }
 	<?=$arResult['BUTTON_METRIC']?>
 }
@@ -131,13 +131,13 @@ var addSector = function(data, startAngle, collapse) {
   if (collapse) {
     skewDeg++;
   }
-  var container = document.querySelector('#fly_roulette .container');
+  var container = document.querySelector('#codematrix_roulette .container');
   var sector = document.createElement('div');
   sector.style.background=data.color;
   sector.className ='sector';
   sector.style.transform='rotate(' + rotateDeg + 'deg) skewY(' + skewDeg + 'deg)';
   container.appendChild(sector);
-  var container_text=document.querySelector('#fly_roulette .text');
+  var container_text=document.querySelector('#codematrix_roulette .text');
   var text = document.createElement('div');
   text.style.color='white';
   text.dataset.rule=data.rule;
@@ -169,7 +169,7 @@ return dataset.length;
     <p class="result_roll_nothing" style="display:none;"><?=$arResult['NOTHING_TEXT']?></p>    
       <label class="email input">
         <input placeholder="<?=$arResult['EMAIL_PLACEHOLDER']?>" type="email" name="email">
-        <p class="result_roll_fail" style="display:none;"><?=GetMessage('fly.roulette_wrong')?><span></span></p>
+        <p class="result_roll_fail" style="display:none;"><?=GetMessage('codematrix.roulette_wrong')?><span></span></p>
         <p class="result_roll_not_unique" style="display:none;"><?=$arResult['EMAIL_NOT_NEW_TEXT']?><span></span></p>
       </label>
       <button class="roll_roulette"><?=$arResult['BUTTON_TEXT']?></button>

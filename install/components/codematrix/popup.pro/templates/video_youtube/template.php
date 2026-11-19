@@ -1,6 +1,6 @@
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?if($arResult['TIMER']=='Y'){
-		$APPLICATION->IncludeComponent('fly:popup.pro.timer','',array(
+		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
 			'LEFT'=>$arResult['TIMER_LEFT'],
@@ -9,7 +9,7 @@
 			'BOTTOM'=>$arResult['TIMER_BOTTOM'],
 		),$component);
 	}?>
-<div id="fly_video_youtube">
+<div id="codematrix_video_youtube">
 	<iframe width="100%" height="480" src="https://www.youtube.com/embed/<?=$arResult['LINK_VIDEO']?>?rel=<?=$arResult['VIDEO_SIMILAR']?>&autoplay=<?=$arResult['VIDEO_AUTOPLAY']?>" frameborder="0"></iframe>
 	<?/*
 	Дополнительные параметры YouTube

@@ -85,7 +85,7 @@ function roll_roulette_func(count){
       email.className=email.className.replace('blink','');
     },1000);
   }
-  //getContinue=true;
+  // Продолжить вращение рулетки.
   
 	if(getContinue){
 		var percent = 100/count;
@@ -114,7 +114,7 @@ function res_roll(sector){
 	
 	if(rule!='nothing'){
     document.querySelector('#codematrix_roulette p.result_roll').style.display='';
-    //document.querySelector('#codematrix_roulette p.result_roll>span').innerHTML=text;
+    // Вывести результат розыгрыша в блок результата.
 		getCoupon(rule,text);
 	}else{
     BX('codematrix_roulette').querySelector('label.input').remove();

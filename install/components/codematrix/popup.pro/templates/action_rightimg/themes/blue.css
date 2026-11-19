@@ -1,0 +1,25 @@
+#codematrix_popup_action {
+    background: #ecf0f1;
+    }
+
+
+    #codematrix_popup_action .text {
+        color: #2c3e50;
+        }
+        #codematrix_popup_action .text h2 {
+            color: #2980b9;
+            }
+        #codematrix_popup_action .text h3 {
+            color: #2980b9;
+            }
+        #codematrix_popup_action .text .info {
+
+            }
+        #codematrix_popup_action .text .going_link {
+            background: #2980b9;
+            }
+        #codematrix_popup_action .text .going_link:hover {
+            background: #3498db;
+            }
+
+.codematrix_popup_pro_timer{background: #3498db;}

@@ -479,6 +479,7 @@ function row_rule_url(){
 }
 var drag;
 $(document).ready(function(){
+	selectPreviewTab();
 	$('#edit_content').on('change','select[name="RULE_ID"]',function(){
 		$(this).val();
 		$(this).closest('label').find('a').attr('href','/bitrix/admin/sale_discount_edit.php?ID='+$(this).val());
@@ -813,9 +814,14 @@ function selectContactTab(){
 }
 
 function selectPreviewTab(){
-	if($('.slide_type').width()==0){
-		$('.slide_type').css('width', '');
-		$('.slide_type').flpSlider();
-		sliderWorks();
+	if(managerPopup.sliderInitialized){
+		return;
 	}
+	var slideType=$('.slide_type');
+	if(!slideType.length || slideType.width()==0){
+		return;
+	}
+	slideType.flpSlider();
+	sliderWorks();
+	managerPopup.sliderInitialized=true;
 }

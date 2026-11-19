@@ -76,7 +76,7 @@ class popup{
 
 	private function getTypesPreset(){
 		$type=array(
-			/* 1. Èçîáðàæåíèå (Áàííåð) */
+			/* 1. Изображение (баннер) */
 			'banner'=>array(
 				'code'=>'banner',
 				'name'=>GetMessage("codematrix.popup_TYPE_NAME_BANNER"),
@@ -97,7 +97,7 @@ class popup{
 				)
 			),
 
-			/* 2. Âèäåî */
+			/* 2. Видео */
 			'video'=>array(
 				'code'=>'video',
 				'name'=>GetMessage("codematrix.popup_TYPE_NAME_VIDEO"),
@@ -122,7 +122,7 @@ class popup{
 				)
 			),
 
-			/* 3. Àêöèè */
+			/* 3. Акции */
 			'action'=>array(
 				'code'=>'action',
 				'name'=>GetMessage("codematrix.popup_TYPE_NAME_ACTION"),
@@ -159,12 +159,12 @@ class popup{
 				)
 			),
 
-			/* 4. Ñîöèàëüíûå ñåòè */
+			/* 4. Социальные сети */
 			'social'=>array(
 				'code'=>'social',
 				'name'=>GetMessage("codematrix.popup_TYPE_NAME_SOCIAL"),
 				'props'=>array(
-					'TITLE'=>array('type'=>'content', 'name'=>GetMessage("codematrix.popup_VIDEO_CONTENT_TITLE")), /*Óáðàòü*/
+					'TITLE'=>array('type'=>'content', 'name'=>GetMessage("codematrix.popup_VIDEO_CONTENT_TITLE")), /* Удалить */
 					'POSITION_LEFT'=>array('type'=>'positionpopup', 'tag'=>'checkbox', 'name'=>GetMessage("codematrix.popup_POSITION_LEFT")),
 					'POSITION_RIGHT'=>array('type'=>'positionpopup', 'tag'=>'checkbox', 'name'=>GetMessage("codematrix.popup_POSITION_RIGHT")),
 					'POSITION_TOP'=>array('type'=>'positionpopup', 'tag'=>'checkbox', 'name'=>GetMessage("codematrix.popup_POSITION_TOP")),
@@ -184,7 +184,7 @@ class popup{
 				)
 			),
 
-			/* 5. Ñáîðùèê êîíòàêòîâ */
+			/* 5. Сбор контактов */
 			'contact'=>array(
 				'code'=>'contact',
 				'name'=>GetMessage("codematrix.popup_TYPE_NAME_CONTACT"),
@@ -291,7 +291,7 @@ class popup{
 						)
 				)
 			),
-			/*8. Îêíî 18+ */
+			/* 8. Окно 18+ */
 			'age'=>array(
 				'code'=>'age',
 				'name'=>GetMessage('codematrix.popup_TYPE_NAME_AGE'),
@@ -497,7 +497,7 @@ class popup{
 
 	protected function getTemplatesPreset(){
 		$templates=array(
-			/* 1. Èçîáðàæåíèå (Áàííåð) */
+			/* 1. Изображение (баннер) */
 			'banner'=>array(
 				array(
 					'template'=>'default',
@@ -515,7 +515,7 @@ class popup{
 				)
 			),
 
-			/* 2. Âèäåî */
+			/* 2. Видео */
 			'video'=>array(
 				array(
 					'template'=>'youtube',
@@ -533,7 +533,7 @@ class popup{
 				)
 			),
 
-			/* 3. Àêöèè */
+			/* 3. Акции */
 			'action'=>array(
 				array(
 					'template'=>'leftimg',
@@ -595,7 +595,7 @@ class popup{
 				)
 			),
 
-			/* 4. Ñîöèàëüíûå ñåòè */
+			/* 4. Социальные сети */
 			'social'=>array(
 				array(
 					'template'=>'one',
@@ -631,7 +631,7 @@ class popup{
 				)
 			),
 
-			/* 5. Ñáîðùèê êîíòàêòîâ */
+			/* 5. Сбор контактов */
 			'contact'=>array(
 				array(
 					'template'=>'type1',
@@ -819,7 +819,7 @@ class popup{
 
 			),
 
-			/* 6. Ïîäåëèòüñÿ â ñîö ñåòè */
+			/* 6. Поделиться в социальной сети */
 			'share'=>array(
 				array(
 					'template'=>'default',
@@ -879,7 +879,7 @@ class popup{
 			)
 		);
 		if (\Bitrix\Main\Loader::IncludeModule('sale')){
-			/* 9.  Êóïîí íà ñêèäêó*/
+			/* 9. Купон на скидку */
 			$template_message=CEventMessage::GetList($by="site_id", $order="desc", array('TYPE_ID'=>'CODEMATRIX_POPUP_SEND_COUPON'));
 			$serviceMessage=array();
 			while($t_m=$template_message->Fetch()){$serviceMessage[]=$t_m;}
@@ -1143,7 +1143,7 @@ class popup{
 			'anchorVisible'=>'',//<a name="#anchorVisible#"></a>
 			'onClickClassLink'=>'',
 			'alreadygoing'=>false,
-			'repeatTime'=>0, //time of repeat
+			'repeatTime'=>0, // Интервал повторного показа.
 			'repeatTime_type'=>'day'//type of repeat
 		);
 

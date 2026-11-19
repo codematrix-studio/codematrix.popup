@@ -3,7 +3,7 @@
  * Copyright (c) 27/10/2020 Created By/Edited By ASDAFF asdaff.asad@yandex.ru
  */
 
-$MESS["codematrix.popup_PARTNER_NAME"] = "CodeMatrix Studio";
+$MESS["codematrix.popup_PARTNER_NAME"] = "CodeMatrix";
 $MESS["codematrix.popup_MODULE_NAME"] = 'Всплывающие окна CodeMatrix';
 $MESS["codematrix.popup_MODULE_DESCRIPTION"] = 'Модуль «Всплывающие окна CodeMatrix» позволяет создавать на Вашем сайте неограниченное число всплывающих окон для решения различных задач.';
 $MESS["codematrix.popup_PARTNER_URI"] = 'https://github.com/codematrix-studio';

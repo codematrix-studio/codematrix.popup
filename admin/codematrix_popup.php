@@ -10,9 +10,11 @@ $module_id='codematrix.popup';
 \Bitrix\Main\Loader::includeModule('codematrix.popup');
 \Bitrix\Main\Loader::includeModule('iblock');
 //head
-CJSCore::Init(array("jquery", "ajax", "fx",'drag_drop'));
-
-Asset::getInstance()->addJs('/bitrix/js/'.$module_id.'/script.js');
+CJSCore::RegisterExt("codematrix_popup", array(
+	"js" => "/bitrix/js/".$module_id."/script.js",
+	"rel" => array("jquery", "ajax", "fx", "drag_drop"),
+));
+CJSCore::Init(array("codematrix_popup"));
 //include($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$module_id."/default_option.php");
 
 $context = Application::getInstance()->getContext();

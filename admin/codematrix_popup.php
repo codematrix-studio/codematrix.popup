@@ -8,7 +8,7 @@ use \Bitrix\Main\Application,
 $module_id='codematrix.popup';
 \Bitrix\Main\Loader::includeModule('codematrix.popup');
 \Bitrix\Main\Loader::includeModule('iblock');
-// Register the module's bundled jQuery as an explicit dependency.
+// Подключаем поставляемую с модулем jQuery как явную зависимость административного скрипта.
 CJSCore::RegisterExt("codematrix_popup_jquery", array(
 	"js" => "/bitrix/js/".$module_id."/jquery-3.8.0.min.js",
 	"skip_core" => true,
@@ -48,7 +48,7 @@ if(!empty($request['action_button'])&&$request['action_button']=='copy'&&!empty(
 	$CURRENT_PAGE .= $_SERVER["HTTP_HOST"];
 	header("Location: ".$CURRENT_PAGE."/bitrix/admin/codematrix_popup.php?id=".$newIdPopup);
 }
-//ajax operations
+// Обработка AJAX-команд.
 if(!empty($request['ajax']) && $request['ajax']=='y'){
 	if(!empty($request['command'])){
 		if($request['command']=='gettemplate'){
@@ -323,7 +323,7 @@ if(!empty($request['id'])){
 }
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_after.php");
 
-//create or edit popup
+// Создание или редактирование всплывающего окна.
 $editFlag = $request->getPost("id_popup");
 if(!empty($editFlag)){
 	$editableWindow->setPopupId($editFlag);
@@ -341,7 +341,7 @@ if(!empty($editFlag)){
 	}
 }
 
-//consent out Message
+// Сообщение об отсутствии настроенных согласий.
 $consentOutMessage = new CAdminMessage(array(
 		'TYPE'=>'ERROR',
 		'MESSAGE'=>GetMessage("codematrix.popup_CONSENT_OUT"),
@@ -916,7 +916,7 @@ if(empty($idPopup)){
 	$selectnextGroups.='</select>';
 	$serviceName=(!empty($editArr['service_name']))?$editArr['service_name']:GetMessage("codematrix.popup_TABCOND_SERVICE_NAME").'_'.$idPopup;
 
-	//condition
+	// Условия показа.
 	/*$condPathsPriority_notshow='';
 	$condPathsPriority_show=' checked="checked"';
 	if(!empty($editArr['maskPriority']) && $editArr['maskPriority']=='NOTSHOW'){

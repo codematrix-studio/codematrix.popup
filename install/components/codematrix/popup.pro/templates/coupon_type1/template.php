@@ -1,4 +1,20 @@
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
+	die();
+}
+
+$imageUrl = trim((string)($arResult["IMG_1_SRC"] ?? ""));
+if (preg_match("/^(?:javascript|data|vbscript):/i", $imageUrl)) {
+	$imageUrl = "";
+}
+$imageUrl = str_replace(array("\\\\", '"', "'", "(", ")", "\r", "\n"), "", $imageUrl);
+$emailShow = (($arResult["EMAIL_SHOW"] ?? "N") === "Y");
+$emailRequired = ($emailShow && ($arResult["EMAIL_REQUIRED"] ?? "N") === "Y");
+$popupId = (int)($arParams["ID_POPUP"] ?? 0);
+$ruleId = (int)($arResult["RULE_ID"] ?? 0);
+$timing = (string)($arResult["TIMING"] ?? "");
+$addToTable = (($arResult["EMAIL_ADD2BASE"] ?? "N") === "Y") ? "Y" : "N";
+?>
 <?if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
@@ -9,33 +25,29 @@
 			'BOTTOM'=>$arResult['TIMER_BOTTOM'],
 		),$component);
 	}?>
-<?function inducementWord($number, $wordArr){$cases = array (2, 0, 1, 1, 1, 2);return $wordArr[ ($number%100>4 && $number%100<20)? 2: $cases[min($number%10, 5)] ];}?>
+<?php
+function inducementWord($number, $wordArr) {
+	$cases = array(2, 0, 1, 1, 1, 2);
+	return $wordArr[($number % 100 > 4 && $number % 100 < 20) ? 2 : $cases[min($number % 10, 5)]];
+}
+?>
 <div id="codematrix_coupon_coupon">
-	<div class="bg" style="background-image:url('<?=$arResult['IMG_1_SRC']?>')">
+	<div class="bg" style="background-image:url('<?=htmlspecialcharsbx($imageUrl)?>')">
 		<div>
-			<h2><?=$arResult['TITLE']?></h2>
-			<p><?=$arResult['SUBTITLE']?></p>
-			<span class="sale"><?=GetMessage("POPUP_SALE")?> <?=$arResult['PERCENT']?></span><span class="avaliable"><?=GetMessage("POPUP_AVALIABLE")?> <?=$arResult['TIMING']?>
-			<?=GetMessage("POPUP_DAYS_".inducementWord($arResult['TIMING'],array(1,2,5)))?>
+			<h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
+			<p><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></p>
+			<span class="sale"><?=GetMessage("POPUP_SALE")?> <?=htmlspecialcharsbx((string)($arResult['PERCENT'] ?? ''))?></span><span class="avaliable"><?=GetMessage("POPUP_AVALIABLE")?> <?=htmlspecialcharsbx($timing)?>
+			<?=GetMessage("POPUP_DAYS_" . inducementWord((int)$timing, array(1, 2, 5)))?>
 			</span>
 			<?
-				if($arResult['EMAIL_SHOW']=='Y'){
-					if($arResult['EMAIL_REQUIRED']=='N' || $arResult['EMAIL_REQUIRED']=='Y'){
-						$arResult['EMAIL_REQUIRED']=($arResult['EMAIL_REQUIRED']=='N')?'':'required';
-					}
-				}
-				if($arResult['EMAIL_SHOW']=='N' || $arResult['EMAIL_SHOW']=='Y'){
-					$arResult['EMAIL_SHOW']=($arResult['EMAIL_SHOW']=='N')?'notshow':'';
-					$param_consent[]=$arResult['EMAIL_TITLE'];
-				}
-				?>
-				<label class="<?=$arResult['EMAIL_SHOW']?> input">
-					<p><?=GetMessage("POPUP_INFO")?><?=$arResult['EMAIL_PLACEHOLDER']?></p>
-					<input type="email" value="<?=$arResult['EMAIL']?>" name="EMAIL" placeholder="<?=$arResult['EMAIL_PLACEHOLDER']?>"/>
+<?php $param_consent[] = (string)($arResult["EMAIL_TITLE"] ?? ""); ?>
+				<label class="<?= $emailShow ? '' : 'notshow' ?> input">
+					<p><?=GetMessage("POPUP_INFO")?><?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?></p>
+					<input type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=$arResult['EMAIL_PLACEHOLDER']?>"/>
 					<span class="error"><?=GetMessage("POPUP_WRONG")?></span>
-					<span class="not_new"><?=$arResult['EMAIL_NOT_NEW_TEXT']?></span>
+					<span class="not_new"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?></span>
 				</label>
-			<div class="coupon_block"><button onclick="getCoupon();"><?=$arResult['BUTTON_TEXT']?></button>
+			<div class="coupon_block"><button onclick="getCoupon();"><?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?></button>
 			<input class="goodCoupon" type="text" disabled>
 			<span><?=GetMessage('POPUP_COPYED')?></span>
 			</div>
@@ -48,13 +60,17 @@
 		return emailPattern.test(elementValue); 
 	} 
 	function getCoupon(){
-		var url = "<?=$templateFolder?>/ajax.php?id=<?=$arResult['RULE_ID']?>&avaliable=<?=$arResult['TIMING']?>";
+		var url = <?=json_encode($templateFolder . "/ajax.php", JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>;
+		url += "?id=" + encodeURIComponent(<?=json_encode((string)$ruleId)?>)
+			+ "&avaliable=" + encodeURIComponent(<?=json_encode($timing)?>)
+			+ "&idPopup=<?= $popupId ?>"
+			+ "&addtotable=<?= $addToTable ?>";
 		var email = BX('codematrix_coupon_coupon').querySelector('label.input');
-		var getContinue=true;
-		if(!email.classList.contains('notshow')){
+		var getContinue = true;
+		if (!email.classList.contains('notshow')) {
 			email = email.querySelector('input');
-			getContinue=validateEmail(email.value);
-			url+="&email="+email.value+"&idPopup=<?=$arParams['ID_POPUP']?>&addtotable=<?=$arResult['EMAIL_ADD2BASE']?>&unique=<?=$arResult['EMAIL_NOT_NEW']?>";
+			getContinue = validateEmail(email.value);
+			url += "&email=" + encodeURIComponent(email.value);
 		}
 		if(getContinue){
 			if(!email.classList.contains('notshow')){

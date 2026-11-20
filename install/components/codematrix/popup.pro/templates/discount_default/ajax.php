@@ -28,12 +28,14 @@ if (
 }
 
 $props = $settings["view"]["props"];
-$ruleId = filter_var($props["RULE_ID"] ?? null, FILTER_VALIDATE_INT, array(
-	"options" => array("min_range" => 1),
-));
-$groupId = filter_var($props["USER_GROUP"] ?? null, FILTER_VALIDATE_INT, array(
-	"options" => array("min_range" => 1),
-));
+$ruleValue = $props["RULE_ID"] ?? null;
+$ruleId = (is_string($ruleValue) || is_int($ruleValue))
+	? filter_var($ruleValue, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1)))
+	: false;
+$groupValue = $props["USER_GROUP"] ?? null;
+$groupId = (is_string($groupValue) || is_int($groupValue))
+	? filter_var($groupValue, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1)))
+	: false;
 if ($groupId === false) {
 	$groupId = 0;
 }

@@ -3,6 +3,7 @@ use \Bitrix\Main\Application,
 	Bitrix\Main\Request,
 	Bitrix\Main\Localization\Loc,
 	Bitrix\Main\Page\Asset,
+	Bitrix\Main\FileTable,
 	Bitrix\Iblock\TypeTable,
 	Bitrix\Iblock\TypeLanguageTable,
 	Bitrix\Iblock\IblockTable,
@@ -79,8 +80,12 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 			$editableWindow=new popupEdit();
 			$allSettings=$editableWindow->getAllPopups();
 			$firstQueue=$lastQueue='';
-			$res = CFile::GetList(array("ID"=>"desc"), array("MODULE_ID"=>$module_id));
-			while($res_arr = $res->GetNext()){
+			$fileResult = FileTable::getList(array(
+				'select' => array('ID', 'SUBDIR', 'FILE_NAME'),
+				'filter' => array('=MODULE_ID' => $module_id),
+				'order' => array('ID' => 'DESC')
+			));
+			while($res_arr = $fileResult->fetch()){
 				$keyPopup=imageBusy($allSettings, array('id'=>$res_arr['ID'], 'path'=>'/upload/'.$res_arr['SUBDIR'].'/'.$res_arr['FILE_NAME']));
 				$deleteLink='<a href="javascript:void(0);" onclick="delPopupImg(this);" class="del_img" title="'.GetMessage("codematrix.popup_IMG_BLOCK_DELIMG").'" data-id="'.$res_arr['ID'].'">&nbsp;</a>';
 				$existKey='';

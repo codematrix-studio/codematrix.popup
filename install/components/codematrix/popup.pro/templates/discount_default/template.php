@@ -42,7 +42,32 @@ $discountTitle = preg_replace_callback(
     <?php if(!empty($arResult['IMG_2_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_2_SRC'] ?? ''))?>"><?php }?>
     <div class="content">
         <h2><?=$discountTitle?></h2>
-        <p><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></p>
+        <?php
+        // В описании разрешено только безопасное форматирование; атрибуты и остальные теги удаляются.
+        $discountSubtitle = html_entity_decode(
+            (string)($arResult['SUBTITLE'] ?? ''),
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8'
+        );
+        $discountSubtitle = preg_replace_callback(
+            '~</?([a-z][a-z0-9]*)\\b[^>]*>~i',
+            static function ($matches) {
+                $tag = strtolower($matches[1]);
+
+                if ($tag === 'b' || $tag === 'strong' || $tag === 'i' || $tag === 'em') {
+                    return (strpos($matches[0], '</') === 0) ? '</' . $tag . '>' : '<' . $tag . '>';
+                }
+
+                if ($tag === 'br') {
+                    return '<br>';
+                }
+
+                return '';
+            },
+            $discountSubtitle
+        );
+        ?>
+        <p><?=$discountSubtitle?></p>
         <form method="POST" onsubmit="getCoupon(this);return false;">
         <fieldset>
 			<?php

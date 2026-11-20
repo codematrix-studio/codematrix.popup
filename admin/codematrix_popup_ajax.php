@@ -15,50 +15,73 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 	$popupsO=new popup;
 	$reqArr=array(
 		'type'=>$request->get('type'),
-		'pageUrl'=>$request->get('pageUrl'),
-		'site'=>$request->get('site'),
-		'dateUser'=>$request->get('dateUser'),
 		'popupIds'=>$request->get('popupIds'),
 		'popupId'=>$request->get('popupId'),
 		'popupTime'=>$request->get('popupTime'),
 	);
+	$getAvailablePopups = static function () use ($popupsO) {
+		return $popupsO->getAvailablePopups(array(
+			'site' => defined('SITE_ID') ? SITE_ID : '',
+			'dateUser' => time(),
+			'pageUrl' => (string)($_SERVER['REQUEST_URI'] ?? '/'),
+			'countPages' => max(1, (int)($_SESSION['codematrix_popup_count_pages'] ?? 1)),
+		));
+	};
 	if(!empty($reqArr['type'])){
-		if($reqArr['type']=='getPopups' && !empty($reqArr['pageUrl'])){
+		if($reqArr['type']=='getPopups'){
 			if(empty($_SESSION['codematrix_popup_count_pages'])){
 				$_SESSION['codematrix_popup_count_pages']=1;
 			}else{
 				$_SESSION['codematrix_popup_count_pages']=$_SESSION['codematrix_popup_count_pages']+1;
 			}
-			$retStr=$popupsO->getAvailablePopups(array(
-				'site'=>$reqArr['site'],
-				'dateUser'=>$reqArr['dateUser'],
-				'pageUrl'=>urldecode($reqArr['pageUrl']),
-				'countPages'=>$_SESSION['codematrix_popup_count_pages']
-			));
+			$retStr=$getAvailablePopups();
 			$retStr=CUtil::PhpToJSObject($retStr);
 			echo str_replace("'", '"', $retStr);
 		}elseif($reqArr['type']=='getBasket'){
 			$basket=popup::GetBasketInfo();
 			$retStr=CUtil::PhpToJSObject($basket);
 			echo str_replace("'", '"', $retStr);
-		}elseif($reqArr['type']=='getTemplatePath' && !empty($reqArr['popupIds'])){
-			$paths=$popupsO->getComponentPath($reqArr['popupIds']);
+		}elseif($reqArr['type']=='getTemplatePath' && is_array($reqArr['popupIds'])){
+			$availablePopups=$getAvailablePopups();
+			$popupIds=array();
+			foreach($reqArr['popupIds'] as $popupId){
+				$popupId=filter_var($popupId, FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
+				if($popupId!==false && isset($availablePopups[$popupId])){
+					$popupIds[]=$popupId;
+				}
+			}
+			$paths=count($popupIds)>0 ? $popupsO->getComponentPath($popupIds) : array();
 			$retStr=CUtil::PhpToJSObject($paths);
 			echo str_replace("'", '"', $retStr);
-		}elseif($reqArr['type']=='getHTML' && !empty($reqArr['popupId'])){
-			$popupsO->getHTMLByPopup($reqArr['popupId']);
-		}elseif($reqArr['type']=='statisticShow' && !empty($reqArr['popupId'])){
-			$retStr=$popupsO->setStatistic($reqArr['popupId'], 1, 'stat_show');
-			$retStr=CUtil::PhpToJSObject($retStr);
-			echo str_replace("'", '"', $retStr);
-		}elseif($reqArr['type']=='statisticTime' && intval($reqArr['popupId']) && intval($reqArr['popupTime'])){
-			$retStr=$popupsO->setStatistic($reqArr['popupId'], intval($reqArr['popupTime']), 'stat_time');
-			$retStr=CUtil::PhpToJSObject($retStr);
-			echo str_replace("'", '"', $retStr);
-		}elseif($reqArr['type']=='statisticAction' && intval($reqArr['popupId'])>0){
-			$retStr=$popupsO->setStatistic($reqArr['popupId'], 1, 'stat_action');
-			$retStr=CUtil::PhpToJSObject($retStr);
-			echo str_replace("'", '"', $retStr);
+		}elseif($reqArr['type']=='getHTML'){
+			$popupId=filter_var($reqArr['popupId'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
+			$availablePopups=$getAvailablePopups();
+			$hasFormData=false;
+			foreach(array('NAME','EMAIL','LASTNAME','PHONE','DESCRIPTION') as $fieldName){
+				if($request->get($fieldName)!==null){
+					$hasFormData=true;
+					break;
+				}
+			}
+			if($popupId!==false && isset($availablePopups[$popupId]) && !$hasFormData){
+				$popupsO->getHTMLByPopup($popupId);
+			}
+		}elseif($reqArr['type']=='statisticShow' || $reqArr['type']=='statisticAction'){
+			$popupId=filter_var($reqArr['popupId'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
+			if($popupId!==false){
+				$field=($reqArr['type']=='statisticShow') ? 'stat_show' : 'stat_action';
+				$retStr=$popupsO->setStatistic($popupId, 1, $field);
+				$retStr=CUtil::PhpToJSObject($retStr);
+				echo str_replace("'", '"', $retStr);
+			}
+		}elseif($reqArr['type']=='statisticTime'){
+			$popupId=filter_var($reqArr['popupId'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
+			$popupTime=filter_var($reqArr['popupTime'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
+			if($popupId!==false && $popupTime!==false){
+				$retStr=$popupsO->setStatistic($popupId, $popupTime, 'stat_time');
+				$retStr=CUtil::PhpToJSObject($retStr);
+				echo str_replace("'", '"', $retStr);
+			}
 		}
 	}
 }else{

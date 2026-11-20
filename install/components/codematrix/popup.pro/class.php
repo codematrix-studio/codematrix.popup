@@ -369,9 +369,14 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				if ($this->arResult['TIMER'] === 'Y') {
 					$format = 'd.m.Y H:i:s';
 					$timerDateValue = $timerSettings['date'] ?? null;
-					$timerDate = is_string($timerDateValue)
-						? \DateTime::createFromFormat($format, $timerDateValue)
-						: false;
+					$timerDate = false;
+					if (is_string($timerDateValue)) {
+						try {
+							$timerDate = \DateTime::createFromFormat($format, $timerDateValue);
+						} catch (\Throwable $exception) {
+							$timerDate = false;
+						}
+					}
 					$timerDateErrors = \DateTime::getLastErrors();
 					$timerDateIsValid = $timerDate instanceof \DateTime
 						&& ($timerDateErrors === false || (

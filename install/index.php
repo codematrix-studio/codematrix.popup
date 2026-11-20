@@ -14,6 +14,11 @@ Class codematrix_popup extends CModule
 	var $MODULE_CSS;
 	var $strError = '';
 
+	/**
+	 * Инициализирует метаданные модуля из файла версии и языковых сообщений.
+	 *
+	 * @return void
+	 */
 	function __construct(){
 		$arModuleVersion = array();
 		include(dirname(__FILE__)."/version.php");
@@ -26,6 +31,12 @@ Class codematrix_popup extends CModule
 		$this->PARTNER_URI = GetMessage("codematrix.popup_PARTNER_URI");
 	}
 
+	/**
+	 * Создаёт таблицы модуля, если они ещё не существуют.
+	 *
+	 * @param array $arParams Дополнительные параметры установки.
+	 * @return bool Результат выполнения этапа установки БД.
+	 */
 	function InstallDB($arParams = array()){
 		global $DB;
 		$DB->Query('CREATE TABLE IF NOT EXISTS codematrix_popup (
@@ -60,6 +71,12 @@ Class codematrix_popup extends CModule
 		return true;
 	}
 
+	/**
+	 * Удаляет таблицы модуля при полном удалении его данных.
+	 *
+	 * @param array $arParams Дополнительные параметры удаления.
+	 * @return bool Результат выполнения этапа удаления БД.
+	 */
 	function UnInstallDB($arParams = array()){
 		global $DB;
 		$DB->Query('DROP TABLE IF EXISTS codematrix_popup;');
@@ -70,15 +87,30 @@ Class codematrix_popup extends CModule
 		return true;
 	}
 
+	/**
+	 * Регистрирует обработчики событий модуля.
+	 *
+	 * @return bool Результат регистрации обработчиков.
+	 */
 	function InstallEvents(){
 		RegisterModuleDependences("main","OnBeforeEndBufferContent", $this->MODULE_ID, "popup", "insertPopups");
 		return true;
 	}
 
+	/**
+	 * Удаляет зарегистрированные обработчики событий модуля.
+	 *
+	 * @return bool Результат удаления обработчиков.
+	 */
 	function UnInstallEvents(){
 		UnRegisterModuleDependences("main", "OnBeforeEndBufferContent", $this->MODULE_ID, "popup", "insertPopups");
 		return true;
 	}
+	/**
+	 * Создаёт типы почтовых событий, используемые модулем.
+	 *
+	 * @return void
+	 */
 	function InstallPostEvent(){
 		\CodeMatrix\Popup\Mail::ensureEventType(
 			'CODEMATRIX_POPUP_SEND_COUPON',
@@ -94,11 +126,21 @@ Class codematrix_popup extends CModule
 		);
 	}
 
+	/**
+	 * Удаляет типы почтовых событий модуля.
+	 *
+	 * @return void
+	 */
 	function UnInstallPostEvent(){
 		\CodeMatrix\Popup\Mail::deleteEventTypes('CODEMATRIX_POPUP_SEND_COUPON');
 		\CodeMatrix\Popup\Mail::deleteEventTypes('CODEMATRIX_POPUP_ROULETTE_SEND');
 	}
 
+	/**
+	 * Создаёт стандартные почтовые шаблоны для всех сайтов.
+	 *
+	 * @return void
+	 */
 	function InstallPostTemplate(){
 		$sites=Bitrix\Main\SiteTable::getList(['select' => ['LID']]);
 		$lids=array();
@@ -124,11 +166,21 @@ Class codematrix_popup extends CModule
 		\CodeMatrix\Popup\Mail::addTemplate($template);
 	}
 
+	/**
+	 * Удаляет почтовые шаблоны, созданные модулем.
+	 *
+	 * @return void
+	 */
 	function UnInstallPostTemplate(){
 		\CodeMatrix\Popup\Mail::deleteTemplates('CODEMATRIX_POPUP_SEND_COUPON');
 		\CodeMatrix\Popup\Mail::deleteTemplates('CODEMATRIX_POPUP_ROULETTE_SEND');
 	}
 
+	/**
+	 * Копирует административные файлы, компоненты и ресурсы модуля в ядро сайта.
+	 *
+	 * @return bool Результат выполнения этапа установки файлов.
+	 */
 	function InstallFiles(){
 		
 		if (is_dir($p = $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.self::MODULE_ID.'/install/components')){
@@ -149,6 +201,11 @@ Class codematrix_popup extends CModule
 		return true;
 	}
 
+	/**
+	 * Удаляет установленные модулем компоненты и публичные ресурсы.
+	 *
+	 * @return bool Результат выполнения этапа удаления файлов.
+	 */
 	function UnInstallFiles(){
 		
 		if (is_dir($p = $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.self::MODULE_ID.'/install/components')){
@@ -178,6 +235,11 @@ Class codematrix_popup extends CModule
 		return true;
 	}
 
+	/**
+	 * Выполняет полный цикл установки модуля.
+	 *
+	 * @return void
+	 */
 	function DoInstall(){
 		global $APPLICATION;
 		$this->InstallFiles();
@@ -188,6 +250,11 @@ Class codematrix_popup extends CModule
 		$this->InstallPostTemplate();
 	}
 
+	/**
+	 * Выполняет полный цикл удаления модуля.
+	 *
+	 * @return void
+	 */
 	function DoUninstall(){
 		global $APPLICATION;
 		$this->UnInstallEvents();

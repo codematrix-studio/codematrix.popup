@@ -155,7 +155,7 @@
 2. Инфоблоки: `CIBlockType`, `CIBlock`, `CIBlockProperty`, `CIBlockElement`.
 3. Файлы: `CFile`.
 4. Sale: `CSaleDiscount` и оставшийся `CModule::IncludeModule()`.
-6. DDL и lifecycle установщика: D7 Connection при сохранении install/uninstall contract.
+5. DDL и lifecycle установщика: D7 Connection при сохранении install/uninstall contract.
 7. Проверка всех AJAX-контрактов и runtime-сценариев.
 8. Повторный поиск legacy-вызовов по всей PHP-части проекта и итоговая сверка с V1.
 

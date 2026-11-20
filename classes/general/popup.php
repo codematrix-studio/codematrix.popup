@@ -1354,24 +1354,32 @@ class popup{
 			 $retArr['row']=$row;
 			 //var_dump($retArr['view']['type']);
 			 if($retArr['view']['type']=='coupon'){
-				$res=Internals\DiscountTable::getList(array(
+				$discount=Internals\DiscountTable::getList(array(
 					'filter'=>array('=ID'=>(int)$retArr['view']['props']['RULE_ID']),
 					'select'=>array('APPLICATION', 'CURRENCY'),
 					'limit'=>1
 				))->fetch();
-				$retArr['view']['props']['PERCENT']=$res;
-				//if($res['DISCOUNT_TYPE']=='P'){
-					$retArr['view']['props']['PERCENT']=explode('=>',$res['APPLICATION']);//['DISCOUNT_VALUE'].'%';
-					$type=explode(',',$retArr['view']['props']['PERCENT'][2]);
-					$type=$type[0];
-					$retArr['view']['props']['PERCENT']=explode(',',$retArr['view']['props']['PERCENT'][1]);
-					$retArr['view']['props']['PERCENT']=(float)$retArr['view']['props']['PERCENT'][0]*(-1);
-					if($type[2]=='P'){
-						$retArr['view']['props']['PERCENT']=$retArr['view']['props']['PERCENT'].'%';
-					}elseif($type[2]=='S'||$type[2]=='F'){
-						$retArr['view']['props']['PERCENT']=CurrencyFormat($retArr['view']['props']['PERCENT'],$res['CURRENCY']);
+
+				// Правило скидки могло быть удалено после настройки попапа.
+				$retArr['view']['props']['PERCENT']='';
+				if($discount && !empty($discount['APPLICATION'])){
+					$applicationParts=explode('=>',$discount['APPLICATION']);
+					if(isset($applicationParts[1], $applicationParts[2])){
+						$valueParts=explode(',', $applicationParts[1]);
+						$typeParts=explode(',', $applicationParts[2]);
+						if(isset($valueParts[0], $typeParts[0])){
+							$discountValue=(float)$valueParts[0]*(-1);
+							$discountType=$typeParts[0][2] ?? '';
+							if($discountType=='P'){
+								$retArr['view']['props']['PERCENT']=$discountValue.'%';
+							}elseif($discountType=='S'||$discountType=='F'){
+								$retArr['view']['props']['PERCENT']=CurrencyFormat($discountValue,$discount['CURRENCY']);
+							}else{
+								$retArr['view']['props']['PERCENT']=$discountValue;
+							}
+						}
 					}
-				//}
+				}
 			 }
 			 return $retArr;
 		 }

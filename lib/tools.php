@@ -16,10 +16,10 @@ class Tools{
 		return $currentModules;
 	}
 	public static function getMailTemplates($var='CODEMATRIX_POPUP_SEND_COUPON'){
-		$template_message=\CEventMessage::GetList($by="site_id", $order="desc", array('TYPE_ID'=>$var));
+		$templates=Mail::getTemplates($var);
 		$serviceMessage=array();
-		while($t_m=$template_message->Fetch()){
-			$serviceMessage[$t_m['ID']]=$t_m['EVENT_NAME'].' ['.$t_m['ID'].']';
+		foreach($templates as $template){
+			$serviceMessage[$template['ID']]=$template['EVENT_NAME'].' ['.$template['ID'].']';
 		}
 		return $serviceMessage;
 	}

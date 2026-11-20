@@ -624,10 +624,6 @@ $(document).ready(function(){
 		managerPopup.updatePreview({'src':this.src, 'id':$(this).data('id')});
 	});
 
-	$('input[name=cancel]').click(function(){
-		location.reload();
-	});
-
 	$('.add_product_field').click(function(){
 		var tmpFields=$(this).closest('td').find('.button_add');
 		$('<div class="button_add"><input name="saleIDProdInBasket[]" id="saleIDProdInBasket_'+tmpFields.length+'" value="" size="5" type="text"> <input type="button" value="..." onclick="jsUtils.OpenWindow(\'/bitrix/admin/iblock_element_search.php?lang=ru&amp;n=saleIDProdInBasket_'+tmpFields.length+'&amp;k=n&amp;\', 900, 700);"> <span id="sp_saleIDProdInBasket_'+tmpFields.length+'"></span></div>').insertBefore($(this));

@@ -448,6 +448,19 @@ class popupEdit extends popup{
 	 * @return array|false|null Данные созданного шаблона, false при отсутствии исходного каталога.
 	 */
 	public function setTemplate($type, $template, $newname){
+		// Значения используются в путях каталогов шаблонов — допускаем только безопасные коды.
+		if (
+			!is_string($type)
+			|| !preg_match('/^[a-z0-9_-]+$/iD', $type)
+			|| !is_string($template)
+			|| !preg_match('/^[a-z0-9_-]+$/iD', $template)
+			|| !is_string($newname)
+			|| trim($newname) === ''
+			|| mb_strlen($newname) > 50
+		) {
+			return false;
+		}
+
 		if(LANG_CHARSET=='windows-1251'){
 			$newname=iconv("UTF-8", LANG_CHARSET, $newname);
 		}
@@ -498,6 +511,22 @@ class popupEdit extends popup{
 	 */
 	public function setColorTheme($type, $template, $colorstyle, $newname){
 		$retArr=array('status'=>'error update');
+
+		// Все три кода участвуют в формировании пути к CSS-файлу.
+		if (
+			!is_string($type)
+			|| !preg_match('/^[a-z0-9_-]+$/iD', $type)
+			|| !is_string($template)
+			|| !preg_match('/^[a-z0-9_-]+$/iD', $template)
+			|| !is_string($colorstyle)
+			|| !preg_match('/^[a-z0-9_-]+$/iD', $colorstyle)
+			|| !is_string($newname)
+			|| trim($newname) === ''
+			|| mb_strlen($newname) > 50
+		) {
+			return $retArr;
+		}
+
 		if(LANG_CHARSET=='windows-1251'){
 			$newname=iconv("UTF-8", LANG_CHARSET, $newname);
 		}
@@ -508,7 +537,7 @@ class popupEdit extends popup{
 				'NAME'=>$newname
 			));
 			$ID = $saveResult->getId();
-			$newPath=str_replace($colorstyle, 'custom_'.$ID, $oldPath);
+			$newPath=dirname($oldPath).'/custom_'.$ID.'.css';
 			copy($_SERVER["DOCUMENT_ROOT"].$oldPath , $_SERVER["DOCUMENT_ROOT"].$newPath);
 
 			$retArr['status']='success';

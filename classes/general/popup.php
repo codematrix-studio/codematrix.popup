@@ -1168,7 +1168,7 @@ class popup{
 						}
 						if(strpos($keyProp, 'IMG_')!==false && strpos($keyProp, '_id')===false && intval($valProp)>0){
 							$nextTemplate['props'][$keyProp.'_id']=$valProp;
-							$valProp=CFile::GetPath($valProp);
+							$valProp=\CodeMatrix\Popup\FilePath::getPath($valProp);
 						}
 						if(strpos($keyProp, 'IMG_')!==false && strpos($keyProp, '_id')===false && empty($valProp)){
 							$valProp=$nextTemplate['props'][$keyProp];
@@ -1981,7 +1981,7 @@ class popup{
 
 			foreach($settings['view']['props'] as $keyProp=>$nextProp){
 				if(strpos($keyProp, 'IMG_')!==false && intval($nextProp)>0){
-					$settings['view']['props'][$keyProp]=CFile::GetPath($nextProp);
+					$settings['view']['props'][$keyProp]=\CodeMatrix\Popup\FilePath::getPath($nextProp);
 				}elseif(strpos($keyProp, 'IMG_')!==false && empty($nextProp)){
 					$tmpTemplates=$this->getTemplates();
 					foreach($tmpTemplates[$settings['view']['type']] as $nextTemplate){

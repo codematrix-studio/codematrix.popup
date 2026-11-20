@@ -76,29 +76,28 @@ if (!$USER->IsAuthorized()) {
 	$user->Update((int)$USER->GetID(), $userFields);
 }
 
-// Не авторизуем существующего пользователя только по знанию его email.
-// Группу выдаём только текущему авторизованному пользователю.
-$userId = (int)$USER->GetID();
-if ($userId > 0 && $groupId > 0) {
-	$groupLink = \Bitrix\Main\UserGroupTable::getList(array(
-		"select" => array("USER_ID"),
-		"filter" => array(
-			"=USER_ID" => $userId,
-			"=GROUP_ID" => $groupId,
-		),
-		"limit" => 1,
-	))->fetch();
-
-	if (!$groupLink) {
-		\Bitrix\Main\UserGroupTable::add(array(
-			"USER_ID" => $userId,
-			"GROUP_ID" => $groupId,
-		));
-	}
-}
-
 $result = $popup->getCoupon($ruleId, "infinite", $email, $popupId, "", $mask);
 if ($result !== false && $result !== null) {
+	// Группу назначаем только после успешного создания купона.
+	$userId = (int)$USER->GetID();
+	if ($userId > 0 && $groupId > 0) {
+		$groupLink = \Bitrix\Main\UserGroupTable::getList(array(
+			"select" => array("USER_ID"),
+			"filter" => array(
+				"=USER_ID" => $userId,
+				"=GROUP_ID" => $groupId,
+			),
+			"limit" => 1,
+		))->fetch();
+
+		if (!$groupLink) {
+			\Bitrix\Main\UserGroupTable::add(array(
+				"USER_ID" => $userId,
+				"GROUP_ID" => $groupId,
+			));
+		}
+	}
+
 	$popup->insertToMailList($email, "", $popupId);
 
 	$context = \Bitrix\Main\Application::getInstance()->getContext();

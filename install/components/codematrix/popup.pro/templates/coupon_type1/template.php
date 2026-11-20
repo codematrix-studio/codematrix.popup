@@ -4,10 +4,13 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 }
 
 $imageUrl = trim((string)($arResult["IMG_1_SRC"] ?? ""));
-if (preg_match("/^(?:javascript|data|vbscript):/i", $imageUrl)) {
+if (
+	preg_match("/^[a-z][a-z0-9+.-]*:/i", $imageUrl)
+	&& !preg_match("/^https?:\\/\\//i", $imageUrl)
+) {
 	$imageUrl = "";
 }
-$imageUrl = str_replace(array("\\\\", '"', "'", "(", ")", "\r", "\n"), "", $imageUrl);
+$imageUrl = preg_replace("/[^a-z0-9_\\-\\.\\/:?&=%#]/i", "", $imageUrl);
 $emailShow = (($arResult["EMAIL_SHOW"] ?? "N") === "Y");
 $emailRequired = ($emailShow && ($arResult["EMAIL_REQUIRED"] ?? "N") === "Y");
 $popupId = (int)($arParams["ID_POPUP"] ?? 0);

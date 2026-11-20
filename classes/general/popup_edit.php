@@ -248,6 +248,13 @@ class popupEdit extends popup{
 		return array('status'=>'success', 'data'=>$ID);
 	}
 	
+	/**
+	 * Обновляет активность, сортировку и название попапа из административного списка.
+	 *
+	 * @param int|string $id Идентификатор попапа.
+	 * @param array $arFields Изменяемые поля записи.
+	 * @return void
+	 */
 	public function editFromTableList($id, $arFields){
 		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$id),
@@ -278,6 +285,11 @@ class popupEdit extends popup{
 		}
 	}
 	
+	/**
+	 * Возвращает настройки всех сохранённых попапов, сгруппированные по ID.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
 	public function getAllPopups(){
 		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'select'=>array('ID', 'SETTINGS'),
@@ -291,10 +303,26 @@ class popupEdit extends popup{
 		return $retArr;
 	}
 	
+	/**
+	 * Преобразует значение элемента массива из кодировки языка сайта в UTF-8.
+	 * Используется при рекурсивной обработке пользовательского шаблона.
+	 *
+	 * @param mixed $item Значение элемента, передаваемое по ссылке.
+	 * @param int|string $key Ключ элемента массива.
+	 * @return void
+	 */
 	public function convertToUtf(&$item, $key){
 		$item=iconv(LANG_CHARSET, "UTF-8", $item);
 	}
 	
+	/**
+	 * Создаёт пользовательскую копию файлового шаблона и сохраняет её настройки.
+	 *
+	 * @param string $type Тип попапа.
+	 * @param string $template Код исходного шаблона.
+	 * @param string $newname Название пользовательского шаблона.
+	 * @return array|false|null Данные созданного шаблона, false при отсутствии исходного каталога.
+	 */
 	public function setTemplate($type, $template, $newname){
 		if(LANG_CHARSET=='windows-1251'){
 			$newname=iconv("UTF-8", LANG_CHARSET, $newname);
@@ -335,6 +363,15 @@ class popupEdit extends popup{
 		}
 	}
 	
+	/**
+	 * Создаёт пользовательскую копию CSS-файла цветовой темы.
+	 *
+	 * @param string $type Тип попапа.
+	 * @param string $template Код шаблона.
+	 * @param string $colorstyle Код исходной цветовой темы.
+	 * @param string $newname Название пользовательской темы.
+	 * @return array Результат операции и данные созданной темы.
+	 */
 	public function setColorTheme($type, $template, $colorstyle, $newname){
 		$retArr=array('status'=>'error update');
 		if(LANG_CHARSET=='windows-1251'){
@@ -365,6 +402,12 @@ class popupEdit extends popup{
 	}
 	
 	
+	/**
+	 * Создаёт копию записи попапа с сохранением её настроек и связанных полей.
+	 *
+	 * @param int|string $id Идентификатор исходного попапа.
+	 * @return int|string|false ID новой записи либо false, если исходная запись не найдена.
+	 */
 	public function CopyPopup($id){
 		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$id),

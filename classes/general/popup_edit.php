@@ -238,6 +238,14 @@ class popupEdit extends popup{
 				) {
 					return array('status' => 'error', 'data' => 'Передано значение недопустимого типа для условия «' . $keyNextCond . '».');
 				}
+				if (in_array($keyNextCond, array('sites', 'groups'), true) && is_array($conditionValue)) {
+					$allowedIds = array_map('strval', array_column($nextCond, 'id'));
+					foreach ($conditionValue as $selectedId) {
+						if (!is_scalar($selectedId) || !in_array((string)$selectedId, $allowedIds, true)) {
+							return array('status' => 'error', 'data' => 'Выбраны неизвестные сайт или группа пользователей.');
+						}
+					}
+				}
 				$settings['condition'][$keyNextCond] = $conditionValue;
 			}
 		}
@@ -249,6 +257,24 @@ class popupEdit extends popup{
 			$contactIblock=$request->getPost("contact_iblock");
 			$contactSaveToList=$request->getPost("contact_save_to_list");
 			$contactRegister=$request->getPost("contact_register");
+			foreach (array($contactSendMail, $contactSaveToIblock, $contactSaveToList, $contactRegister) as $contactFlag) {
+				if ($contactFlag !== null && $contactFlag !== 'Y') {
+					return array('status' => 'error', 'data' => 'Некорректный параметр контактной формы.');
+				}
+			}
+			if ($contactSaveToIblock === 'Y') {
+				$contactIblockId = filter_var($contactIblock, FILTER_VALIDATE_INT, array(
+					'options' => array('min_range' => 1),
+				));
+				if (
+					$contactIblockId === false
+					|| !\\Bitrix\\Main\\Loader::includeModule('iblock')
+					|| !\\Bitrix\\Iblock\\IblockTable::getById($contactIblockId)->fetch()
+				) {
+					return array('status' => 'error', 'data' => 'Выбранный инфоблок не существует или недоступен.');
+				}
+				$contactIblock = $contactIblockId;
+			}
 			if(!empty($contactSendMail) || (!empty($contactSaveToIblock) && !empty($contactIblock)) || !empty($contactSaveToList) || !empty($contactRegister)){
 				if(!empty($contactSaveToList)){
 					$settings['contact']['emailList']='Y';

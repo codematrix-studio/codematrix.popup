@@ -1287,7 +1287,7 @@ class popup{
 	 *
 	 * @param string $mail Адрес электронной почты.
 	 * @param int|string $id Идентификатор попапа; 0 означает проверку общего списка.
-	 * @return bool true, если адрес можно добавить; false, если он уже есть или адрес пуст.
+	 * @return bool true, если адрес не найден в списке; false, если он уже есть или адрес пуст.
 	 */
 	public function searchinMailList($mail,$id=0){
 		$id=(int)$id;
@@ -1311,16 +1311,25 @@ class popup{
 				}
 				if(!$row=$groupList->fetch()){
 					$rowPopup=$this->getSetting($id);
+					if(!$rowPopup){
+						return true;
+					}
 					$listAddDb = \Bitrix\Sender\ListTable::add(array(
 						'NAME' => $rowPopup['service_name'],
 						'CODE' => 'codematrixPopup_'.$id,
 					));
-					if($listAddDb->isSuccess())
-						$listId = $listAddDb->getId();
+					if(!$listAddDb->isSuccess()){
+						// Ошибка создания списка не должна приводить к обращению к неопределённому ID.
+						return true;
+					}
+					$listId = (int)$listAddDb->getId();
 				}else{
-					$listId = $row['ID'];
+					$listId = (int)$row['ID'];
 				}
-					
+
+				if($listId<=0){
+					return true;
+				}
 				$filter['filter']['LIST_ID']=$listId;
 			}
 			$emailList=\Bitrix\Sender\ContactListTable::GetList($filter);
@@ -1365,11 +1374,12 @@ class popup{
 					'NAME' => $rowPopup['service_name'],
 					'CODE' => 'codematrixPopup_'.$tmpPopup,
 				));
-				if($listAddDb->isSuccess()){
-					$listId = $listAddDb->getId();
+				if(!$listAddDb->isSuccess()){
+					return false;
 				}
+				$listId = (int)$listAddDb->getId();
 			}else{
-				$listId = $row['ID'];
+				$listId = (int)$row['ID'];
 			}
 			// Идентификатор почтового шаблона.
 			$tmpMail = $conHelper->forSql($mail);
@@ -1383,11 +1393,16 @@ class popup{
 					'DATE_INSERT' => $curDateFunc,
 					'DATE_UPDATE' => $curDateFunc
 				));
-				if($listAddDb->isSuccess()){
-					$mailId = $listAddDb->getId();
+				if(!$listAddDb->isSuccess()){
+					return false;
 				}
+				$mailId = (int)$listAddDb->getId();
 			}else{
-				$mailId = $row['ID'];
+				$mailId = (int)$row['ID'];
+			}
+
+			if($listId<=0 || $mailId<=0){
+				return false;
 			}
 
 			// Добавить группу пользователей в список рассылки.

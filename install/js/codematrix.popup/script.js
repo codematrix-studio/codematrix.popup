@@ -646,6 +646,7 @@ $(document).ready(function(){
 				replaceBlock=$(this).parent();
 			if(inputName.prop('disabled')==false && inputName.val()!==''){
 				ajaxData.name=inputName.val();
+				ajaxData.sessid=BX.bitrix_sessid();
 				inputName.prop('disabled', true);
 				$.ajax({
 					url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=add_custom_template',
@@ -683,6 +684,7 @@ $(document).ready(function(){
 				replaceBlock=$(this).parent();
 			if(inputName.prop('disabled')==false && inputName.val()!==''){
 				ajaxData.name=inputName.val();
+				ajaxData.sessid=BX.bitrix_sessid();
 				inputName.prop('disabled', true);
 				$.ajax({
 					url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=add_custom_colortheme',
@@ -730,7 +732,7 @@ function delPopupImg(o){
 	$.ajax({
 		url: '/bitrix/admin/codematrix_popup.php?ajax=y&command=del_img',
 		type: "POST",
-		data:{id:_this.data('id')},
+		data:{id:_this.data('id'), sessid:BX.bitrix_sessid()},
 		dataType:'json',
 		success: function(data){
 			_this.closest('figure').remove();

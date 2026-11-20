@@ -63,6 +63,16 @@ if(!empty($request['action_button'])&&$request['action_button']=='copy'&&!empty(
 // Обработка AJAX-команд.
 if(!empty($request['ajax']) && $request['ajax']=='y'){
 	if(!empty($request['command'])){
+		// Изменяющие операции административного AJAX API защищены от CSRF.
+		$mutatingCommands = array('del_img', 'add_custom_colortheme', 'add_custom_template');
+		if (
+			in_array($request['command'], $mutatingCommands, true)
+			&& (!$request->isPost() || !check_bitrix_sessid())
+		) {
+			http_response_code(403);
+			die();
+		}
+
 		if($request['command']=='gettemplate'){
 			global $APPLICATION;
 			$APPLICATION->IncludeComponent(
@@ -373,7 +383,11 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_aft
 
 // Создание или редактирование всплывающего окна.
 $editFlag = $request->getPost("id_popup");
-if(!empty($editFlag)){
+if(!empty($editFlag) && $request->isPost()){
+	if (!check_bitrix_sessid()) {
+		http_response_code(403);
+		CAdminMessage::ShowMessage(array("TYPE" => "ERROR", "MESSAGE" => "Сессия формы истекла. Обновите страницу и повторите сохранение."));
+	} else {
 	$editableWindow->setPopupId($editFlag);
 	$upd=$editableWindow->editPopup($request);
 	if($upd['status']=='error'){
@@ -386,6 +400,7 @@ if(!empty($editFlag)){
 			$tmpMess=GetMessage("codematrix.popup_SUCCESS_UPDATE", array('ID'=>$upd['data']));
 		}
 		CAdminMessage::ShowMessage(Array("TYPE"=>"OK", "MESSAGE"=>$tmpMess));
+	}
 	}
 }
 
@@ -412,7 +427,8 @@ if(empty($idPopup)){
 		(window.BX||top.BX).message({'JSADM_FILES':'<?=GetMessage("codematrix.popup_JSADM_FILES")?>'});
 	</script>
 	<section class="popup_detail"><form action="" enctype="multipart/form-data" method="post" name="detail_popup">
-		<input type="hidden" name="id_popup" value="<?=$idPopup?>" /><?php
+		<?=bitrix_sessid_post()?>
+		<input type="hidden" name="id_popup" value="<?=htmlspecialcharsbx((string)$idPopup)?>" /><?php
 	$aTabs = array(
 		array("DIV" => "fl_popup_settings".$nextPopup["id"], "TAB" => GetMessage("codematrix.popup_TAB_SETTING_NAME"), "TITLE" => GetMessage("codematrix.popup_TAB_SETTING_DESC"), "ONSELECT"=>'selectPreviewTab()'),
 		array("DIV" => "fl_popup_condition".$nextPopup["id"], "TAB" => GetMessage("codematrix.popup_TAB_CONDITION_NAME"), "TITLE" => GetMessage("codematrix.popup_TAB_CONDITION_DESC")),

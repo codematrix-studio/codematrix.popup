@@ -78,13 +78,24 @@ if (
 
 $emailHash = hash("sha256", mb_strtolower(trim($email)));
 $drawsKey = "codematrix_popup_roulette_draws";
+$completedKey = "codematrix_popup_roulette_completed";
 
 if (!isset($_SESSION[$drawsKey]) || !is_array($_SESSION[$drawsKey])) {
 	$_SESSION[$drawsKey] = array();
 }
+if (!isset($_SESSION[$completedKey]) || !is_array($_SESSION[$completedKey])) {
+	$_SESSION[$completedKey] = array();
+}
 
 // Первый этап: сервер сам выбирает сектор и выдаёт краткоживущий одноразовый токен.
 if ($mode === "draw") {
+	$completedAt = (int)($_SESSION[$completedKey][$popupId] ?? 0);
+	if ($completedAt > 0 && $completedAt <= time() && time() - $completedAt < 864000000) {
+		$sendJson(array("status" => "error", "code" => "already_completed"));
+	}
+	if ($completedAt > 0) {
+		unset($_SESSION[$completedKey][$popupId]);
+	}
 	if (
 		$addToTable === "Y"
 		&& ($props["EMAIL_NOT_NEW"] ?? "N") === "Y"
@@ -235,6 +246,7 @@ if (!is_string($response)) {
 	$response,
 	$requestFingerprint
 );
+$_SESSION[$completedKey][$popupId] = time();
 unset($_SESSION[$drawsKey][$popupId]);
 
 header("Content-Type: application/json; charset=UTF-8");

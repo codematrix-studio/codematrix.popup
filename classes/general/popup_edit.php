@@ -153,15 +153,8 @@ class popupEdit extends popup{
 					$settings['condition']['timeInterval']=$tmpPeriodFrom.'#'.$tmpPeriodTo;
 				}
 			}elseif($keyNextCond=='dateStart' || $keyNextCond=='dateFinish'){
-				// Формат даты и времени хранится в региональных настройках культуры, а не в SiteTable.
-				$context = \Bitrix\Main\Context::getCurrent();
-				$culture = ($context !== null) ? $context->getCulture() : null;
-				$dateTimeFormat = ($culture !== null) ? $culture->getDateTimeFormat() : '';
-
-				// Резервный вариант для окружений без доступной культуры текущего контекста.
-				if ($dateTimeFormat === '') {
-					$dateTimeFormat = \CSite::GetDateFormat('FULL', SITE_ID);
-				}
+				// Получаем формат именно текущего сайта в формате, ожидаемом MakeTimeStamp().
+				$dateTimeFormat = \CSite::GetDateFormat('FULL', SITE_ID);
 
 				$settings['condition'][$keyNextCond] = MakeTimeStamp(
 					$request->getPost($keyNextCond),

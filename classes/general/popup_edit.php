@@ -64,17 +64,35 @@ class popupEdit extends popup{
 	public function editPopup($request){		
 		$strError = '';
 		$settings=array('view'=>array(), 'condition'=>array());
-		$viewStructure=$this->getTemplates();
-		$viewStructure=$viewStructure[$request->getPost("type")];
-		$settings['view']['type']=$request->getPost("type");
-		$settings['view']['color_style']=$request->getPost("color_style");
-		$settings['view']['template']=$request->getPost("template");
-		foreach($viewStructure as $nextViewEl){
-			if($nextViewEl['template']==$settings['view']['template']){
+
+		$type = (string)$request->getPost('type');
+		$templateName = (string)$request->getPost('template');
+		$availableTemplates = $this->getTemplates();
+
+		if (!isset($availableTemplates[$type]) || !is_array($availableTemplates[$type])) {
+			return array('status' => 'error', 'data' => 'Выбран неизвестный тип попапа.');
+		}
+
+		$selectedTemplate = null;
+		foreach ($availableTemplates[$type] as $templateItem) {
+			if (($templateItem['template'] ?? null) === $templateName) {
+				$selectedTemplate = $templateItem;
 				break;
 			}
 		}
-		$viewStructure=$nextViewEl['props'];
+
+		if (
+			!is_array($selectedTemplate)
+			|| !isset($selectedTemplate['props'])
+			|| !is_array($selectedTemplate['props'])
+		) {
+			return array('status' => 'error', 'data' => 'Выбранный шаблон не относится к указанному типу попапа.');
+		}
+
+		$settings['view']['type'] = $type;
+		$settings['view']['color_style'] = $request->getPost('color_style');
+		$settings['view']['template'] = $templateName;
+		$viewStructure = $selectedTemplate['props'];
 		foreach($viewStructure as $keyNextViewEl=>$nextViewEl){
 			$tmpPost=$request->getPost($keyNextViewEl);
 			if($keyNextViewEl=='EMAIL_TEMPLATE'){

@@ -41,10 +41,13 @@ class Tools{
 	}
 
 	public static function getUserGroup(){
-		$res = \CGroup::getList(($by="ID"),($order="asc"));
-		$result=array();
-		while($r=$res->Fetch()){
-			$result[$r['ID']]=$r['NAME'];
+		$result = array();
+		$groups = \Bitrix\Main\GroupTable::getList(array(
+			'select' => array('ID', 'NAME'),
+			'order' => array('ID' => 'ASC')
+		));
+		while($group = $groups->fetch()){
+			$result[$group['ID']] = $group['NAME'];
 		}
 		return $result;
 	}

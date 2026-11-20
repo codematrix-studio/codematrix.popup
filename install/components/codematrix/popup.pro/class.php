@@ -271,7 +271,6 @@ class CodeMatrixPopup extends \CBitrixComponent{
 					$cookie->setDomain($context->getServer()->getHttpHost());
 					$cookie->setHttpOnly(false);
 					$responce->addCookie($cookie);
-					$context->getResponse()->flush("");
 				}
 			}elseif($popupSetting['view']['type']=='coupon'){
 				
@@ -289,7 +288,6 @@ class CodeMatrixPopup extends \CBitrixComponent{
 					$cookie->setDomain($context->getServer()->getHttpHost());
 					$cookie->setHttpOnly(false);
 					$responce->addCookie($cookie);
-					$context->getResponse()->flush("");
 				}
 			}
 			$this->arResult=$tmpRes;

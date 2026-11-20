@@ -78,6 +78,7 @@
             <span class="not_new"><?=GetMessage('flp.not_new')?></span>
             <span class="not_valid"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?></span>
             <span class="auth_required" style="display:none;"><?=GetMessage('flp.auth_required')?></span>
+            <span class="coupon_error" style="display:none;"><?=GetMessage('flp.coupon_error')?></span>
 			<label class="<?= (($arResult['EMAIL_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> <?= (($arResult['EMAIL_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> one email">
 				<input <?= (($arResult['EMAIL_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
@@ -130,6 +131,9 @@
 						f.querySelector('span.not_new').style.display='inline-block';
 					}else if(data=='auth_required'){
 						f.querySelector('span.auth_required').style.display='inline-block';
+						return;
+					}else if(data=='coupon_error'){
+						f.querySelector('span.coupon_error').style.display='inline-block';
 						return;
 					}else{
 						f.querySelector('span.auth_required').style.display='none';

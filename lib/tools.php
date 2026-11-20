@@ -4,12 +4,12 @@ namespace CodeMatrix\Popup;
 use Bitrix\Main\Mail\Event;
 class Tools{
 
-		/**
+	/**
 	 * Возвращает активные правила скидок в формате «ID => название [ID]».
 	 *
 	 * @return array<int, string>
 	 */
-public static function getBasketRules(){
+	public static function getBasketRules(){
 		$currentModules=array();
 		 $groupDiscountIterator = \Bitrix\Sale\Internals\DiscountTable::getList(array(
             'select' => array('ID', 'NAME'),
@@ -20,13 +20,13 @@ public static function getBasketRules(){
         }
 		return $currentModules;
 	}
-		/**
+	/**
 	 * Возвращает почтовые шаблоны указанного типа события для списка в настройках.
 	 *
 	 * @param string $var Код почтового события.
 	 * @return array<int, string> Массив «ID шаблона => код события [ID]».
 	 */
-public static function getMailTemplates($var='CODEMATRIX_POPUP_SEND_COUPON'){
+	public static function getMailTemplates($var='CODEMATRIX_POPUP_SEND_COUPON'){
 		$templates=Mail::getTemplates($var);
 		$serviceMessage=array();
 		foreach($templates as $template){
@@ -34,7 +34,7 @@ public static function getMailTemplates($var='CODEMATRIX_POPUP_SEND_COUPON'){
 		}
 		return $serviceMessage;
 	}
-		/**
+	/**
 	 * Возвращает ID свойства инфоблока или создаёт строковое свойство, если оно отсутствует.
 	 *
 	 * @param int|string $iblock_id ID инфоблока.
@@ -42,7 +42,7 @@ public static function getMailTemplates($var='CODEMATRIX_POPUP_SEND_COUPON'){
 	 * @param string $prop_name Название создаваемого свойства.
 	 * @return int|string|false ID свойства либо false при ошибке создания.
 	 */
-public static function returnPropId($iblock_id, $prop_code, $prop_name){
+	public static function returnPropId($iblock_id, $prop_code, $prop_name){
 		\Bitrix\Main\Loader::includeModule('iblock');
 		$iblockId = (int)$iblock_id;
 		$propertyCode = strtoupper((string)$prop_code);
@@ -69,12 +69,12 @@ public static function returnPropId($iblock_id, $prop_code, $prop_name){
 		return $result->isSuccess() ? $result->getId() : false;
 	}
 
-		/**
+	/**
 	 * Возвращает список групп пользователей в формате «ID => название».
 	 *
 	 * @return array<int, string>
 	 */
-public static function getUserGroup(){
+	public static function getUserGroup(){
 		$result = array();
 		$groups = \Bitrix\Main\GroupTable::getList(array(
 			'select' => array('ID', 'NAME'),

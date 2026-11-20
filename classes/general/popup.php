@@ -1546,6 +1546,13 @@ class popup{
 				$fields['MAX_USE']='1';
 			}
 			$fields['COUPON']=$COUPON;
+
+			// Не отправлять посетителю купон, который не удалось сохранить.
+			$couponsResult = \Bitrix\Sale\Internals\DiscountCouponTable::add($fields);
+			if (!$couponsResult->isSuccess()) {
+				return false;
+			}
+
 			if($popup_id!=0){
 				$settings=$this->getSetting($popup_id);
 				if($settings['view']['type']=='coupon'){
@@ -1595,7 +1602,6 @@ class popup{
 					}
 				}
 			}
-			$couponsResult = \Bitrix\Sale\Internals\DiscountCouponTable::add($fields);
 			return $COUPON;
 		}elseif($id=='win'){
 			$COUPON='';

@@ -337,7 +337,6 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						// Установить cookie, чтобы повторно не показывать окно пользователю, отправившему форму.
 						$responce = $context->getResponse();
 						$cookie = new Cookie("codematrixPopupFilling_".$this->arParams['ID_POPUP'], 'Y', time()+864000000);
-						$cookie->setDomain($context->getServer()->getHttpHost());
 						$cookie->setHttpOnly(false);
 						$responce->addCookie($cookie);
 					}
@@ -354,7 +353,6 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				if(isset($reqValue)&&$reqValue=='Y'){
 					$responce = $context->getResponse();
 					$cookie = new Cookie("codematrixPopupFilling_".$this->arParams['ID_POPUP'], 'Y', time()+864000000);
-					$cookie->setDomain($context->getServer()->getHttpHost());
 					$cookie->setHttpOnly(false);
 					$responce->addCookie($cookie);
 				}

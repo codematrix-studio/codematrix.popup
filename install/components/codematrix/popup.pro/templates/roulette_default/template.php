@@ -11,8 +11,8 @@
 	}?>
 <div id="codematrix_roulette">
     <?$deg=100/$arResult['ELEMENTS_COUNT'];?>
-    <h2><?=$arResult['TITLE']?></h2>
-    <h3><?=$arResult['SUBTITLE']?></h3>
+    <h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
+    <h3><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></h3>
      <div class="contain_roulette">
       <div class="rotate_shadow">
       <div class="rotate_block">
@@ -41,10 +41,10 @@
         	return emailPattern.test(elementValue); 
         }
         function getCoupon(id,text){
-          var url = "<?=$templateFolder?>/ajax.php?id="+id+"&avaliable=<?=$arResult['TIMING']?>";
+          var url = <?=json_encode($templateFolder . "/ajax.php", JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>+"?id="+encodeURIComponent(id)+"&avaliable="+encodeURIComponent(<?=json_encode((string)$arResult['TIMING'])?>);
           var email = BX('codematrix_roulette').querySelector('label.input');
           var getContinue=true;
-            url+="&email="+email.querySelector('input').value+"&idPopup=<?=$arParams['ID_POPUP']?>&addtotable=<?=$arResult['EMAIL_ADD2BASE']?>&unique=<?=$arResult['EMAIL_NOT_NEW']?>&resultText="+text;
+            url+="&email="+encodeURIComponent(email.querySelector('input').value)+"&idPopup=<?= (int)$arParams['ID_POPUP'] ?>&addtotable="+encodeURIComponent(<?=json_encode((string)$arResult['EMAIL_ADD2BASE'])?>)+"&unique="+encodeURIComponent(<?=json_encode((string)$arResult['EMAIL_NOT_NEW'])?>)+"&resultText="+encodeURIComponent(text);
             BX.ajax({
               url:url,
               method:'POST',
@@ -67,9 +67,9 @@
             <?foreach($arResult['ELEMENTS'] as $element){?>
                 {
                     value:<?=$deg?>,
-                    color:'<?=$element['color']?>',
-                    text:'<?=$element['text']?>',
-                    rule:'<?=$element['rule']?>'
+                    color:<?=json_encode((string)$element['color'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>,
+                    text:<?=json_encode((string)$element['text'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>,
+                    rule:<?=json_encode((string)$element['rule'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>
                 },
             <?}?>
 ];
@@ -105,7 +105,7 @@ function roll_roulette_func(count){
   
 }
 function res_roll(sector){
-	var text=document.querySelector('#codematrix_roulette div.rotate_block>.text>div:nth-child('+sector+')').innerHTML;
+	var text=document.querySelector('#codematrix_roulette div.rotate_block>.text>div:nth-child('+sector+')').textContent;
 	var rule=document.querySelector('#codematrix_roulette div.rotate_block>.text>div:nth-child('+sector+')').dataset.rule;
   var not = document.querySelectorAll('#codematrix_roulette div.rotate_block>.container>div:not(:nth-child('+sector+'))');
   for(var i=0; i<not.length;i++){
@@ -141,7 +141,7 @@ var addSector = function(data, startAngle, collapse) {
   var text = document.createElement('div');
   text.style.color='white';
   text.dataset.rule=data.rule;
-  text.innerHTML=data.text;
+  text.textContent=data.text;
   text.style.transform='rotate('+((rotateDeg-(90-sectorDeg/2)))+'deg) translate(0px,-50%)';
   container_text.appendChild(text);
   return startAngle + sectorDeg;
@@ -165,13 +165,13 @@ function paintRoulett(){dataset.reduce(function (prev, curr) {
 return dataset.length;
 }
     </script>
-    <p class="result_roll" style="display:none;"><?=$arResult['RESULT_TEXT']?></p>    
-    <p class="result_roll_nothing" style="display:none;"><?=$arResult['NOTHING_TEXT']?></p>    
+    <p class="result_roll" style="display:none;"><?=htmlspecialcharsbx((string)($arResult['RESULT_TEXT'] ?? ''))?></p>    
+    <p class="result_roll_nothing" style="display:none;"><?=htmlspecialcharsbx((string)($arResult['NOTHING_TEXT'] ?? ''))?></p>    
       <label class="email input">
-        <input placeholder="<?=$arResult['EMAIL_PLACEHOLDER']?>" type="email" name="email">
+        <input placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?>" type="email" name="email">
         <p class="result_roll_fail" style="display:none;"><?=GetMessage('codematrix.roulette_wrong')?><span></span></p>
-        <p class="result_roll_not_unique" style="display:none;"><?=$arResult['EMAIL_NOT_NEW_TEXT']?><span></span></p>
+        <p class="result_roll_not_unique" style="display:none;"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?><span></span></p>
       </label>
-      <button class="roll_roulette"><?=$arResult['BUTTON_TEXT']?></button>
+      <button class="roll_roulette"><?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?></button>
     
 </div>

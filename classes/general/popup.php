@@ -5,6 +5,7 @@ use \Bitrix\Main\Application,
 	Bitrix\Main\Context,
 	Bitrix\Main\Localization\Loc,
 	Bitrix\Main\Page\Asset,
+	Bitrix\Main\SiteTable,
 	Bitrix\Main\UserConsent\Internals\AgreementTable,
 	Bitrix\Main\UserConsent\Agreement;
 use Bitrix\Main\Mail\Event;
@@ -1156,8 +1157,11 @@ class popup{
 			$conditionArr['groups'][]=array('active'=>false, 'id'=>'firstvisit', 'name'=>GetMessage("codematrix.popup_CONDITIONS_GROUPSFIRSTVISIT"));
 		}
 
-		$rsSites = CSite::GetList($by="sort", $order="desc");
-		while ($arSite = $rsSites->Fetch()){
+		$sites = SiteTable::getList(array(
+			'select' => array('LID', 'NAME'),
+			'order' => array('SORT' => 'DESC')
+		));
+		while ($arSite = $sites->fetch()){
 			$conditionArr['sites'][]=array('active'=>false, 'id'=>$arSite['LID'], 'name'=>$arSite['NAME']);
 		}
 		$rsGroups = \Bitrix\Main\GroupTable::getList(array(

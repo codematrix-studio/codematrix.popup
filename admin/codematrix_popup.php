@@ -220,7 +220,7 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 			$dataStatus=true;
 			$requiredVal=array('template', 'name', 'type');
 			foreach($requiredVal as $nextVal){
-				if(empty($request[$nextVal])){
+				if(empty($request->getPost($nextVal))){
 					$dataStatus=false;
 					break;
 				}

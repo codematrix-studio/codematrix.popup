@@ -206,6 +206,14 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						}
 					}
 				}
+				if (
+					$cenderData
+					&& ($tmpRes['USE_CONSENT_SHOW'] ?? 'N') === 'Y'
+					&& !empty($tmpRes['AGREEMENTS'])
+					&& $request->getPost('use_consent') !== 'Y'
+				) {
+					$errors['CONSENT'] = 'Необходимо подтвердить согласие на обработку персональных данных.';
+				}
 				if(count($errors)>0){
 					$tmpRes['ERRORS']=$errors;
 				}elseif($cenderData){

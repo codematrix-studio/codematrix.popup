@@ -112,6 +112,9 @@
 			var sendO={},
 				cInputs=f.querySelectorAll("input, textarea");
 			for(var i=0; i<cInputs.length; i++){
+				if(cInputs[i].type==='checkbox' && !cInputs[i].checked){
+					continue;
+				}
 				sendO[cInputs[i].name]=cInputs[i].value;
 			}
 			BX.ajax({

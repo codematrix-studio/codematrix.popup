@@ -363,7 +363,8 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						$cookie->setHttpOnly(false);
 						$responce->addCookie($cookie);
 					}
-				}elseif($popupSetting['view']['type']=='coupon'){
+				}
+				elseif($popupSetting['view']['type']=='coupon'){
 				
 				foreach($popupSetting['view']['props'] as $key=>$prop){
 					if($key!='IMG_1_SRC'&&$key!='EMAIL_PLACEHOLDER')

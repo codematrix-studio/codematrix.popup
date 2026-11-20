@@ -345,7 +345,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 								$_SESSION['codematrix_popup_statistic_action'][$popupId] = true;
 							}
 							$tmpRes['SUCCESS']='Y';
-							\\CodeMatrix\\Popup\\PublicRequestGuard::rememberResponse(
+							\CodeMatrix\Popup\PublicRequestGuard::rememberResponse(
 								'contact',
 								$popupId,
 								'SUCCESS',

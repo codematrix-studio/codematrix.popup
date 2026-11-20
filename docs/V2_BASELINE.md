@@ -148,3 +148,85 @@
 ## Статус
 
 Первичный просмотр GitHub-исходников завершён. Полная карта вызовов, схема запросов, тесты и проверка на стенде ещё не завершены. До их завершения нельзя считать архитектурный аудит полным и нельзя выполнять массовый перенос.
+
+
+## Детализация аудита слоя данных (20.11.2026)
+
+### Точная схема по установщику
+
+Поля и SQL-типы, объявленные в `install/index.php`:
+
+| Таблица | Поле | SQL-тип / ограничение |
+|---|---|---|
+| `codematrix_popup` | `id` | `INT NOT NULL AUTO_INCREMENT PRIMARY KEY` |
+| | `sort` | `INT NOT NULL` |
+| | `active` | `VARCHAR(1) DEFAULT NULL` |
+| | `name` | `VARCHAR(50) DEFAULT NULL` |
+| | `type` | `VARCHAR(30) NOT NULL` |
+| | `stat_show` | `INT DEFAULT NULL` |
+| | `stat_time` | `INT DEFAULT NULL` |
+| | `stat_action` | `INT DEFAULT NULL` |
+| | `settings` | `TEXT NOT NULL` |
+| | `cont_iblock` | `INT DEFAULT NULL` |
+| | `cont_posttemplate` | `INT DEFAULT NULL` |
+| `codematrix_popup_add_colors` | `id` | `INT NOT NULL AUTO_INCREMENT PRIMARY KEY` |
+| | `template` | `VARCHAR(50) NOT NULL` |
+| | `name` | `VARCHAR(50) DEFAULT NULL` |
+| `codematrix_popup_add_templates` | `id` | `INT NOT NULL AUTO_INCREMENT PRIMARY KEY` |
+| | `name` | `VARCHAR(50) NOT NULL` |
+| | `type` | `VARCHAR(50) NOT NULL` |
+| | `template` | `TEXT NOT NULL` |
+
+Это схема из кода установщика, а не подтверждённая схема работающей базы. ORM-классы нельзя считать готовыми до сверки с БД стенда.
+
+### Найденные обращения к собственным таблицам
+
+| Файл / метод | Таблица | Операции |
+|---|---|---|
+| `popup::getCustomTemplates()` | `codematrix_popup_add_templates` | SELECT, чтение и `unserialize(template)` |
+| `popup::getCustomColors()` | `codematrix_popup_add_colors` | SELECT |
+| `popup::getSetting()` | `codematrix_popup` | SELECT по ID, `unserialize(settings)` |
+| `popup::getAvailablePopups()` | `codematrix_popup` | SELECT активных записей, сортировка по `sort`, `unserialize(settings)` |
+| `popup::getComponentResult()` | `codematrix_popup` | SELECT по ID, чтение сериализованных настроек |
+| `popup::setStatistic()` | `codematrix_popup` | SELECT и UPDATE одного из трёх счётчиков |
+| `popupEdit::editPopup()` | `codematrix_popup` | INSERT/UPDATE, запись сериализованного массива |
+| `popupEdit::editFromTableList()` | `codematrix_popup` | SELECT/UPDATE, изменение полей и сериализованных условий |
+| `popupEdit::getAllPopups()` | `codematrix_popup` | SELECT всех записей, чтение сериализованных настроек |
+| `popupEdit::setTemplate()` | `codematrix_popup_add_templates` | INSERT с временным значением, затем UPDATE сериализованного шаблона |
+| `popupEdit::setColorTheme()` | `codematrix_popup_add_colors` | INSERT пользовательской темы |
+| `popupEdit::CopyPopup()` | `codematrix_popup` | SELECT полей и INSERT копии |
+| `admin/codematrix_popup.php` | требуется отдельная детализация | Административная страница содержит дополнительные обращения; перечень будет дополнен после полного разбора файла |
+
+### Выводы для ORM
+
+- Имена таблиц и колонок должны остаться прежними.
+- `settings` и `template` содержат PHP-сериализацию. Нельзя заменять её JSON или менять формат в рамках D7-миграции.
+- `setStatistic()` принимает имя поля, но ограничивает его списком `stat_show`, `stat_time`, `stat_action`. Это ограничение необходимо сохранить.
+- Создание пользовательского шаблона состоит из двух последовательных операций INSERT/UPDATE; перенос должен сохранить корректность идентификатора и итогового сериализованного содержимого.
+- Копирование окна не должно копировать первичный ключ и должно сохранять прежний набор копируемых полей.
+- Установщик и ORM должны согласованно описывать nullable-поля и типы. Фактическая БД стенда остаётся источником окончательной проверки.
+
+### Автозагрузка
+
+`include.php` регистрирует только глобальные классы `popup` и `popupEdit` через `CModule::AddAutoloadClasses`. Файл `lib/tools.php` объявляет `CodeMatrix\\Popup\\Tools`, но явной регистрации пространства имён в `include.php` не обнаружено. Необходимо проверить фактическую загрузку этого класса на стенде и затем настроить штатную D7-регистрацию пространства имён. Сам факт расположения файла в `lib/` не принимается за доказательство корректной автозагрузки.
+
+### AJAX-контракт
+
+Обработчик `admin/codematrix_popup_ajax.php` читает параметры `type`, `pageUrl`, `site`, `dateUser`, `popupIds`, `popupId`, `popupTime`. Существующие действия:
+
+- `getPopups`;
+- `getBasket`;
+- `getTemplatePath`;
+- `getHTML`;
+- `statisticShow`;
+- `statisticTime`;
+- `statisticAction`.
+
+Для JSON-ответов сейчас используется `CUtil::PhpToJSObject()` с последующей заменой одинарных кавычек на двойные. Это текущая реализация, а не рекомендуемый формат. При миграции нужно отдельно проверить реальные ответы и JS-потребителей; допустимо исправление только при доказанном сохранении внешнего формата и корректности данных, включая строки с кавычками.
+
+### Параметры целевого окружения
+
+- PHP: `8.2.30`.
+- Bitrix main: `26.150.0`.
+- Данные предоставлены пользователем с тестового стенда 20.11.2026.
+- Доступ к самой файловой системе и БД тестового стенда из текущей проверки не выполнялся.

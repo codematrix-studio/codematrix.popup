@@ -1346,8 +1346,11 @@ if(empty($idPopup)){
 			if(is_array($editArr['saleIDProdInBasket'])){
 				$currentBasketProduct=count($editArr['saleIDProdInBasket']);
 				$tov_Names=array();
-				$tmpNames=CIBlockElement::GetList(array(),array('ID'=>$editArr['saleIDProdInBasket']),false,false,array('ID','NAME'));
-				while($tmpName=$tmpNames->Fetch())
+				$tmpNames=\Bitrix\Iblock\ElementTable::getList(array(
+					'select' => array('ID', 'NAME'),
+					'filter' => array('@ID' => $editArr['saleIDProdInBasket'])
+				));
+				while($tmpName=$tmpNames->fetch())
 					$tov_Names[$tmpName['ID']]=$tmpName['NAME'];
 				foreach($editArr['saleIDProdInBasket'] as $key=>$val){?>
 					<div class="button_add">

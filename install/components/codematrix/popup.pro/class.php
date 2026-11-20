@@ -186,7 +186,8 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				foreach($contactArr as $keyContact=>$nextContact){
 					if(!empty($tmpRes[$keyContact.'_SHOW']) && $tmpRes[$keyContact.'_SHOW']=='Y'){
 						$tmpRes[$keyContact]=$nextContact;
-						$reqValue = $request->get($keyContact);
+						// Данные формы принимаются только из тела POST-запроса.
+						$reqValue = $request->getPost($keyContact);
 						if(isset($reqValue)){
 							$cenderData=true;
 							$tmpRes[$keyContact]=$reqValue;
@@ -305,7 +306,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 			}elseif($popupSetting['view']['type']=='age'){
 				$context = Application::getInstance()->getContext();
 				$request = $context->getRequest();
-				$reqValue = $request->get('checked');
+				$reqValue = $request->getPost('checked');
 				if(isset($reqValue)&&$reqValue=='Y'){
 					$responce = $context->getResponse();
 					$cookie = new Cookie("codematrixPopupFilling_".$this->arParams['ID_POPUP'], 'Y', time()+864000000);

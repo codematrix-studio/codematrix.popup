@@ -130,15 +130,34 @@ if ($mode === "draw") {
 		$sendJson(array("status" => "error", "code" => "invalid_roulette"));
 	}
 
-	// Повторяем порядок элементов компонента: служебный ключ count не является сектором.
+	// Служебный ключ count не является сектором колеса.
+	$configuredCount = isset($rouletteItems["count"]) && is_scalar($rouletteItems["count"])
+		? (int)$rouletteItems["count"]
+		: 0;
 	unset($rouletteItems["count"]);
 	$rouletteItems = array_values($rouletteItems);
-	if (!$rouletteItems) {
+
+	// Не фильтруем повреждённые элементы: индексы на сервере и в колесе должны совпадать.
+	if (!$rouletteItems || ($configuredCount > 0 && $configuredCount !== count($rouletteItems))) {
 		$sendJson(array("status" => "error", "code" => "invalid_roulette"));
 	}
 
 	foreach ($rouletteItems as $element) {
-		if (!is_array($element) || !isset($element["rule"]) || !is_scalar($element["rule"])) {
+		if (
+			!is_array($element)
+			|| !isset($element["rule"])
+			|| !is_scalar($element["rule"])
+			|| !is_scalar($element["text"] ?? "")
+		) {
+			$sendJson(array("status" => "error", "code" => "invalid_roulette"));
+		}
+
+		$ruleValue = (string)$element["rule"];
+		if (
+			$ruleValue !== "nothing"
+			&& $ruleValue !== "win"
+			&& filter_var($ruleValue, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1))) === false
+		) {
 			$sendJson(array("status" => "error", "code" => "invalid_roulette"));
 		}
 	}

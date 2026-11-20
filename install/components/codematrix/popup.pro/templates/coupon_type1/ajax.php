@@ -49,7 +49,7 @@ if (
 	die();
 }
 
-$cachedResponse = CodeMatrixPopupPublicRequestGuard::getCachedResponse("coupon", $popupId);
+$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("coupon", $popupId);
 if ($cachedResponse !== null) {
 	echo $cachedResponse["response"];
 	die();
@@ -79,7 +79,7 @@ if ($addToTable === "Y") {
 	}
 	if ($result !== null) {
 		$popup->insertToMailList($email, "", $popupId);
-		CodeMatrixPopupPublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result);
+		\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result);
 		echo $result;
 	}
 	die();
@@ -100,7 +100,7 @@ if ($addToTable === null || $addToTable === "N") {
 		die();
 	}
 	if ($result !== null) {
-		CodeMatrixPopupPublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result);
+		\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result);
 		echo $result;
 	}
 }

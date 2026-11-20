@@ -9,7 +9,7 @@ use Bitrix\Main,
 if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 Loc::loadMessages(__FILE__);
 
-class CodeMatrixPopupTimer extends \\CBitrixComponent
+class CodeMatrixPopupTimer extends \CBitrixComponent
 {
     /**
      * Подготавливает параметры компонента таймера.

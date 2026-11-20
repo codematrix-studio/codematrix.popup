@@ -296,7 +296,6 @@ class popupEdit extends popup{
 	}
 	
 	public function setTemplate($type, $template, $newname){
-		global $DB;
 		if(LANG_CHARSET=='windows-1251'){
 			$newname=iconv("UTF-8", LANG_CHARSET, $newname);
 		}
@@ -343,8 +342,7 @@ class popupEdit extends popup{
 		}
 		$oldPath='/bitrix/components/codematrix/popup.pro/templates/'.$type.'_'.$template.'/themes/'.$colorstyle.'.css';
 		if(file_exists($_SERVER["DOCUMENT_ROOT"].$oldPath)){
-			global $DB;
-			$saveResult = \\CodeMatrix\\Popup\\Model\\PopupColorTable::add(array(
+				$saveResult = \\CodeMatrix\\Popup\\Model\\PopupColorTable::add(array(
 				'TEMPLATE'=>$type.'_'.$template,
 				'NAME'=>$newname
 			));
@@ -368,7 +366,6 @@ class popupEdit extends popup{
 	
 	
 	public function CopyPopup($id){
-		global $DB;
 		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$id),
 			'select'=>array('SORT', 'ACTIVE', 'NAME', 'TYPE', 'SETTINGS', 'CONT_IBLOCK', 'CONT_POSTTEMPLATE')

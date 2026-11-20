@@ -163,6 +163,33 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 				die();
 			}
 
+			$file = FileTable::getList(array(
+				'select' => array('ID', 'SUBDIR', 'FILE_NAME'),
+				'filter' => array(
+					'=ID' => $fileId,
+					'=MODULE_ID' => $module_id,
+				),
+				'limit' => 1,
+			))->fetch();
+
+			if (!$file) {
+				http_response_code(404);
+				echo json_encode(array('status' => 'error', 'message' => 'Файл не найден'));
+				die();
+			}
+
+			// Скрытая в интерфейсе кнопка не является защитой: повторно проверяем использование файла на сервере.
+			$editableWindow = new popupEdit();
+			$busyPopup = imageBusy($editableWindow->getAllPopups(), array(
+				'id' => $fileId,
+				'path' => '/upload/' . $file['SUBDIR'] . '/' . $file['FILE_NAME'],
+			));
+			if ($busyPopup !== false) {
+				http_response_code(409);
+				echo json_encode(array('status' => 'error', 'message' => 'Изображение используется попапом'));
+				die();
+			}
+
 			CFile::Delete($fileId);
 			echo json_encode('success');
 		}elseif($request['command']=='add_custom_colortheme'){

@@ -54,20 +54,23 @@ if (!$USER->IsAuthorized()) {
 		"limit" => 1,
 	))->fetch();
 
-	if (!$userRecord) {
-		$user = new CUser();
-		$registerResult = $USER->SimpleRegister($email);
-		if (!$registerResult || !$USER->IsAuthorized()) {
-			die();
-		}
-
-		$userFields = array(
-			"NAME" => (string)$request->get("NAME"),
-			"LAST_NAME" => (string)$request->get("LAST_NAME"),
-			"PERSONAL_PHONE" => (string)$request->get("PHONE"),
-		);
-		$user->Update((int)$USER->GetID(), $userFields);
+	if ($userRecord) {
+		// Нельзя входить в существующую учётную запись только по адресу email.
+		die();
 	}
+
+	$user = new CUser();
+	$registerResult = $USER->SimpleRegister($email);
+	if (!$registerResult || !$USER->IsAuthorized()) {
+		die();
+	}
+
+	$userFields = array(
+		"NAME" => (string)$request->get("NAME"),
+		"LAST_NAME" => (string)$request->get("LAST_NAME"),
+		"PERSONAL_PHONE" => (string)$request->get("PHONE"),
+	);
+	$user->Update((int)$USER->GetID(), $userFields);
 }
 
 // Не авторизуем существующего пользователя только по знанию его email.

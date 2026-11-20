@@ -241,23 +241,19 @@ $responseData = array(
 	"text" => $resultText,
 	"coupon" => "",
 );
+$shouldInsertToList = false;
 
-if ($rule === "nothing") {
-	$addCookie();
-} elseif ($rule === "win") {
+if ($rule === "win") {
+	// Для сектора win getCoupon() отправляет письмо и ожидаемо возвращает null.
 	$popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
-	$addCookie();
-} else {
+} elseif ($rule !== "nothing") {
 	$result = $popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
 	if ($result === false || $result === null) {
 		$sendJson(array("status" => "error", "code" => "coupon_error"));
 	}
 
 	$responseData["coupon"] = (string)$result;
-	if ($addToTable === "Y") {
-		$popup->insertToMailList($email, "", $popupId);
-	}
-	$addCookie();
+	$shouldInsertToList = ($addToTable === "Y");
 }
 
 $response = json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -265,6 +261,7 @@ if (!is_string($response)) {
 	$sendJson(array("status" => "error", "code" => "coupon_error"));
 }
 
+// Фиксируем завершение и ответ сразу после выдачи результата, до необязательных побочных действий.
 \CodeMatrix\Popup\PublicRequestGuard::rememberResponse(
 	"roulette",
 	$popupId,
@@ -273,6 +270,11 @@ if (!is_string($response)) {
 );
 $_SESSION[$completedKey][$popupId] = time();
 unset($_SESSION[$drawsKey][$popupId]);
+
+if ($shouldInsertToList) {
+	$popup->insertToMailList($email, "", $popupId);
+}
+$addCookie();
 
 header("Content-Type: application/json; charset=UTF-8");
 echo $response;

@@ -1,33 +1,77 @@
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
-\Bitrix\Main\Loader::IncludeModule("codematrix.popup");
-$popup=new popup;
-$res='';
-$email = '';
-if(isset($_REQUEST['email']))
-	$email=$_REQUEST['email'];
-if(!isset($_REQUEST['addtotable'])){
-	$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup']);
-	echo $res;
+<?php
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
+
+if (!\Bitrix\Main\Loader::includeModule("codematrix.popup")) {
 	die();
 }
-if(isset($_REQUEST['addtotable'])&&$_REQUEST['addtotable']!='Y'){
-	$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup']);
-	echo $res;
+
+$request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
+$popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
+	"options" => array("min_range" => 1),
+));
+$ruleId = filter_var($request->get("id"), FILTER_VALIDATE_INT, array(
+	"options" => array("min_range" => 1),
+));
+$settings = ($popupId !== false) ? (new popup())->getSetting($popupId) : false;
+
+if (
+	!is_array($settings)
+	|| ($settings["view"]["type"] ?? "") !== "coupon"
+	|| !is_array($settings["view"]["props"] ?? null)
+) {
 	die();
 }
-if(isset($_REQUEST['email'])&&isset($_REQUEST['idPopup'])&&$_REQUEST['addtotable']=='Y'){
-	if($_REQUEST['unique']=='Y'){
-		if($popup->searchinMailList($email)){
-			$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup']);
-			$popup->insertToMailList($email,'',$_REQUEST['idPopup']);
-			echo $res;
-		}else{
-			echo 'not_unique';
+
+$props = $settings["view"]["props"];
+$configuredRuleId = (int)($props["RULE_ID"] ?? 0);
+$configuredTiming = (string)($props["TIMING"] ?? "");
+$requestedTiming = $request->get("avaliable");
+$email = $request->get("email");
+$addToTable = $request->get("addtotable");
+$unique = $request->get("unique");
+
+if (
+	$ruleId === false
+	|| $configuredRuleId <= 0
+	|| $ruleId !== $configuredRuleId
+	|| !is_string($requestedTiming)
+	|| $requestedTiming !== $configuredTiming
+	|| !in_array($addToTable, array(null, "Y", "N"), true)
+	|| !in_array($unique, array(null, "Y", "N"), true)
+) {
+	die();
+}
+
+if ($addToTable === "Y") {
+	if (
+		!is_string($email)
+		|| !filter_var($email, FILTER_VALIDATE_EMAIL)
+		|| ($props["EMAIL_ADD2BASE"] ?? "N") !== "Y"
+	) {
+		die();
+	}
+
+	$popup = new popup();
+	if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y" && $unique === "Y") {
+		if (!$popup->searchinMailList($email, $popupId)) {
+			echo "not_unique";
+			die();
 		}
-	}else{
-		$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup']);
-		$popup->insertToMailList($email,'',$_REQUEST['idPopup']);
-		echo $res;
+	}
+
+	$result = $popup->getCoupon($configuredRuleId, $configuredTiming, $email, $popupId);
+	if ($result !== false && $result !== null) {
+		$popup->insertToMailList($email, "", $popupId);
+		echo $result;
+	}
+	die();
+}
+
+if ($addToTable === null || $addToTable === "N") {
+	$result = (new popup())->getCoupon($configuredRuleId, $configuredTiming, "", $popupId);
+	if ($result !== false && $result !== null) {
+		echo $result;
 	}
 }
+
 die();

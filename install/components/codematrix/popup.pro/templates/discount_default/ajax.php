@@ -28,9 +28,17 @@ if (
 }
 
 $props = $settings["view"]["props"];
-$ruleId = (int)($props["RULE_ID"] ?? 0);
-$groupId = (int)($props["USER_GROUP"] ?? 0);
-$mask = (string)($props["DISCOUNT_MASK"] ?? "");
+$ruleId = filter_var($props["RULE_ID"] ?? null, FILTER_VALIDATE_INT, array(
+	"options" => array("min_range" => 1),
+));
+$groupId = filter_var($props["USER_GROUP"] ?? null, FILTER_VALIDATE_INT, array(
+	"options" => array("min_range" => 1),
+));
+if ($groupId === false) {
+	$groupId = 0;
+}
+$maskValue = $props["DISCOUNT_MASK"] ?? "";
+$mask = is_string($maskValue) ? $maskValue : null;
 $email = $request->getPost("email");
 $addToTable = $request->getPost("addtotable");
 // Проверка уникальности определяется сохранёнными настройками, а не параметром клиента.
@@ -45,7 +53,9 @@ if ($consentRequired && $consentValue !== "Y") {
 }
 
 if (
-	$ruleId <= 0
+	$ruleId === false
+	|| $mask === null
+	|| mb_strlen($mask) > 64
 	|| !in_array($addToTable, array("Y"), true)
 	|| !is_string($email)
 	|| !filter_var($email, FILTER_VALIDATE_EMAIL)

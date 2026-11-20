@@ -82,7 +82,11 @@ if ($addToTable === null || $addToTable === "N") {
 	}
 
 	$result = (new popup())->getCoupon($configuredRuleId, $configuredTiming, $emailForCoupon, $popupId);
-	if ($result !== false && $result !== null) {
+	if ($result === false) {
+		echo "coupon_error";
+		die();
+	}
+	if ($result !== null) {
 		echo $result;
 	}
 }

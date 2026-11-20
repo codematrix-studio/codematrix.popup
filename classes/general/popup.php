@@ -1046,12 +1046,12 @@ class popup{
 
 	private function getCustomTemplates(){
 		$retArr=array();
-		$res = \\CodeMatrix\\Popup\\Model\\PopupTemplateTable::getList(array(
+		$res = \CodeMatrix\Popup\Model\PopupTemplateTable::getList(array(
 			'select'=>array('ID', 'NAME', 'TYPE', 'TEMPLATE'),
 			'order'=>array('ID'=>'ASC')
 		));
 		while($ormRow = $res->fetch()){
-			$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 			$additionalColorThemes[$row['template']]['custom_'.$row['id']]=$row['name'].' ['.$row['id'].']';
 			$retArr[$row['type']][]=unserialize($row['template']);
 		}
@@ -1313,13 +1313,13 @@ class popup{
 
 	public function getSetting($id=0){
 		if($id==0){return false;}
-		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$id),
 			'select'=>array('*'),
 			'limit'=>1
 		));
 		$ormRow = $res->fetch();
-		$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 		if($row){
 			 $retArr=unserialize($row['settings']);
 			 $retArr['service_name']=$row['name'];
@@ -1556,7 +1556,7 @@ class popup{
 
 	public function getAvailablePopups($options){
 
-		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'filter'=>array('=ACTIVE'=>'Y'),
 			'select'=>array('*'),
 			'order'=>array('SORT'=>'ASC')
@@ -1574,7 +1574,7 @@ class popup{
 		$options['pageUrl'] = str_replace($serverBase, "", $options['pageUrl']);
 	
 		while($ormRow = $res->fetch()){
-			$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 
 			$settings=unserialize($row['settings']);
 
@@ -1750,13 +1750,13 @@ class popup{
 	*/
 	public function getComponentResult($idPopup){
 		if($idPopup==0){return false;}
-		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$idPopup),
 			'select'=>array('*'),
 			'limit'=>1
 		));
 		$ormRow = $res->fetch();
-		$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 		if($row){
 			$settings=unserialize($row['settings']);
 
@@ -1839,14 +1839,14 @@ class popup{
 			'stat_action'=>'STAT_ACTION'
 		);
 		if(!empty($field) && isset($statisticFields[$field])){
-			$ormRow = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+			$ormRow = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 				'filter'=>array('=ID'=>$idPopup),
 				'select'=>array('ID', $statisticFields[$field]),
 				'limit'=>1
 			))->fetch();
-			$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 			if($row){
-				\\CodeMatrix\\Popup\\Model\\PopupTable::update($idPopup, array(
+				\CodeMatrix\Popup\Model\PopupTable::update($idPopup, array(
 					$statisticFields[$field]=>$row[$field]+$value
 				));
 				return true;

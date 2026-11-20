@@ -1,5 +1,5 @@
-<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?phpif($arResult['TIMER']=='Y'){
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
@@ -13,10 +13,10 @@
     <link href="https://fonts.googleapis.com/css?family=Old+Standard+TT" rel="stylesheet">
     <div class="background"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="card">
-        <?phpif(!empty($arResult['IMG_1_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_1_SRC'] ?? ''))?>"><?php}?>
-        <div class="number"><?php$str=str_replace('#','0',$arResult['DISCOUNT_MASK']); $str=substr_replace($str,'1',-1);?>VIP <?=htmlspecialcharsbx((string)$str)?></div>
+        <?php if(!empty($arResult['IMG_1_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_1_SRC'] ?? ''))?>"><?php }?>
+        <div class="number"><?php $str=str_replace('#','0',$arResult['DISCOUNT_MASK']); $str=substr_replace($str,'1',-1);?>VIP <?=htmlspecialcharsbx((string)$str)?></div>
     </div>
-    <?phpif(!empty($arResult['IMG_2_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_2_SRC'] ?? ''))?>"><?php}?>
+    <?php if(!empty($arResult['IMG_2_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_2_SRC'] ?? ''))?>"><?php }?>
     <div class="content">
         <h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
         <p><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></p>
@@ -95,7 +95,7 @@
 			<div class="<?= (($arResult['USE_CONSENT_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> consentBlock">
 			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)($arResult['CONSENT_ID'] ?? 0) ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
-			<?php}?>
+			<?php }?>
 			<div class="clear"></div>
 		</fieldset>
         </form>

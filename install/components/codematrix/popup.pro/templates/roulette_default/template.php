@@ -1,5 +1,5 @@
-<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?phpif($arResult['TIMER']=='Y'){
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
@@ -10,7 +10,7 @@
 		),$component);
 	}?>
 <div id="codematrix_roulette">
-    <?php$deg=100/$arResult['ELEMENTS_COUNT'];?>
+    <?php $deg=100/$arResult['ELEMENTS_COUNT'];?>
     <h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
     <h3><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></h3>
      <div class="contain_roulette">
@@ -67,14 +67,14 @@
             });
         }
         var dataset = [
-            <?phpforeach($arResult['ELEMENTS'] as $element){?>
+            <?php foreach($arResult['ELEMENTS'] as $element){?>
                 {
                     value:<?=$deg?>,
                     color:<?=json_encode((string)$element['color'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>,
                     text:<?=json_encode((string)$element['text'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>,
                     rule:<?=json_encode((string)$element['rule'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>
                 },
-            <?php}?>
+            <?php }?>
 ];
 
 var maxValue = 25;

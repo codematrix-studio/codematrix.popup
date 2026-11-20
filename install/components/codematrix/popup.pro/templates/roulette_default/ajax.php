@@ -86,6 +86,13 @@ if ($addToTable === "Y") {
 }
 
 $resultText = $allowedResults[$rule];
+if ($rule === "win") {
+	$popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
+	$addCookie();
+	$context->getResponse()->flush("");
+	die();
+}
+
 $result = $popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
 if ($result !== false && $result !== null) {
 	if ($addToTable === "Y") {

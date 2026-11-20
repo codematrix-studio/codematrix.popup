@@ -1,6 +1,8 @@
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 use Bitrix\Main\Application,
-Bitrix\Main\Web\Cookie;
+Bitrix\Main\Web\Cookie,
+Bitrix\Main\UserTable,
+Bitrix\Main\UserGroupTable;
 \Bitrix\Main\Loader::IncludeModule("codematrix.popup");
 $popup=new popup;
 $res='';
@@ -12,8 +14,13 @@ if(isset($_REQUEST['email'])&&isset($_REQUEST['idPopup'])&&$_REQUEST['addtotable
 		if($popup->searchinMailList($email,$_REQUEST['idPopup'])){
             global $USER;
             if(!$USER->IsAuthorized()){
-                $user = CUser::GetList(($by="id"),($order="desc"),array('EMAIL'=>$email));
-                if($r=$user->Fetch()){
+                $user = UserTable::getList(array(
+                    'select' => array('ID'),
+                    'filter' => array('=EMAIL' => $email),
+                    'order' => array('ID' => 'DESC'),
+                    'limit' => 1,
+                ));
+                if($r=$user->fetch()){
 					$USER->Authorize($r['ID']);
 				}else{
 					$user = new CUser;
@@ -27,7 +34,24 @@ if(isset($_REQUEST['email'])&&isset($_REQUEST['idPopup'])&&$_REQUEST['addtotable
                 }
             }
 			$userID=$USER->GetID();
-			CUser::SetUserGroup($userID, array_merge(CUser::GetUserGroup($userID), array($_REQUEST['group'])));
+			$groupId = (int)$_REQUEST['group'];
+			if ($groupId > 0) {
+				$groupLink = UserGroupTable::getList(array(
+					'select' => array('USER_ID'),
+					'filter' => array(
+						'=USER_ID' => $userID,
+						'=GROUP_ID' => $groupId,
+					),
+					'limit' => 1,
+				))->fetch();
+
+				if (!$groupLink) {
+					UserGroupTable::add(array(
+						'USER_ID' => $userID,
+						'GROUP_ID' => $groupId,
+					));
+				}
+			}
 			$res = $popup->getCoupon($_REQUEST['id'],'infinite',$email,$_REQUEST['idPopup'],'',$_REQUEST['MASK']);
 			$popup->insertToMailList($email,'',$_REQUEST['idPopup']);
             $context = Application::getInstance()->getContext();

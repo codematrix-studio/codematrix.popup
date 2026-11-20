@@ -42,7 +42,7 @@ class PopupTemplateTable extends DataManager
                 ->configureSize(50)
                 ->configureRequired(),
 
-            (new TextField('template'))
+            (new TextField('TEMPLATE'))
                 ->configureRequired(),
         ];
     }

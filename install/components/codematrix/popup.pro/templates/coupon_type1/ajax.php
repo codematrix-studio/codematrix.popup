@@ -31,11 +31,14 @@ if (
 }
 
 $props = $settings["view"]["props"];
-$configuredRuleId = filter_var($props["RULE_ID"] ?? null, FILTER_VALIDATE_INT, array(
-	"options" => array("min_range" => 1),
-));
+$ruleValue = $props["RULE_ID"] ?? null;
+$configuredRuleId = (is_string($ruleValue) || is_int($ruleValue))
+	? filter_var($ruleValue, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1)))
+	: false;
 $timingValue = $props["TIMING"] ?? "";
-$configuredTiming = is_scalar($timingValue) ? (string)$timingValue : null;
+$configuredTiming = (is_string($timingValue) || is_int($timingValue))
+	? (string)$timingValue
+	: null;
 $validTiming = $configuredTiming !== null
 	&& (
 		$configuredTiming === ""

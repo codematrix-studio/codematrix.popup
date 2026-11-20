@@ -64,16 +64,18 @@ function inducementWord($number, $wordArr) {
 	} 
 	function getCoupon(){
 		var url = <?=json_encode($templateFolder . "/ajax.php", JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>;
-		url += "?id=" + encodeURIComponent(<?=json_encode((string)$ruleId)?>)
-			+ "&avaliable=" + encodeURIComponent(<?=json_encode($timing)?>)
-			+ "&idPopup=<?= $popupId ?>"
-			+ "&addtotable=<?= $addToTable ?>";
+		var data = {
+			id: <?=json_encode((string)$ruleId)?>,
+			avaliable: <?=json_encode($timing)?>,
+			idPopup: <?= (int)$popupId ?>,
+			addtotable: <?=json_encode((string)$addToTable)?>
+		};
 		var email = BX('codematrix_coupon_coupon').querySelector('label.input');
 		var getContinue = true;
 		if (!email.classList.contains('notshow')) {
 			email = email.querySelector('input');
 			getContinue = validateEmail(email.value);
-			url += "&email=" + encodeURIComponent(email.value);
+			data.email = email.value;
 		}
 		if(getContinue){
 			if(!email.classList.contains('notshow')){
@@ -81,6 +83,7 @@ function inducementWord($number, $wordArr) {
 			}
 			BX.ajax({
 				url:url,
+				data:data,
 				method:'POST',
 				onsuccess: function(data){
 					

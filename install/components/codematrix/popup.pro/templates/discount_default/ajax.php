@@ -43,9 +43,12 @@ if (
 	die();
 }
 
-$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("discount", $popupId);
+$requestFingerprint = hash("sha256", mb_strtolower(trim($email)));
+$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("discount", $popupId, $requestFingerprint);
 if ($cachedResponse !== null) {
-	echo $cachedResponse["response"];
+	if (isset($cachedResponse["response"])) {
+		echo $cachedResponse["response"];
+	}
 	die();
 }
 
@@ -96,7 +99,7 @@ if ($result === false) {
 }
 if ($result !== null) {
 	// Сохраняем ответ до дополнительных действий, чтобы повтор не создавал новый купон.
-	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("discount", $popupId, (string)$result);
+	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("discount", $popupId, (string)$result, $requestFingerprint);
 
 	// Группу назначаем только после успешного создания купона.
 	$userId = (int)$USER->GetID();

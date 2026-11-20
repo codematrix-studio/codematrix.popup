@@ -28,6 +28,13 @@ CJSCore::Init(array("codematrix_popup"));
 $context = Application::getInstance()->getContext();
 $request = $context->getRequest();
 
+/**
+ * Находит попап, в настройках которого используется указанное изображение.
+ *
+ * @param array $popupArr Настройки попапов, индексированные по ID.
+ * @param array $img Данные изображения с ключами id и path.
+ * @return int|string|false ID использующего изображение попапа либо false.
+ */
 function imageBusy($popupArr, $img){
 	$impPropArr=array('IMG_1_SRC','IMG_2_SRC','IMG_3_SRC','IMG_4_SRC','IMG_5_SRC');
 	foreach($popupArr as $keyPopup=>$valPopup){

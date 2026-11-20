@@ -75,9 +75,16 @@ if (
 	die();
 }
 
-$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("roulette", $popupId);
+$requestFingerprint = hash("sha256", serialize(array(
+	$rule,
+	mb_strtolower(trim($email)),
+	$addToTable,
+)));
+$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("roulette", $popupId, $requestFingerprint);
 if ($cachedResponse !== null) {
-	echo $cachedResponse["response"];
+	if (isset($cachedResponse["response"])) {
+		echo $cachedResponse["response"];
+	}
 	die();
 }
 
@@ -100,7 +107,7 @@ if ($addToTable === "Y") {
 $resultText = $allowedResults[$rule];
 if ($rule === "win") {
 	$popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
-	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("roulette", $popupId, "");
+	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("roulette", $popupId, "", $requestFingerprint);
 	$addCookie();
 	$context->getResponse()->flush("");
 	die();
@@ -112,7 +119,7 @@ if ($result === false) {
 	die();
 }
 if ($result !== null) {
-	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("roulette", $popupId, (string)$result);
+	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("roulette", $popupId, (string)$result, $requestFingerprint);
 	if ($addToTable === "Y") {
 		$popup->insertToMailList($email, "", $popupId);
 	}

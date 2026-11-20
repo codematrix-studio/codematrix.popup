@@ -128,14 +128,20 @@ if ($mode === "draw") {
 	}
 
 	// Служебный ключ count не является сектором колеса.
-	$configuredCount = isset($rouletteItems["count"]) && is_scalar($rouletteItems["count"])
-		? (int)$rouletteItems["count"]
-		: 0;
+	$configuredCount = filter_var(
+		$rouletteItems["count"] ?? null,
+		FILTER_VALIDATE_INT,
+		array("options" => array("min_range" => 1))
+	);
 	unset($rouletteItems["count"]);
 	$rouletteItems = array_values($rouletteItems);
 
 	// Не фильтруем повреждённые элементы: индексы на сервере и в колесе должны совпадать.
-	if (!$rouletteItems || ($configuredCount > 0 && $configuredCount !== count($rouletteItems))) {
+	if (
+		$configuredCount === false
+		|| !$rouletteItems
+		|| $configuredCount !== count($rouletteItems)
+	) {
 		$sendJson(array("status" => "error", "code" => "invalid_roulette"));
 	}
 

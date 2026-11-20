@@ -62,6 +62,7 @@ class popupEdit extends popup{
 	 * @return mixed Результат сохранения.
 	 */
 	public function editPopup($request){		
+		$strError = '';
 		$settings=array('view'=>array(), 'condition'=>array());
 		$viewStructure=$this->getTemplates();
 		$viewStructure=$viewStructure[$request->getPost("type")];

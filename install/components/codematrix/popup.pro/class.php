@@ -326,9 +326,13 @@ class CodeMatrixPopup extends \CBitrixComponent{
 									'order' => array('ID' => 'DESC'),
 								));
 								$existingUser = $tmpUsers->fetch();
-								$tmpRes['REG_RES'][] = !$existingUser;
-								if(!$existingUser){
-									$res=$USER->SimpleRegister($forSendDataArr['EMAIL']);
+								if (!$existingUser) {
+									$registerResult = $USER->SimpleRegister($forSendDataArr['EMAIL']);
+									$tmpRes['REG_RES'][] = is_array($registerResult)
+										&& $USER->IsAuthorized()
+										&& (int)$USER->GetID() > 0;
+								} else {
+									$tmpRes['REG_RES'][] = false;
 								}
 							}
 						}

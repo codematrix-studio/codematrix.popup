@@ -105,7 +105,7 @@
 		return emailPattern.test(elementValue); 
 	} 
 	function getCoupon(f){
-		var url = "<?=$templateFolder?>/ajax.php?id=<?=$arResult['RULE_ID']?>";
+		var url = <?=json_encode($templateFolder . "/ajax.php", JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>;
 		var email=f.querySelector('label.email');
         var name=f.querySelector('input[name="NAME"]').value;
         var lastname=f.querySelector('input[name="LASTNAME"]').value;
@@ -113,8 +113,9 @@
 		var getContinue=true;
 		email = email.querySelector('input');
 		getContinue=validateEmail(email.value);
-		url+="&email="+email.value+"&idPopup=<?=$arParams['ID_POPUP']?>&addtotable=<?=$arResult['EMAIL_ADD2BASE']?>&unique=<?=$arResult['EMAIL_NOT_NEW']?>&MASK=<?=str_replace('#','%23',$arResult['DISCOUNT_MASK'])?>&group=<?=$arResult['USER_GROUP']?>";
-        url+='&NAME='+encodeURIComponent(name)+'&LAST_NAME='+encodeURIComponent(lastname)+'&PHONE'+encodeURIComponent(phone);
+		url+="?idPopup=<?= (int)$arParams['ID_POPUP'] ?>&addtotable="+encodeURIComponent(<?=json_encode((string)$arResult['EMAIL_ADD2BASE'])?>);
+		url+="&email="+encodeURIComponent(email.value);
+        url+='&NAME='+encodeURIComponent(name)+'&LAST_NAME='+encodeURIComponent(lastname)+'&PHONE='+encodeURIComponent(phone);
 		if(getContinue){
 			if(!email.classList.contains('notshow')){
 				email.className="";

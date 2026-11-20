@@ -3,18 +3,18 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 	die();
 }
 
-$hrefLink = trim((string)($arResult["HREF_LINK"] ?? ""));
-if (preg_match("/^(?:javascript|data|vbscript):/i", $hrefLink)) {
-	$hrefLink = "#";
+$linkHref = trim((string)($arResult["HREF_LINK"] ?? ""));
+if (preg_match("/^(?:javascript|data|vbscript):/i", $linkHref)) {
+	$linkHref = "#";
 }
 $popupId = (int)($arParams["ID_POPUP"] ?? 0);
 ?>
 <div id="codematrix_age_default">
-	<img src="<?= htmlspecialcharsbx((string)($arResult["IMG_1_SRC"] ?? "")) ?>" alt="">
+	<img src="<?= htmlspecialcharsbx((string)($arResult["IMG_1_SRC"] ?? "")) ?>">
 	<h2><?= htmlspecialcharsbx((string)($arResult["TITLE"] ?? "")) ?></h2>
 	<div class="buttons">
 		<a rel="nofollow" href="javascript:void(0);" class="flTargetAction yesClick"><?= htmlspecialcharsbx((string)($arResult["BUTTON_TEXT_Y"] ?? "")) ?></a>
-		<a rel="nofollow" href="<?= htmlspecialcharsbx($hrefLink) ?>" class="noClick"><?= htmlspecialcharsbx((string)($arResult["BUTTON_TEXT_N"] ?? "")) ?></a>
+		<a rel="nofollow" href="<?= htmlspecialcharsbx($linkHref) ?>" class="noClick"><?= htmlspecialcharsbx((string)($arResult["BUTTON_TEXT_N"] ?? "")) ?></a>
 	</div>
 	<script>
 		setTimeout(function () {
@@ -22,11 +22,14 @@ $popupId = (int)($arParams["ID_POPUP"] ?? 0);
 			if (!tmpEl) {
 				return;
 			}
-			tmpEl.addEventListener("click", function () {
+
+			tmpEl.addEventListener("click", pop_close);
+
+			function pop_close() {
 				BX.ajax({
-					url: '<?= CUtil::JSEscape($templateFolder) ?>/ajax.php',
+					url: <?= json_encode($templateFolder . "/ajax.php", JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>,
 					data: {
-						id_popup: '<?= $popupId ?>',
+						id_popup: <?= $popupId ?>,
 						checked: 'Y'
 					},
 					method: 'POST',
@@ -40,7 +43,7 @@ $popupId = (int)($arParams["ID_POPUP"] ?? 0);
 						console.log(data);
 					}
 				});
-			});
+			}
 		}, 50);
 	</script>
 </div>

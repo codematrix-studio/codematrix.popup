@@ -1324,6 +1324,12 @@ class popup{
 		return false;
 	}
 
+	/**
+	 * Возвращает сохранённые настройки попапа и дополняет их данными правила скидки для купона.
+	 *
+	 * @param int|string $id Идентификатор попапа.
+	 * @return array|false Настройки попапа либо false, если запись не найдена.
+	 */
 	public function getSetting($id=0){
 		if($id==0){return false;}
 		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(

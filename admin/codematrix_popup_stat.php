@@ -20,4 +20,4 @@ echo GetMessage("codematrix.popup_STAT_TITLE");
 ?>
 
 CodeMatrix Popup STAT
-<?phprequire($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");?>
+<?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");?>

@@ -43,7 +43,7 @@ function inducementWord($number, $wordArr) {
 <?php $param_consent[] = (string)($arResult["EMAIL_TITLE"] ?? ""); ?>
 				<label class="<?= $emailShow ? '' : 'notshow' ?> input">
 					<p><?=GetMessage("POPUP_INFO")?><?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?></p>
-					<input type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=$arResult['EMAIL_PLACEHOLDER']?>"/>
+					<input type="email" <?= $emailRequired ? 'required' : '' ?> value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?>"/>
 					<span class="error"><?=GetMessage("POPUP_WRONG")?></span>
 					<span class="not_new"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?></span>
 				</label>

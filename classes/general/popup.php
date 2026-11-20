@@ -1804,9 +1804,14 @@ class popup{
 			if (!empty($settings['timer']['enabled']) && $settings['timer']['enabled'] === "Y") {
 				$format = 'd.m.Y H:i:s';
 				$timerDateValue = $settings['timer']['date'] ?? null;
-				$timerDate = is_string($timerDateValue)
-					? \DateTime::createFromFormat($format, $timerDateValue)
-					: false;
+				$timerDate = false;
+				if (is_string($timerDateValue)) {
+					try {
+						$timerDate = \DateTime::createFromFormat($format, $timerDateValue);
+					} catch (\Throwable $exception) {
+						$timerDate = false;
+					}
+				}
 				$timerDateErrors = \DateTime::getLastErrors();
 				$timerDateIsValid = $timerDate instanceof \DateTime
 					&& ($timerDateErrors === false || (

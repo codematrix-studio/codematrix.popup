@@ -1,5 +1,5 @@
-<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?phpif($arResult['TIMER']=='Y'){
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
@@ -11,7 +11,7 @@
 	}?>
 <div id="codematrix_video_youtube">
 	<iframe width="100%" height="480" src="https://www.youtube.com/embed/<?=$arResult['LINK_VIDEO']?>?rel=<?=$arResult['VIDEO_SIMILAR']?>&autoplay=<?=$arResult['VIDEO_AUTOPLAY']?>" frameborder="0"></iframe>
-	<?php/*
+	<?php /*
 	Дополнительные параметры YouTube
 	rel=0 - Запрет показа похожих роликов
 	autoplay=1 - Автозапуск ролика

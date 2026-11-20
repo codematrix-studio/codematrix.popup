@@ -213,6 +213,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 							\Bitrix\Main\Mail\Event::send([
 								'EVENT_NAME' => 'CODEMATRIX_POPUP_SENDER',
 								'LID' => SITE_ID,
+								'LANGUAGE_ID' => LANGUAGE_ID,
 								'C_FIELDS' => $forSendDataArr,
 								'DUPLICATE' => 'Y',
 								'MESSAGE_ID' => (int)$popupSetting['row']['cont_posttemplate'],

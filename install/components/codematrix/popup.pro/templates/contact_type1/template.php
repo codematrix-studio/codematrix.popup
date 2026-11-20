@@ -1,17 +1,17 @@
-<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 <div id="codematrix_contact_type1">
 	
 	<div class="bgColorBlock">
-	<?phpif(!empty($arResult['ERRORS'])){?>
+	<?php if(!empty($arResult['ERRORS'])){?>
 		<div class="error"><p>Error:</p>
-		<?phpforeach($arResult['ERRORS'] as $nextError){?>
+		<?php foreach($arResult['ERRORS'] as $nextError){?>
 			<p><?=htmlspecialcharsbx((string)$nextError)?></p>
-		<?php}?>
+		<?php }?>
 		</div>
-	<?php}if(empty($arResult['SUCCESS'])){
+	<?php }if(empty($arResult['SUCCESS'])){
 		$param_consent=array();?>
-		<?phpif($arResult['TIMER']=='Y'){
+		<?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
@@ -86,7 +86,7 @@
 				$param_consent[]=$arResult['DESCRIPTION_TITLE'];
 				?>
 				
-			<?php}?>
+			<?php }?>
 			<label class="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?> textarea">
 				<textarea <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?> name="DESCRIPTION" placeholder="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_PLACEHOLDER'] ?? ''))?>"><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION'] ?? ''))?></textarea>
 				<span><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_TITLE'] ?? ''))?><sup>*</sup></span>
@@ -104,7 +104,7 @@
 			<div class="<?=htmlspecialcharsbx((string)($arResult['USE_CONSENT_SHOW'] ?? ''))?> consentBlock">
 			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)$arResult['CONSENT_ID'] ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
-			<?php}?>
+			<?php }?>
 			<div class="clear"></div>
 		</div>
 	</form>
@@ -132,13 +132,13 @@
 			});
 		}
 	</script>
-	<?php}if(!empty($arResult['SUCCESS']) && $arResult['SUCCESS']=='Y'){?>
+	<?php }if(!empty($arResult['SUCCESS']) && $arResult['SUCCESS']=='Y'){?>
 	<div class="success"><?=GetMessage("POPUP_THANKS")?></div>
 	<script>
 		BX.ready(function(){
 			positionBanner();
 		});
 	</script>
-	<?php}?>
+	<?php }?>
 	<div>
 </div>

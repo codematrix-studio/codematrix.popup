@@ -5,6 +5,7 @@ use \Bitrix\Main\Application,
 	Bitrix\Main\Context,
 	Bitrix\Main\Localization\Loc,
 	Bitrix\Main\Page\Asset,
+	Bitrix\Main\UI\Extension,
 	Bitrix\Main\SiteTable,
 	Bitrix\Main\UserConsent\Internals\AgreementTable,
 	Bitrix\Main\UserConsent\Agreement;
@@ -1540,7 +1541,7 @@ class popup{
 			if(\Bitrix\Main\Loader::includeModule('sale')){
 				$codematrixPopups['basket']=self::GetBasketInfo();
 			}
-			CJSCore::Init(array("ajax", "popup"));
+			Extension::load(array('ajax', 'popup'));
 			
 			$asset = Asset::getInstance();
 			$asset->addJs('/bitrix/js/'.self::idModule.'/script_public.js');

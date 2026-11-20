@@ -13,13 +13,13 @@
     <link href="https://fonts.googleapis.com/css?family=Old+Standard+TT" rel="stylesheet">
     <div class="background"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="card">
-        <?if(!empty($arResult['IMG_1_SRC'])){?><img src="<?=$arResult['IMG_1_SRC']?>"><?}?>
-        <div class="number"><?$str=str_replace('#','0',$arResult['DISCOUNT_MASK']); $str=substr_replace($str,'1',-1);?>VIP <?=$str?></div>
+        <?if(!empty($arResult['IMG_1_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_1_SRC'] ?? ''))?>"><?}?>
+        <div class="number"><?$str=str_replace('#','0',$arResult['DISCOUNT_MASK']); $str=substr_replace($str,'1',-1);?>VIP <?=htmlspecialcharsbx((string)$str)?></div>
     </div>
-    <?if(!empty($arResult['IMG_2_SRC'])){?><img src="<?=$arResult['IMG_2_SRC']?>"><?}?>
+    <?if(!empty($arResult['IMG_2_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_2_SRC'] ?? ''))?>"><?}?>
     <div class="content">
-        <h2><?=$arResult['TITLE']?></h2>
-        <p><?=$arResult['SUBTITLE']?></p>
+        <h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
+        <p><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></p>
         <form method="POST" onsubmit="getCoupon(this);return false;">
         <fieldset>
 			<?
@@ -33,7 +33,7 @@
 				$param_consent[]=$arResult['NAME_TITLE'];
 			}?>
 			<label class="one <?=$arResult['NAME_SHOW']?> <?=$arResult['NAME_REQUIRED']?>">
-				<input <?=$arResult['NAME_REQUIRED']?> name="NAME" type="text" value="<?=$arResult['NAME']?>" placeholder="<?=$arResult['NAME_TITLE']?>" />
+				<input <?=$arResult['NAME_REQUIRED']?> name="NAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['NAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['NAME_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
             <?
@@ -47,7 +47,7 @@
 				$param_consent[]=$arResult['LASTNAME_TITLE'];
 			}?>
 			<label class="one <?=$arResult['LASTNAME_SHOW']?> <?=$arResult['LASTNAME_REQUIRED']?>">
-				<input <?=$arResult['LASTNAME_REQUIRED']?> name="LASTNAME" type="text" value="<?=$arResult['LASTNAME']?>" placeholder="<?=$arResult['LASTNAME_TITLE']?>" />
+				<input <?=$arResult['LASTNAME_REQUIRED']?> name="LASTNAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['LASTNAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['LASTNAME_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
 			<?
@@ -62,7 +62,7 @@
 			}
             ?>
 			<label class="one <?=$arResult['PHONE_SHOW']?> <?=$arResult['PHONE_REQUIRED']?>">
-				<input <?=$arResult['PHONE_REQUIRED']?> type="text" value="<?=$arResult['PHONE']?>" name="PHONE" placeholder="<?=$arResult['PHONE_TITLE']?>" />
+				<input <?=$arResult['PHONE_REQUIRED']?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['PHONE'] ?? ''))?>" name="PHONE" placeholder="<?=htmlspecialcharsbx((string)($arResult['PHONE_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
 			<?
@@ -76,14 +76,14 @@
 				$param_consent[]=$arResult['EMAIL_TITLE'];
 			}?>
             <span class="not_new"><?=GetMessage('flp.not_new')?></span>
-            <span class="not_valid"><?=$arResult['EMAIL_NOT_NEW_TEXT']?></span>
+            <span class="not_valid"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?></span>
 			<label class="<?=$arResult['EMAIL_SHOW']?> <?=$arResult['EMAIL_REQUIRED']?> one email">
-				<input <?=$arResult['EMAIL_REQUIRED']?> type="email" value="<?=$arResult['EMAIL']?>" name="EMAIL" placeholder="<?=$arResult['EMAIL_TITLE']?>" />
+				<input <?=$arResult['EMAIL_REQUIRED']?> type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
 
 			
-			<label class="submit"><input type="submit" onclick=""  value="<?=$arResult['BUTTON_TEXT']?>"></label>
+			<label class="submit"><input type="submit" onclick=""  value="<?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?>"></label>
 			<?
 			if($arResult['USE_CONSENT_SHOW']=='N' || $arResult['USE_CONSENT_SHOW']=='Y'){
 				$arResult['USE_CONSENT_SHOW']=($arResult['USE_CONSENT_SHOW']=='N')?'notshow':'';
@@ -91,7 +91,7 @@
 			if($arResult['USE_CONSENT_SHOW']!='N' && count($arResult['AGREEMENTS'])>0){
 			?>
 			<div class="<?=$arResult['USE_CONSENT_SHOW']?> consentBlock">
-			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?=$arResult['CONSENT_ID']?>" target="_blank"><?=$arResult['CONSENT_LIST']?></a>
+			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)($arResult['CONSENT_ID'] ?? 0) ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
 			<?}?>
 			<div class="clear"></div>
@@ -133,7 +133,7 @@
 						f.remove()//.style.display='none';
 						var element = document.createElement('div');
                         element.setAttribute('class','send');
-                        var t = document.createTextNode('<?=GetMessage('flp.discount_send')?>');
+                        var t = document.createTextNode(<?=json_encode(GetMessage('flp.discount_send'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>);
                         element.appendChild(t);
                         document.querySelector('#codematrix_discount div.content').appendChild(element);
 						codematrixPopupTargetAction();

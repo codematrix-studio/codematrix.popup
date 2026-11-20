@@ -11,28 +11,28 @@
 			'BOTTOM'=>$arResult['TIMER_BOTTOM'],
 		),$component);
 	}?>
-	<div class="img"><img src="<?=$arResult['IMG_1_SRC']?>"></div>
+	<div class="img"><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_1_SRC'] ?? ''))?>"></div>
 	<div class="back">
 		<h3>
 			<?$arResult['SUBTITLE'] = explode('<br>',$arResult['SUBTITLE']);?>
 			<?foreach($arResult['SUBTITLE'] as $subtitle){?>
-				<span><?=$subtitle?></span>
+				<span><?=htmlspecialcharsbx((string)$subtitle)?></span>
 			<?}?>
 		</h3>
 	</div>
 	<div class="main">
-		<h2><?=$arResult['TITLE']?></h2>
+		<h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
 	
 	<?if(!empty($arResult['ERRORS'])){?>
 		<div class="error"><p>Error:</p>
 		<?foreach($arResult['ERRORS'] as $nextError){?>
-			<p><?=$nextError?></p>
+			<p><?=htmlspecialcharsbx((string)$nextError)?></p>
 		<?}?>
 		</div>
 	<?}?>
 	</div>
-	<form action="<?=$templateFolder?>/ajax.php" method="POST" onsubmit="sendForm3(this);return false;">
-		<input type="hidden" name="id_popup" value="<?=$arParams['ID_POPUP']?>" />
+	<form action="<?=htmlspecialcharsbx((string)$templateFolder)?>/ajax.php" method="POST" onsubmit="sendForm3(this);return false;">
+		<input type="hidden" name="id_popup" value="<?= (int)$arParams['ID_POPUP'] ?>" />
 		<input type="hidden" name="template_name" value="<?=$templateName?>" />
 		<fieldset>
 			<?
@@ -44,9 +44,9 @@
 			if($arResult['NAME_SHOW']=='N' || $arResult['NAME_SHOW']=='Y'){
 				$nameShow=($arResult['NAME_SHOW']=='N')?'notshow':'';
 			}?>
-			<label class="one <?=$arResult['NAME_SHOW']?> <?=$arResult['NAME_REQUIRED']?>">
-				<input <?=$arResult['NAME_REQUIRED']?> name="NAME" type="text" value="<?=$arResult['NAME']?>" placeholder="<?=$arResult['NAME_PLACEHOLDER']?>" />
-				<span><?=$arResult['NAME_TITLE']?><sup>*</sup></span>
+			<label class="one <?=htmlspecialcharsbx((string)($arResult['NAME_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['NAME_REQUIRED'] ?? ''))?>">
+				<input <?=htmlspecialcharsbx((string)($arResult['NAME_REQUIRED'] ?? ''))?> name="NAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['NAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['NAME_PLACEHOLDER'] ?? ''))?>" />
+				<span><?=htmlspecialcharsbx((string)($arResult['NAME_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 			<?
 			if($arResult['PHONE_SHOW']=='Y'){
@@ -58,9 +58,9 @@
 			if($arResult['PHONE_SHOW']=='N' || $arResult['PHONE_SHOW']=='Y'){
 				$arResult['PHONE_SHOW']=($arResult['PHONE_SHOW']=='N')?'notshow':'';
 			}?>
-			<label class="one <?=$arResult['PHONE_SHOW']?> <?=$arResult['PHONE_REQUIRED']?>">
-				<input <?=$arResult['PHONE_REQUIRED']?> type="text" value="<?=$arResult['PHONE']?>" name="PHONE" placeholder="<?=$arResult['PHONE_PLACEHOLDER']?>" />
-				<span><?=$arResult['PHONE_TITLE']?><sup>*</sup></span>
+			<label class="one <?=htmlspecialcharsbx((string)($arResult['PHONE_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['PHONE_REQUIRED'] ?? ''))?>">
+				<input <?=htmlspecialcharsbx((string)($arResult['PHONE_REQUIRED'] ?? ''))?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['PHONE'] ?? ''))?>" name="PHONE" placeholder="<?=htmlspecialcharsbx((string)($arResult['PHONE_PLACEHOLDER'] ?? ''))?>" />
+				<span><?=htmlspecialcharsbx((string)($arResult['PHONE_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 			<?
 			if($arResult['EMAIL_SHOW']=='Y'){
@@ -71,9 +71,9 @@
 			if($arResult['EMAIL_SHOW']=='N' || $arResult['EMAIL_SHOW']=='Y'){
 				$arResult['EMAIL_SHOW']=($arResult['EMAIL_SHOW']=='N')?'notshow':'';
 			}?>
-			<label class="<?=$arResult['EMAIL_SHOW']?> <?=$arResult['EMAIL_REQUIRED']?> one">
-				<input <?=$arResult['EMAIL_REQUIRED']?> type="email" value="<?=$arResult['EMAIL']?>" name="EMAIL" placeholder="<?=$arResult['EMAIL_PLACEHOLDER']?>" />
-				<span><?=$arResult['EMAIL_TITLE']?><sup>*</sup></span>
+			<label class="<?=htmlspecialcharsbx((string)($arResult['EMAIL_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['EMAIL_REQUIRED'] ?? ''))?> one">
+				<input <?=htmlspecialcharsbx((string)($arResult['EMAIL_REQUIRED'] ?? ''))?> type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?>" />
+				<span><?=htmlspecialcharsbx((string)($arResult['EMAIL_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 			<?
 			if($arResult['DESCRIPTION_SHOW']=='Y'){
@@ -86,12 +86,12 @@
 				<div class="clear"></div>
 				<?
 			}?>
-			<label class="<?=$arResult['DESCRIPTION_SHOW']?> <?=$arResult['DESCRIPTION_REQUIRED']?>">
-				<textarea <?=$arResult['DESCRIPTION_REQUIRED']?> name="DESCRIPTION" placeholder="<?=$arResult['DESCRIPTION_PLACEHOLDER']?>"><?=$arResult['DESCRIPTION']?></textarea><span><?=$arResult['DESCRIPTION_TITLE']?><sup>*</sup></span>
+			<label class="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?>">
+				<textarea <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?> name="DESCRIPTION" placeholder="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_PLACEHOLDER'] ?? ''))?>"><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION'] ?? ''))?></textarea><span><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 			
 			<label class="submit">
-				<button type="submit" onclick=""><?=$arResult['BUTTON_TEXT']?></button>
+				<button type="submit" onclick=""><?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?></button>
 			</label>
 			<?
 				if($arResult['USE_CONSENT_SHOW']=='N' || $arResult['USE_CONSENT_SHOW']=='Y'){
@@ -99,8 +99,8 @@
 				}
 			if($arResult['USE_CONSENT_SHOW']!='N' && count($arResult['AGREEMENTS'])>0){
 			?>
-			<div class="<?=$arResult['USE_CONSENT_SHOW']?> consentBlock">
-			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?=$arResult['CONSENT_ID']?>" target="_blank"><?=$arResult['CONSENT_LIST']?></a>
+			<div class="<?=htmlspecialcharsbx((string)($arResult['USE_CONSENT_SHOW'] ?? ''))?> consentBlock">
+			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)$arResult['CONSENT_ID'] ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
 			<?}?>
 			<div class="clear"></div>

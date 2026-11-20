@@ -19,7 +19,7 @@ final class PublicRequestGuard
      * @param int $windowSeconds Период защиты в секундах.
      * @return array|null Массив с ключом response либо null, если запроса ещё не было.
      */
-    public static function getCachedResponse($action, $popupId, $windowSeconds = 60)
+    public static function getCachedResponse($action, $popupId, $fingerprint = '', $windowSeconds = 60)
     {
         if (session_status() !== PHP_SESSION_ACTIVE || !is_string($action) || $action === '' || (int)$popupId <= 0) {
             return null;
@@ -34,8 +34,9 @@ final class PublicRequestGuard
 
         if (
             !is_array($entry)
-            || !isset($entry['time'], $entry['response'])
+            || !isset($entry['time'], $entry['response'], $entry['fingerprint'])
             || !is_string($entry['response'])
+            || !is_string($entry['fingerprint'])
         ) {
             return null;
         }
@@ -44,6 +45,10 @@ final class PublicRequestGuard
         if ($createdAt <= 0 || $createdAt > time() || time() - $createdAt >= max(1, (int)$windowSeconds)) {
             unset($_SESSION['codematrix_popup_public_requests'][$key]);
             return null;
+        }
+
+        if (!hash_equals($entry['fingerprint'], (string)$fingerprint)) {
+            return array('blocked' => true);
         }
 
         return array('response' => $entry['response']);
@@ -57,7 +62,7 @@ final class PublicRequestGuard
      * @param string $response Ответ, который должен получить повторный запрос.
      * @return void
      */
-    public static function rememberResponse($action, $popupId, $response)
+    public static function rememberResponse($action, $popupId, $response, $fingerprint = '')
     {
         if (
             session_status() !== PHP_SESSION_ACTIVE
@@ -65,6 +70,7 @@ final class PublicRequestGuard
             || $action === ''
             || (int)$popupId <= 0
             || !is_string($response)
+            || !is_string($fingerprint)
         ) {
             return;
         }
@@ -83,6 +89,7 @@ final class PublicRequestGuard
         $_SESSION['codematrix_popup_public_requests'][self::getKey($action, $popupId)] = array(
             'time' => $now,
             'response' => $response,
+            'fingerprint' => $fingerprint,
         );
     }
 

@@ -29,15 +29,15 @@ class PopupColorTable extends DataManager
     public static function getMap()
     {
         return [
-            (new IntegerField('id'))
+            (new IntegerField('ID'))
                 ->configurePrimary()
                 ->configureAutocomplete(),
 
-            (new StringField('template'))
+            (new StringField('TEMPLATE'))
                 ->configureSize(50)
                 ->configureRequired(),
 
-            (new StringField('name'))
+            (new StringField('NAME'))
                 ->configureSize(50)
                 ->configureNullable(true),
         ];

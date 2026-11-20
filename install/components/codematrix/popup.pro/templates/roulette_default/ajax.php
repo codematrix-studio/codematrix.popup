@@ -5,19 +5,29 @@ if (!\Bitrix\Main\Loader::includeModule("codematrix.popup")) {
 	die();
 }
 
-$request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
+$context = \Bitrix\Main\Application::getInstance()->getContext();
+$request = $context->getRequest();
 
-// Выдача купона изменяет данные магазина и допускается только через POST.
+// Выдача приза изменяет данные магазина и допускается только через POST.
 if (!$request->isPost()) {
 	http_response_code(405);
 	die();
 }
-$popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
+
+$popupId = filter_var($request->getPost("idPopup"), FILTER_VALIDATE_INT, array(
 	"options" => array("min_range" => 1),
 ));
-$settings = ($popupId !== false && \CodeMatrix\Popup\PublicRequestGuard::isPopupRendered($popupId))
-	? (new popup())->getSetting($popupId)
-	: false;
+
+if (
+	$popupId === false
+	|| !\CodeMatrix\Popup\PublicRequestGuard::isPopupRendered($popupId)
+	|| session_status() !== PHP_SESSION_ACTIVE
+) {
+	die();
+}
+
+$popup = new popup();
+$settings = $popup->getSetting($popupId);
 
 if (
 	!is_array($settings)
@@ -28,25 +38,17 @@ if (
 }
 
 $props = $settings["view"]["props"];
-$rule = $request->get("id");
-$email = $request->get("email");
-$addToTable = $request->get("addtotable");
-// Проверка уникальности определяется сохранёнными настройками попапа.
-$requestedTiming = $request->get("avaliable");
 $timing = (string)($props["TIMING"] ?? "");
-$rouletteItems = $settings["roulett"] ?? array();
-if (!is_array($rouletteItems)) {
+$addToTable = $request->getPost("addtotable");
+$email = $request->getPost("email");
+$mode = $request->getPost("mode");
+
+$sendJson = static function (array $data) {
+	header("Content-Type: application/json; charset=UTF-8");
+	echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 	die();
-}
-$allowedResults = array();
+};
 
-foreach ($rouletteItems as $element) {
-	if (is_array($element) && isset($element["rule"])) {
-		$allowedResults[(string)$element["rule"]] = (string)($element["text"] ?? "");
-	}
-}
-
-$context = \Bitrix\Main\Application::getInstance()->getContext();
 $addCookie = static function () use ($context, $popupId) {
 	$cookie = new \Bitrix\Main\Web\Cookie(
 		"codematrixPopupFilling_" . $popupId,
@@ -58,78 +60,181 @@ $addCookie = static function () use ($context, $popupId) {
 	$context->getResponse()->addCookie($cookie);
 };
 
-if ($request->get("nothing") !== null) {
-	$addCookie();
-	$context->getResponse()->flush("");
-	die();
+if (
+	!is_string($email)
+	|| !filter_var($email, FILTER_VALIDATE_EMAIL)
+	|| !is_string($addToTable)
+	|| !in_array($addToTable, array("Y", "N"), true)
+) {
+	$sendJson(array("status" => "error", "code" => "invalid_request"));
 }
 
 if (
-	!is_string($rule)
-	|| !array_key_exists($rule, $allowedResults)
-	|| !is_string($requestedTiming)
-	|| $requestedTiming !== $timing
-	|| !is_string($email)
-	|| !filter_var($email, FILTER_VALIDATE_EMAIL)
-	|| !in_array($addToTable, array("Y", "N"), true)
-
+	($addToTable === "Y" && ($props["EMAIL_ADD2BASE"] ?? "N") !== "Y")
+	|| ($addToTable === "N" && ($props["EMAIL_ADD2BASE"] ?? "N") === "Y")
 ) {
-	die();
+	$sendJson(array("status" => "error", "code" => "invalid_request"));
+}
+
+$emailHash = hash("sha256", mb_strtolower(trim($email)));
+$drawsKey = "codematrix_popup_roulette_draws";
+
+if (!isset($_SESSION[$drawsKey]) || !is_array($_SESSION[$drawsKey])) {
+	$_SESSION[$drawsKey] = array();
+}
+
+// Первый этап: сервер сам выбирает сектор и выдаёт краткоживущий одноразовый токен.
+if ($mode === "draw") {
+	if (
+		$addToTable === "Y"
+		&& ($props["EMAIL_NOT_NEW"] ?? "N") === "Y"
+		&& !$popup->searchinMailList($email, $popupId)
+	) {
+		$sendJson(array("status" => "error", "code" => "not_unique"));
+	}
+
+	$pendingDraw = $_SESSION[$drawsKey][$popupId] ?? null;
+	if (is_array($pendingDraw)) {
+		$createdAt = (int)($pendingDraw["created_at"] ?? 0);
+		if ($createdAt > 0 && $createdAt <= time() && time() - $createdAt <= 300) {
+			if (
+				hash_equals((string)($pendingDraw["email_hash"] ?? ""), $emailHash)
+				&& ($pendingDraw["add_to_table"] ?? null) === $addToTable
+			) {
+				$sendJson(array(
+					"status" => "ok",
+					"index" => (int)$pendingDraw["index"],
+					"token" => (string)$pendingDraw["token"],
+				));
+			}
+
+			$sendJson(array("status" => "error", "code" => "draw_pending"));
+		}
+
+		unset($_SESSION[$drawsKey][$popupId]);
+	}
+
+	$rouletteItems = $settings["roulett"] ?? array();
+	if (!is_array($rouletteItems)) {
+		$sendJson(array("status" => "error", "code" => "invalid_roulette"));
+	}
+
+	$rouletteItems = array_values(array_filter($rouletteItems, static function ($element) {
+		return is_array($element) && isset($element["rule"]) && is_scalar($element["rule"]);
+	}));
+
+	if (!$rouletteItems) {
+		$sendJson(array("status" => "error", "code" => "invalid_roulette"));
+	}
+
+	try {
+		$selectedIndex = random_int(0, count($rouletteItems) - 1);
+		$token = bin2hex(random_bytes(32));
+	} catch (\Throwable $exception) {
+		$sendJson(array("status" => "error", "code" => "draw_failed"));
+	}
+
+	$_SESSION[$drawsKey][$popupId] = array(
+		"token_hash" => hash("sha256", $token),
+		"email_hash" => $emailHash,
+		"add_to_table" => $addToTable,
+		"index" => $selectedIndex,
+		"rule" => (string)$rouletteItems[$selectedIndex]["rule"],
+		"text" => (string)($rouletteItems[$selectedIndex]["text"] ?? ""),
+		"created_at" => time(),
+	);
+
+	$sendJson(array(
+		"status" => "ok",
+		"index" => $selectedIndex,
+		"token" => $token,
+	));
+}
+
+// Второй этап: сервер выдаёт только тот результат, который был выбран на первом этапе.
+if ($mode !== "redeem") {
+	$sendJson(array("status" => "error", "code" => "invalid_request"));
+}
+
+$token = $request->getPost("token");
+if (!is_string($token) || !preg_match('/^[a-f0-9]{64}$/D', $token)) {
+	$sendJson(array("status" => "error", "code" => "invalid_token"));
 }
 
 $requestFingerprint = hash("sha256", serialize(array(
-	$rule,
-	mb_strtolower(trim($email)),
+	$token,
+	$emailHash,
 	$addToTable,
 )));
-$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("roulette", $popupId, $requestFingerprint);
+$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse(
+	"roulette",
+	$popupId,
+	$requestFingerprint
+);
+
 if ($cachedResponse !== null) {
 	if (isset($cachedResponse["response"])) {
+		header("Content-Type: application/json; charset=UTF-8");
 		echo $cachedResponse["response"];
-	} else {
-		echo "coupon_error";
-	}
-	die();
-}
-
-$popup = new popup();
-if ($addToTable === "Y") {
-	if (($props["EMAIL_ADD2BASE"] ?? "N") !== "Y") {
 		die();
 	}
 
-	if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y") {
-		if (!$popup->searchinMailList($email, $popupId)) {
-			echo "not_unique";
-			die();
-		}
-	}
-} elseif (($props["EMAIL_ADD2BASE"] ?? "N") === "Y") {
-	die();
+	$sendJson(array("status" => "error", "code" => "coupon_error"));
 }
 
-$resultText = $allowedResults[$rule];
-if ($rule === "win") {
-	$popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
-	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("roulette", $popupId, "", $requestFingerprint);
+$pendingDraw = $_SESSION[$drawsKey][$popupId] ?? null;
+if (
+	!is_array($pendingDraw)
+	|| !isset($pendingDraw["token_hash"], $pendingDraw["email_hash"], $pendingDraw["add_to_table"], $pendingDraw["rule"], $pendingDraw["text"], $pendingDraw["created_at"])
+	|| !is_string($pendingDraw["token_hash"])
+	|| !hash_equals($pendingDraw["token_hash"], hash("sha256", $token))
+	|| !hash_equals((string)$pendingDraw["email_hash"], $emailHash)
+	|| $pendingDraw["add_to_table"] !== $addToTable
+	|| (int)$pendingDraw["created_at"] > time()
+	|| time() - (int)$pendingDraw["created_at"] > 300
+) {
+	$sendJson(array("status" => "error", "code" => "invalid_token"));
+}
+
+$rule = (string)$pendingDraw["rule"];
+$resultText = (string)$pendingDraw["text"];
+$responseData = array(
+	"status" => "success",
+	"rule" => $rule,
+	"text" => $resultText,
+	"coupon" => "",
+);
+
+if ($rule === "nothing") {
 	$addCookie();
-	$context->getResponse()->flush("");
-	die();
-}
+} elseif ($rule === "win") {
+	$popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
+	$addCookie();
+} else {
+	$result = $popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
+	if ($result === false || $result === null) {
+		$sendJson(array("status" => "error", "code" => "coupon_error"));
+	}
 
-$result = $popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
-if ($result === false) {
-	echo "coupon_error";
-	die();
-}
-if ($result !== null) {
-	\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("roulette", $popupId, (string)$result, $requestFingerprint);
+	$responseData["coupon"] = (string)$result;
 	if ($addToTable === "Y") {
 		$popup->insertToMailList($email, "", $popupId);
 	}
 	$addCookie();
-	$context->getResponse()->flush("");
-	echo $result;
 }
 
-die();
+$response = json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+if (!is_string($response)) {
+	$sendJson(array("status" => "error", "code" => "coupon_error"));
+}
+
+\CodeMatrix\Popup\PublicRequestGuard::rememberResponse(
+	"roulette",
+	$popupId,
+	$response,
+	$requestFingerprint
+);
+unset($_SESSION[$drawsKey][$popupId]);
+
+header("Content-Type: application/json; charset=UTF-8");
+echo $response;

@@ -1754,9 +1754,14 @@ class popup{
 	*/
 	public function getComponentResult($idPopup){
 		if($idPopup==0){return false;}
-		global $DB;
-		$res = $DB->Query('select * from '.$this->tableSetting.' where id='.$idPopup.' limit 1;');
-		if($row = $res->Fetch()){
+		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+			'filter'=>array('=ID'=>$idPopup),
+			'select'=>array('*'),
+			'limit'=>1
+		));
+		$ormRow = $res->fetch();
+		$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		if($row){
 			$settings=unserialize($row['settings']);
 
 			// В старых или неполных записях может отсутствовать выбранный шаблон.

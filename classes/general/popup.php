@@ -1801,10 +1801,20 @@ class popup{
 			if(!empty($settings['condition']['dateFinish']) && $settings['condition']['dateFinish']<=$options['dateUser']){
 				continue;
 			}
-			if(!empty($settings['timer']['enabled'])&&$settings['timer']['enabled']=="Y"){
+			if (!empty($settings['timer']['enabled']) && $settings['timer']['enabled'] === "Y") {
 				$format = 'd.m.Y H:i:s';
-				$unixtime=DateTime::createFromFormat($format, $settings['timer']['date']);
-				if(time()>$unixtime->getTimestamp()){
+				$timerDateValue = $settings['timer']['date'] ?? null;
+				$timerDate = is_string($timerDateValue)
+					? \DateTime::createFromFormat($format, $timerDateValue)
+					: false;
+				$timerDateErrors = \DateTime::getLastErrors();
+				$timerDateIsValid = $timerDate instanceof \DateTime
+					&& ($timerDateErrors === false || (
+						$timerDateErrors['warning_count'] === 0
+						&& $timerDateErrors['error_count'] === 0
+					));
+				// Некорректная дата в старой записи не должна приводить к фатальной ошибке сайта.
+				if (!$timerDateIsValid || time() > $timerDate->getTimestamp()) {
 					continue;
 				}
 			}

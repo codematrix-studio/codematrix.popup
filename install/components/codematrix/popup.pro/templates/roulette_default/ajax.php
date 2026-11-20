@@ -135,6 +135,7 @@ if ($mode === "draw") {
 	}
 
 	$_SESSION[$drawsKey][$popupId] = array(
+		"token" => $token,
 		"token_hash" => hash("sha256", $token),
 		"email_hash" => $emailHash,
 		"add_to_table" => $addToTable,

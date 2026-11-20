@@ -49,7 +49,7 @@ if(!empty($request['action_button'])&&$request['action_button']=='copy'&&!empty(
 	$editableWindow=new popupEdit();
 	$newIdPopup=$editableWindow->CopyPopup($request['ID']);
 	global $APPLICATION;
-	$CURRENT_PAGE = (CMain::IsHTTPS()) ? "https://" : "http://";
+	$CURRENT_PAGE = ($request->isHttps()) ? "https://" : "http://";
 	$CURRENT_PAGE .= $_SERVER["HTTP_HOST"];
 	header("Location: ".$CURRENT_PAGE."/bitrix/admin/codematrix_popup.php?id=".$newIdPopup);
 }
@@ -1442,7 +1442,7 @@ if(empty($idPopup)){
 
 <?
 if(isset($_REQUEST['save']) && $_REQUEST['save']==GetMessage("codematrix.popup_TAB_BUTTON_SAVE") && !empty($_REQUEST['id'])){
-	$CURRENT_PAGE = (CMain::IsHTTPS()) ? "https://" : "http://";
+	$CURRENT_PAGE = ($request->isHttps()) ? "https://" : "http://";
 	$CURRENT_PAGE .= $_SERVER["HTTP_HOST"];
 	$CURRENT_PAGE .= $APPLICATION->GetCurPage(true);
 	header('Location: '.$CURRENT_PAGE);

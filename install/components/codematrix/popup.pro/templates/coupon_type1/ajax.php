@@ -69,7 +69,15 @@ if ($addToTable === "Y") {
 }
 
 if ($addToTable === null || $addToTable === "N") {
-	$result = (new popup())->getCoupon($configuredRuleId, $configuredTiming, "", $popupId);
+	$emailForCoupon = "";
+	if ($email !== null) {
+		if (!is_string($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			die();
+		}
+		$emailForCoupon = $email;
+	}
+
+	$result = (new popup())->getCoupon($configuredRuleId, $configuredTiming, $emailForCoupon, $popupId);
 	if ($result !== false && $result !== null) {
 		echo $result;
 	}

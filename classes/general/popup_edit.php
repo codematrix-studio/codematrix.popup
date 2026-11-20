@@ -220,10 +220,10 @@ class popupEdit extends popup{
 			$arFieldsInsert['CONT_IBLOCK']=$settings['contact']['iblock'];
 		}
 		if($request->getPost("id_popup")=='new'){
-			$saveResult = \\CodeMatrix\\Popup\\Model\\PopupTable::add($arFieldsInsert);
+			$saveResult = \CodeMatrix\Popup\Model\PopupTable::add($arFieldsInsert);
 			$ID = $saveResult->getId();
 		}else{
-			\\CodeMatrix\\Popup\\Model\\PopupTable::update($request->getPost("id_popup"), $arFieldsInsert);
+			\CodeMatrix\Popup\Model\PopupTable::update($request->getPost("id_popup"), $arFieldsInsert);
 			$ID = $request->getPost("id_popup");
 		}
 		if(strlen($strError)>0){
@@ -233,13 +233,13 @@ class popupEdit extends popup{
 	}
 	
 	public function editFromTableList($id, $arFields){
-		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$id),
 			'select'=>array('*'),
 			'limit'=>1
 		));
 		$ormRow = $res->fetch();
-		$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 		if($row){
 			$tmpSetting=unserialize($row['settings']);
 			$updFields=array();
@@ -258,7 +258,7 @@ class popupEdit extends popup{
 				$tmpSetting['condition']['service_name']=$arFields['NAME'];
 			}
 			$updFields['SETTINGS']=serialize($tmpSetting);
-			\\CodeMatrix\\Popup\\Model\\PopupTable::update($id, $updFields);
+			\CodeMatrix\Popup\Model\PopupTable::update($id, $updFields);
 		}
 	}
 	
@@ -292,14 +292,14 @@ class popupEdit extends popup{
 					$copyTemplate=$nextTemplate;
 					$copyTemplate['name']=$newname;
 					$copyTemplate['active']=false;
-					$saveResult = \\CodeMatrix\\Popup\\Model\\PopupTemplateTable::add(array(
+					$saveResult = \CodeMatrix\Popup\Model\PopupTemplateTable::add(array(
 						'TYPE'=>$type,
 						'NAME'=>$newname,
 						'TEMPLATE'=>'start'
 					));
 					$ID = $saveResult->getId();
 					$copyTemplate['template']='custom_'.$ID;
-					\\CodeMatrix\\Popup\\Model\\PopupTemplateTable::update($ID, array(
+					\CodeMatrix\Popup\Model\PopupTemplateTable::update($ID, array(
 						'TEMPLATE'=>serialize($copyTemplate)
 					));
 					CopyDirFiles($_SERVER["DOCUMENT_ROOT"].$oldPath, $_SERVER["DOCUMENT_ROOT"].$newPath.$ID, true, true, false);
@@ -326,7 +326,7 @@ class popupEdit extends popup{
 		}
 		$oldPath='/bitrix/components/codematrix/popup.pro/templates/'.$type.'_'.$template.'/themes/'.$colorstyle.'.css';
 		if(file_exists($_SERVER["DOCUMENT_ROOT"].$oldPath)){
-				$saveResult = \\CodeMatrix\\Popup\\Model\\PopupColorTable::add(array(
+				$saveResult = \CodeMatrix\Popup\Model\PopupColorTable::add(array(
 				'TEMPLATE'=>$type.'_'.$template,
 				'NAME'=>$newname
 			));
@@ -350,16 +350,16 @@ class popupEdit extends popup{
 	
 	
 	public function CopyPopup($id){
-		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$id),
 			'select'=>array('SORT', 'ACTIVE', 'NAME', 'TYPE', 'SETTINGS', 'CONT_IBLOCK', 'CONT_POSTTEMPLATE')
 		));
 		$tmpFields=array();
 		$ormRow = $res->fetch();
-		$r = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		$r = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 		if($r){
 			$tmpFields=array_change_key_case($r, CASE_UPPER);
-			$saveResult = \\CodeMatrix\\Popup\\Model\\PopupTable::add($tmpFields);
+			$saveResult = \CodeMatrix\Popup\Model\PopupTable::add($tmpFields);
 			return $saveResult->getId();
 		}else
 			return false;

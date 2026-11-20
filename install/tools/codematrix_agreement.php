@@ -1,1 +1,1 @@
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/codematrix.popup/tools/agreement.php");?>
+<?phprequire($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/codematrix.popup/tools/agreement.php");?>

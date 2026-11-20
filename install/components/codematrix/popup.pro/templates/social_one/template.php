@@ -1,5 +1,5 @@
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?
+<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php
 $blocks = array();
 if(!empty($arResult['ID_VK'])){
 	$blocks[]='ID_VK';
@@ -18,7 +18,7 @@ $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'
 	<div class="top_border"></div>
 	<div class="left_border"></div>
 	<h2><?=$arResult['TITLE']?></h2>
-	<?$img='vk.png';
+	<?php$img='vk.png';
 		if($choosen == 'ID_VK'){
 	?>
 		<img src="<?=$templateFolder?>/img/<?=$img?>">
@@ -35,7 +35,7 @@ $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'
 					VK.Widgets.Group('codematrix_vk_groups', {mode: 5, width:'auto', height:'316'}, '<?=$arResult['ID_VK']?>');
 				}
 			</script>
-	<?}elseif($choosen == 'ID_INST'){
+	<?php}elseif($choosen == 'ID_INST'){
 			$img='instagram.png';
 			?>
 			<img src="<?=$templateFolder?>/img/<?=$img?>">
@@ -46,7 +46,7 @@ $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'
 			scrolling="no" 
 			style="border:none;overflow:hidden;width:296px;height:316px;text-align:center;"></iframe>
 			
-	<?}elseif($choosen=='ID_ODNKL'){
+	<?php}elseif($choosen=='ID_ODNKL'){
 		$img='odnkl.png';?>
 		<img src="<?=$templateFolder?>/img/<?=$img?>">
 		<div id="ok_group_widget"></div>
@@ -66,7 +66,7 @@ $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'
 		  d.documentElement.appendChild(js);
 		}(document,"ok_group_widget","<?=$arResult['ID_ODNKL']?>",'{"width":305,"height":316}');
 		</script>
-	<?}?>
+	<?php}?>
 	<div class="right_border"></div>
 	<div class="bottom_border"></div>
 </div>

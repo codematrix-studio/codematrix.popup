@@ -1,4 +1,4 @@
-<?
+<?php
 use Bitrix\Main;
 
 require_once dirname(__DIR__).'/lib/mail.php';

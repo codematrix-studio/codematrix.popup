@@ -1,8 +1,8 @@
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?$vk = $arResult['ID_VK'];
+<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php$vk = $arResult['ID_VK'];
 $inst = $arResult['ID_INST'];
 $odnkl = $arResult['ID_ODNKL'];?>
-		<?
+		<?php
 		$count=0;
 		if(!empty($vk))
 				$count++;
@@ -25,7 +25,7 @@ width:<?=$count?>px;
 		<?=$arResult['TITLE']?>
 	</h2>
 	<div class="social_holder">
-		<?if(!empty($arResult['ID_VK'])){?>
+		<?phpif(!empty($arResult['ID_VK'])){?>
 		<!-- Виджет ВКонтакте. -->
 		<div id="vk_groups"></div>
 		<script type="text/javascript">
@@ -47,8 +47,8 @@ width:<?=$count?>px;
 					//VK.Widgets.Group("vk_groups", {mode: 5, width: "300",height:"316"}, <?=$arResult['ID_VK']?>);
 				}
 		</script>
-		<?}?>
-		<?if(!empty($arResult['ID_ODNKL'])){?>
+		<?php}?>
+		<?phpif(!empty($arResult['ID_ODNKL'])){?>
 		<div id="ok_group_widget"></div>
 		<script>
 		!function (d, id, did, st) {
@@ -79,8 +79,8 @@ width:<?=$count?>px;
 		  d.documentElement.appendChild(js);
 		}(document,"ok_group_widget","<?=$arResult['ID_ODNKL']?>",'{"width":300,"height":316}');
 		</script>
-		<?}?>
-		<?if(!empty($arResult['ID_INST'])){?>
+		<?php}?>
+		<?phpif(!empty($arResult['ID_INST'])){?>
 		<div id='inst_wid'>
 		<iframe 
 			src="//widget.instagramm.ru/?imageW=3&imageH=2&thumbnail_size=88&type=0&typetext=<?=$arResult['ID_INST']?>&head_show=1&profile_show=1&shadow_show=0&bg=255,255,255,1&opacity=true&head_bg=46729b&subscribe_bg=46729b&border_color=999999&head_title=" 
@@ -89,7 +89,7 @@ width:<?=$count?>px;
 			scrolling="no" 
 			style="border:none;overflow:hidden;width:300px;height:316px;"></iframe> 
 		</div>
-		<?}?>
+		<?php}?>
 		<div class="clear"></div>
 	</div>
 </div>

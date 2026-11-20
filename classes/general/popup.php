@@ -1287,7 +1287,7 @@ class popup{
 	 *
 	 * @param string $mail Адрес электронной почты.
 	 * @param int|string $id Идентификатор попапа; 0 означает проверку общего списка.
-	 * @return bool true, если адрес не найден в списке; false, если он уже есть или адрес пуст.
+	 * @return bool true, если адрес не найден или проверка списка не завершена; false, если адрес уже есть или пуст.
 	 */
 	public function searchinMailList($mail,$id=0){
 		$id=(int)$id;
@@ -1364,8 +1364,11 @@ class popup{
 			$curDateFunc = new \Bitrix\Main\Type\DateTime;
 
 			$rowPopup=$this->getSetting($tmpPopup);
+			if(!$rowPopup){
+				return false;
+			}
 
-			// Идентификатор группы пользователей.
+			// Идентификатор списка рассылки.
 			$groupList=\Bitrix\Sender\ListTable::GetList(array(
 				'filter'=>array('CODE'=>'codematrixPopup_'.$tmpPopup)
 			));

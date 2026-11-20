@@ -84,6 +84,8 @@ $cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("roule
 if ($cachedResponse !== null) {
 	if (isset($cachedResponse["response"])) {
 		echo $cachedResponse["response"];
+	} else {
+		echo "coupon_error";
 	}
 	die();
 }

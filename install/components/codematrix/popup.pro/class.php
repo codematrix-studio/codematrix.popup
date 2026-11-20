@@ -221,6 +221,12 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				) {
 					$errors['CONSENT'] = 'Необходимо подтвердить согласие на обработку персональных данных.';
 				}
+				if (
+					$cenderData
+					&& !\CodeMatrix\Popup\PublicRequestGuard::isPopupRendered((int)$this->arParams['ID_POPUP'])
+				) {
+					$errors['FORM'] = 'Не удалось подтвердить открытие формы. Обновите страницу и попробуйте снова.';
+				}
 				if(count($errors)>0){
 					$tmpRes['ERRORS']=$errors;
 				}elseif($cenderData){

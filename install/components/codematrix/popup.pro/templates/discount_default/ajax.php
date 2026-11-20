@@ -133,7 +133,6 @@ if ($result !== null) {
 		"Y",
 		time() + 864000000
 	);
-	$cookie->setDomain($context->getServer()->getHttpHost());
 	$cookie->setHttpOnly(false);
 	$context->getResponse()->addCookie($cookie);
 	$context->getResponse()->flush("");

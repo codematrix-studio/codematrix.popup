@@ -44,6 +44,33 @@ final class LegacyRowMapper
 
         $result = @unserialize($value, array('allowed_classes' => false));
 
-        return is_array($result) ? $result : array();
+        return is_array($result) && self::isSafeArray($result) ? $result : array();
+    }
+
+    /**
+     * Проверяет, что массив содержит только массивы, скалярные значения и null.
+     * Ограничение глубины защищает от циклических ссылок в сериализованных данных.
+     *
+     * @param mixed $value Проверяемое значение.
+     * @param int $depth Текущая глубина вложенности.
+     * @return bool
+     */
+    private static function isSafeArray($value, $depth = 0)
+    {
+        if ($depth > 64) {
+            return false;
+        }
+
+        if (!is_array($value)) {
+            return is_scalar($value) || $value === null;
+        }
+
+        foreach ($value as $item) {
+            if (!self::isSafeArray($item, $depth + 1)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

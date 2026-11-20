@@ -1,4 +1,5 @@
 <?
+require_once dirname(__DIR__).'/lib/mail.php';
 use Bitrix\Main;
 IncludeModuleLangFile(__FILE__);
 Class codematrix_popup extends CModule
@@ -78,79 +79,55 @@ Class codematrix_popup extends CModule
 		return true;
 	}
 	function InstallPostEvent(){
-		$keyPost='CODEMATRIX_POPUP_SEND_COUPON';
-		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
-		if(!$arET = $rsET->Fetch()){
-			$obEventType = new CEventType;
-			$obEventType->Add(array(
-				'LID'=>'ru',
-				'EVENT_NAME'=>$keyPost,
-				"NAME"=>GetMessage("codematrix.popup_EVENT_NAME"),
-				"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION"))
-			));
-		}
-		$keyPost='CODEMATRIX_POPUP_ROULETTE_SEND';
-		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
-		if(!$arET = $rsET->Fetch()){
-			$obEventType = new CEventType;
-			$obEventType->Add(array(
-				'LID'=>'ru',
-				'EVENT_NAME'=>$keyPost,
-				"NAME"=>GetMessage("codematrix.popup_EVENT_NAME_ROULETTE"),
-				"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION_ROULETTE"))
-			));
-		}	
+		\CodeMatrix\Popup\Mail::ensureEventType(
+			'CODEMATRIX_POPUP_SEND_COUPON',
+			'ru',
+			GetMessage("codematrix.popup_EVENT_NAME"),
+			str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION"))
+		);
+		\CodeMatrix\Popup\Mail::ensureEventType(
+			'CODEMATRIX_POPUP_ROULETTE_SEND',
+			'ru',
+			GetMessage("codematrix.popup_EVENT_NAME_ROULETTE"),
+			str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION_ROULETTE"))
+		);
 	}
+
 	function UnInstallPostEvent(){
-		$keyPost='CODEMATRIX_POPUP_SEND_COUPON';
-		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
-		if($arET = $rsET->Fetch()){
-			$et = new CEventType;
-			$et->Delete($keyPost);
-		}
-		$keyPost='CODEMATRIX_POPUP_ROULETTE_SEND';
-		$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
-		if($arET = $rsET->Fetch()){
-			$et = new CEventType;
-			$et->Delete($keyPost);
-		}
+		\CodeMatrix\Popup\Mail::deleteEventTypes('CODEMATRIX_POPUP_SEND_COUPON');
+		\CodeMatrix\Popup\Mail::deleteEventTypes('CODEMATRIX_POPUP_ROULETTE_SEND');
 	}
+
 	function InstallPostTemplate(){
-		$obTemplate = new CEventMessage;
-		$template=array();
-		$template['LID']=array();
-		$sites=Bitrix\Main\SiteTable::getList();
-		while($s=$sites->Fetch())
-			$template['LID'][]=$s['LID'];
-		$template['EVENT_NAME']="CODEMATRIX_POPUP_SEND_COUPON";
-		$template['ACTIVE']='Y';
-		$template['EMAIL_FROM']='#DEFAULT_EMAIL_FROM#';
-		$template['EMAIL_TO']='#EMAIL#';
-		$template['SUBJECT']=GetMessage("codematrix.popup_TEMPLATE_SUBJECT");
-		$template['BODY_TYPE']='html';
-		$template['MESSAGE']=str_ireplace("\t", '',GetMessage("codematrix.popup_TEMPLATE_MESSAGE"));
-		$obTemplate->Add($template);
-		$template['EVENT_NAME']="CODEMATRIX_POPUP_ROULETTE_SEND";
-		$template['ACTIVE']='Y';
-		$template['EMAIL_FROM']='#DEFAULT_EMAIL_FROM#';
-		$template['EMAIL_TO']='#EMAIL#';
+		$sites=Bitrix\Main\SiteTable::getList(['select' => ['LID']]);
+		$lids=array();
+		while($site=$sites->Fetch()){
+			$lids[]=$site['LID'];
+		}
+
+		$template=array(
+			'LID'=>$lids,
+			'EVENT_NAME'=>'CODEMATRIX_POPUP_SEND_COUPON',
+			'ACTIVE'=>'Y',
+			'EMAIL_FROM'=>'#DEFAULT_EMAIL_FROM#',
+			'EMAIL_TO'=>'#EMAIL#',
+			'SUBJECT'=>GetMessage("codematrix.popup_TEMPLATE_SUBJECT"),
+			'BODY_TYPE'=>'html',
+			'MESSAGE'=>str_ireplace("\t", '',GetMessage("codematrix.popup_TEMPLATE_MESSAGE"))
+		);
+		\CodeMatrix\Popup\Mail::addTemplate($template);
+
+		$template['EVENT_NAME']='CODEMATRIX_POPUP_ROULETTE_SEND';
 		$template['SUBJECT']=GetMessage("codematrix.popup_TEMPLATE_SUBJECT_ROULETTE");
-		$template['BODY_TYPE']='html';
 		$template['MESSAGE']=str_ireplace("\t", '',GetMessage("codematrix.popup_TEMPLATE_MESSAGE_ROULETTE"));
-		$obTemplate->Add($template);
+		\CodeMatrix\Popup\Mail::addTemplate($template);
 	}
+
 	function UnInstallPostTemplate(){
-		$templates = CEventMessage::GetList($by="site_id",$order="desc",array('TYPE_ID'=>'CODEMATRIX_POPUP_SEND_COUPON'));
-		$emessage = new CEventMessage;
-		while($template=$templates->GetNext()){
-			$emessage->Delete((int)$template['ID']);
-		}
-		$templates = CEventMessage::GetList($by="site_id",$order="desc",array('TYPE_ID'=>'CODEMATRIX_POPUP_ROULETTE_SEND'));
-		$emessage = new CEventMessage;
-		while($template=$templates->GetNext()){
-			$emessage->Delete((int)$template['ID']);
-		}
+		\CodeMatrix\Popup\Mail::deleteTemplates('CODEMATRIX_POPUP_SEND_COUPON');
+		\CodeMatrix\Popup\Mail::deleteTemplates('CODEMATRIX_POPUP_ROULETTE_SEND');
 	}
+
 	function InstallFiles(){
 		
 		if (is_dir($p = $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.self::MODULE_ID.'/install/components')){

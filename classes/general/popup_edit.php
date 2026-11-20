@@ -94,8 +94,11 @@ class popupEdit extends popup{
 
 		$settings['view']['type'] = $type;
 		$colorStyle = $request->getPost('color_style');
-		if (!is_string($colorStyle) || $colorStyle === '') {
-			return array('status' => 'error', 'data' => 'Не указана корректная цветовая тема попапа.');
+		if ($colorStyle === null) {
+			$colorStyle = $selectedTemplate['color_style'] ?? '';
+		}
+		if (!is_string($colorStyle)) {
+			return array('status' => 'error', 'data' => 'Некорректно задана цветовая тема попапа.');
 		}
 		$settings['view']['color_style'] = $colorStyle;
 		$settings['view']['template'] = $templateName;

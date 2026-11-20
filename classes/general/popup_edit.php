@@ -217,13 +217,14 @@ class popupEdit extends popup{
 					return array('status' => 'error', 'data' => 'Некорректный список товаров корзины.');
 				}
 				foreach($productIds as $nextProd){
+					if (empty($nextProd)) {
+						continue;
+					}
 					$productId = filter_var($nextProd, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1)));
 					if ($productId === false) {
 						return array('status' => 'error', 'data' => 'Список товаров содержит некорректный идентификатор.');
 					}
-					if(!empty($nextProd)){
-						$tmpProds[]=$productId;
-					}
+					$tmpProds[] = $productId;
 				}
 				$settings['condition'][$keyNextCond]=(count($tmpProds)==0)?'':$tmpProds;
 			}else{

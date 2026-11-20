@@ -5,6 +5,7 @@
 		"popup" => "classes/general/popup.php",
 		"popupEdit" => "classes/general/popup_edit.php",
 		"CodeMatrix\\Popup\\Mail" => "lib/mail.php",
-		"CodeMatrix\\Popup\\FilePath" => "lib/filepath.php"
+		"CodeMatrix\\Popup\\FilePath" => "lib/filepath.php",
+		"CodeMatrix\\Popup\\PublicRequestGuard" => "lib/publicrequestguard.php"
 	)
 );

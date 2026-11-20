@@ -293,28 +293,28 @@ if(!empty($request['id'])){
 	$typesArr=$editableWindow->getTypes();
 	while($arRes = $rsData->NavNext(true, "f_")){
 		$row =$lAdmin->AddRow($f_id, $arRes);
-		$row->AddViewField("ID", '<a href="./codematrix_popup.php?lang='.SITE_ID.'&id='.$f_id.'">'.$f_id.'</a>');
+		$row->AddViewField("ID", '<a href="./codematrix_popup.php?lang='.htmlspecialcharsbx(SITE_ID).'&id='.(int)$f_id.'">'.(int)$f_id.'</a>');
 		$row->AddViewField("SORT", $f_sort);
 		$row->AddInputField("SORT", array("size"=>10, 'value'=>$f_sort));
 
 		$row->AddCheckField("active");
 
 		$row->AddInputField("NAME", array("size"=>15, 'value'=>$f_name));
-		$row->AddViewField("NAME", '<a href="./codematrix_popup.php?lang='.SITE_ID.'&id='.$f_id.'">'.$f_name.'</a>');
+		$row->AddViewField("NAME", '<a href="./codematrix_popup.php?lang='.htmlspecialcharsbx(SITE_ID).'&id='.(int)$f_id.'">'.htmlspecialcharsbx($f_name).'</a>');
 		$f_type=(empty($typesArr[$f_type]))?$f_type:$typesArr[$f_type]['name'];
-		$row->AddViewField("TYPE", $f_type);
+		$row->AddViewField("TYPE", htmlspecialcharsbx($f_type));
 		$row->AddViewField("STAT_SHOW", $f_stat_show);
 		$row->AddViewField("STAT_TIME", popup::convertTimeFromSecond($f_stat_time));
 		$row->AddViewField("STAT_ACTION", $f_stat_action);
 
 		$f_settings=unserialize($arRes['settings']);
 
-		$row->AddViewField("MASK_IN", $f_settings['condition']['showOnlyPath']);
-		$row->AddViewField("MASK_OUT", $f_settings['condition']['hideOnlyPath']);
+		$row->AddViewField("MASK_IN", htmlspecialcharsbx($f_settings['condition']['showOnlyPath'] ?? ''));
+		$row->AddViewField("MASK_OUT", htmlspecialcharsbx($f_settings['condition']['hideOnlyPath'] ?? ''));
 		$tmpSites=implode(',',$f_settings['condition']['sites']);
 		$tmpSites=str_ireplace('all', '', $tmpSites);
 		$tmpSites=str_ireplace(',,', ',', $tmpSites);
-		$row->AddViewField("SITES", $tmpSites);
+		$row->AddViewField("SITES", htmlspecialcharsbx($tmpSites));
 
 
 		$arActions = Array();

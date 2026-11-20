@@ -12,7 +12,7 @@ if (!$request->isPost()) {
 	http_response_code(405);
 	die();
 }
-$popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
+$popupId = filter_var($request->getPost("idPopup"), FILTER_VALIDATE_INT, array(
 	"options" => array("min_range" => 1),
 ));
 $settings = ($popupId !== false && \CodeMatrix\Popup\PublicRequestGuard::isPopupRendered($popupId))
@@ -31,8 +31,8 @@ $props = $settings["view"]["props"];
 $ruleId = (int)($props["RULE_ID"] ?? 0);
 $groupId = (int)($props["USER_GROUP"] ?? 0);
 $mask = (string)($props["DISCOUNT_MASK"] ?? "");
-$email = $request->get("email");
-$addToTable = $request->get("addtotable");
+$email = $request->getPost("email");
+$addToTable = $request->getPost("addtotable");
 // Проверка уникальности определяется сохранёнными настройками, а не параметром клиента.
 
 if (
@@ -85,9 +85,9 @@ if (!$USER->IsAuthorized()) {
 		die();
 	}
 
-	$name = $request->get("NAME");
-	$lastName = $request->get("LAST_NAME");
-	$phone = $request->get("PHONE");
+	$name = $request->getPost("NAME");
+	$lastName = $request->getPost("LAST_NAME");
+	$phone = $request->getPost("PHONE");
 	$userFields = array(
 		"NAME" => is_string($name) ? $name : "",
 		"LAST_NAME" => is_string($lastName) ? $lastName : "",

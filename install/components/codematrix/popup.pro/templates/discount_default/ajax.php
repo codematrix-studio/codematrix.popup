@@ -1,70 +1,112 @@
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
-use Bitrix\Main\Application,
-Bitrix\Main\Web\Cookie,
-Bitrix\Main\UserTable,
-Bitrix\Main\UserGroupTable;
-\Bitrix\Main\Loader::IncludeModule("codematrix.popup");
-$popup=new popup;
-$res='';
-$email = '';
-if(isset($_REQUEST['email']))
-	$email=$_REQUEST['email'];
-if(isset($_REQUEST['email'])&&isset($_REQUEST['idPopup'])&&$_REQUEST['addtotable']=='Y'){
-	if($_REQUEST['unique']=='Y'){
-		if($popup->searchinMailList($email,$_REQUEST['idPopup'])){
-            global $USER;
-            if(!$USER->IsAuthorized()){
-                $user = UserTable::getList(array(
-                    'select' => array('ID'),
-                    'filter' => array('=EMAIL' => $email),
-                    'order' => array('ID' => 'DESC'),
-                    'limit' => 1,
-                ));
-                if($r=$user->fetch()){
-					$USER->Authorize($r['ID']);
-				}else{
-					$user = new CUser;
-                    $result=$USER->SimpleRegister($email);
-					$fields = Array(
-						"NAME"              => urldecode($_REQUEST['NAME']),
-						"LAST_NAME"         => urldecode($_REQUEST['LAST_NAME']),
-						"PERSONAL_PHONE"    => urldecode($_REQUEST['PHONE']),
-					);
-					$user->Update($USER->GetID(),$fields);
-                }
-            }
-			$userID=$USER->GetID();
-			$groupId = (int)$_REQUEST['group'];
-			if ($groupId > 0) {
-				$groupLink = UserGroupTable::getList(array(
-					'select' => array('USER_ID'),
-					'filter' => array(
-						'=USER_ID' => $userID,
-						'=GROUP_ID' => $groupId,
-					),
-					'limit' => 1,
-				))->fetch();
+<?php
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 
-				if (!$groupLink) {
-					UserGroupTable::add(array(
-						'USER_ID' => $userID,
-						'GROUP_ID' => $groupId,
-					));
-				}
-			}
-			$res = $popup->getCoupon($_REQUEST['id'],'infinite',$email,$_REQUEST['idPopup'],'',$_REQUEST['MASK']);
-			$popup->insertToMailList($email,'',$_REQUEST['idPopup']);
-            $context = Application::getInstance()->getContext();
-            $responce = $context->getResponse();
-			$cookie = new Cookie("codematrixPopupFilling_".$_REQUEST['idPopup'], 'Y', time()+864000000);
-			$cookie->setDomain($context->getServer()->getHttpHost());
-			$cookie->setHttpOnly(false);
-			$responce->addCookie($cookie);
-			$context->getResponse()->flush("");
-			echo $res;
-		}else{
-			echo 'not_unique';
-		}
+if (!\Bitrix\Main\Loader::includeModule("codematrix.popup")) {
+	die();
+}
+
+$request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
+$popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
+	"options" => array("min_range" => 1),
+));
+$settings = ($popupId !== false) ? (new popup())->getSetting($popupId) : false;
+
+if (
+	!is_array($settings)
+	|| ($settings["view"]["type"] ?? "") !== "discount"
+	|| !is_array($settings["view"]["props"] ?? null)
+) {
+	die();
+}
+
+$props = $settings["view"]["props"];
+$ruleId = (int)($props["RULE_ID"] ?? 0);
+$groupId = (int)($props["USER_GROUP"] ?? 0);
+$mask = (string)($props["DISCOUNT_MASK"] ?? "");
+$email = $request->get("email");
+$addToTable = $request->get("addtotable");
+$unique = $request->get("unique");
+
+if (
+	$ruleId <= 0
+	|| !in_array($addToTable, array("Y"), true)
+	|| !is_string($email)
+	|| !filter_var($email, FILTER_VALIDATE_EMAIL)
+	|| ($props["EMAIL_ADD2BASE"] ?? "N") !== "Y"
+) {
+	die();
+}
+
+$popup = new popup();
+if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y" && $unique === "Y") {
+	if (!$popup->searchinMailList($email, $popupId)) {
+		echo "not_unique";
+		die();
 	}
 }
+
+global $USER;
+if (!$USER->IsAuthorized()) {
+	$userRecord = \Bitrix\Main\UserTable::getList(array(
+		"select" => array("ID"),
+		"filter" => array("=EMAIL" => $email),
+		"order" => array("ID" => "DESC"),
+		"limit" => 1,
+	))->fetch();
+
+	if (!$userRecord) {
+		$user = new CUser();
+		$registerResult = $USER->SimpleRegister($email);
+		if (!$registerResult || !$USER->IsAuthorized()) {
+			die();
+		}
+
+		$userFields = array(
+			"NAME" => (string)$request->get("NAME"),
+			"LAST_NAME" => (string)$request->get("LAST_NAME"),
+			"PERSONAL_PHONE" => (string)$request->get("PHONE"),
+		);
+		$user->Update((int)$USER->GetID(), $userFields);
+	}
+}
+
+// Не авторизуем существующего пользователя только по знанию его email.
+// Группу выдаём только текущему авторизованному пользователю.
+$userId = (int)$USER->GetID();
+if ($userId > 0 && $groupId > 0) {
+	$groupLink = \Bitrix\Main\UserGroupTable::getList(array(
+		"select" => array("USER_ID"),
+		"filter" => array(
+			"=USER_ID" => $userId,
+			"=GROUP_ID" => $groupId,
+		),
+		"limit" => 1,
+	))->fetch();
+
+	if (!$groupLink) {
+		\Bitrix\Main\UserGroupTable::add(array(
+			"USER_ID" => $userId,
+			"GROUP_ID" => $groupId,
+		));
+	}
+}
+
+$result = $popup->getCoupon($ruleId, "infinite", $email, $popupId, "", $mask);
+if ($result !== false && $result !== null) {
+	$popup->insertToMailList($email, "", $popupId);
+
+	$context = \Bitrix\Main\Application::getInstance()->getContext();
+	$cookie = new \Bitrix\Main\Web\Cookie(
+		"codematrixPopupFilling_" . $popupId,
+		"Y",
+		time() + 864000000
+	);
+	$cookie->setDomain($context->getServer()->getHttpHost());
+	$cookie->setHttpOnly(false);
+	$context->getResponse()->addCookie($cookie);
+	$context->getResponse()->flush("");
+
+	echo $result;
+}
+
 die();

@@ -48,6 +48,8 @@ $cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("disco
 if ($cachedResponse !== null) {
 	if (isset($cachedResponse["response"])) {
 		echo $cachedResponse["response"];
+	} else {
+		echo "coupon_error";
 	}
 	die();
 }

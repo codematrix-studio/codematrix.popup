@@ -52,13 +52,33 @@ function imageBusy($popupArr, $img){
 	}
 	return false;
 }
-if(!empty($request['action_button'])&&$request['action_button']=='copy'&&!empty($request['ID'])){
-	$editableWindow=new popupEdit();
-	$newIdPopup=$editableWindow->CopyPopup($request['ID']);
-	global $APPLICATION;
-	$CURRENT_PAGE = ($request->isHttps()) ? "https://" : "http://";
-	$CURRENT_PAGE .= $_SERVER["HTTP_HOST"];
-	header("Location: ".$CURRENT_PAGE."/bitrix/admin/codematrix_popup.php?id=".$newIdPopup);
+if ($request->getPost('action_button') === 'copy') {
+	if (!$request->isPost() || !check_bitrix_sessid()) {
+		http_response_code(403);
+		die();
+	}
+
+	$sourcePopupId = filter_var(
+		$request->getPost('ID'),
+		FILTER_VALIDATE_INT,
+		array('options' => array('min_range' => 1))
+	);
+
+	if ($sourcePopupId === false) {
+		http_response_code(400);
+		die();
+	}
+
+	$editableWindow = new popupEdit();
+	$newIdPopup = (int)$editableWindow->CopyPopup($sourcePopupId);
+	$redirectUrl = '/bitrix/admin/codematrix_popup.php';
+
+	if ($newIdPopup > 0) {
+		$redirectUrl .= '?id=' . $newIdPopup;
+	}
+
+	LocalRedirect($redirectUrl);
+	die();
 }
 // Обработка AJAX-команд.
 if(!empty($request['ajax']) && $request['ajax']=='y'){
@@ -176,6 +196,18 @@ if(!empty($request['id'])){
 	$sTableID = $editableWindow->getTableSetting();
 	$oSort = new CAdminSorting($sTableID, "ID", "desc");
 	$lAdmin = new CAdminList($sTableID, $oSort);
+
+	// Защищаем пакетные изменения и редактирование списка CSRF-токеном Bitrix.
+	$hasListMutation = $request->isPost()
+		&& (
+			!empty($request->getPost('action'))
+			|| !empty($request->getPost('FIELDS'))
+		);
+
+	if ($hasListMutation && !check_bitrix_sessid()) {
+		http_response_code(403);
+		die();
+	}
 
 	if($lAdmin->EditAction()){
 		foreach($FIELDS as $ID=>$arFields){
@@ -341,10 +373,13 @@ if(!empty($request['id'])){
 			"TEXT"=>GetMessage("codematrix.popup_TABLE_EDIT"),
 			"ACTION"=>$lAdmin->ActionRedirect("./codematrix_popup.php?id=".$f_id)
 		);
+		$copyConfirm = CUtil::JSEscape(GetMessage('codematrix.popup_TABLE_COPY_CONFIRM'));
+		$copyPopupId = (int)$f_id;
+		$copySessid = CUtil::JSEscape(bitrix_sessid());
 		$arActions[]=array(
 			"ICON"=>"copy",
 			"TEXT"=>GetMessage("codematrix.popup_TABLE_COPY"),
-			"ACTION"=>"if(confirm('".GetMessage('codematrix.popup_TABLE_COPY_CONFIRM')."')) ".$lAdmin->ActionRedirect("codematrix_popup.php?action_button=copy&ID=".$f_id)
+			"ACTION"=>"if(confirm('".$copyConfirm."')){var copyForm=document.createElement('form');copyForm.method='post';copyForm.action='codematrix_popup.php';var copyFields=[['action_button','copy'],['ID','".$copyPopupId."'],['sessid','".$copySessid."']];for(var i=0;i<copyFields.length;i++){var copyInput=document.createElement('input');copyInput.type='hidden';copyInput.name=copyFields[i][0];copyInput.value=copyFields[i][1];copyForm.appendChild(copyInput);}document.body.appendChild(copyForm);copyForm.submit();}"
 		);
 		$arActions[] = array(
 			"ICON"=>"delete",

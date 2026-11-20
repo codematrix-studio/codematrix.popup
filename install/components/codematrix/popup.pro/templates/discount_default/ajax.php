@@ -43,6 +43,12 @@ if (
 	die();
 }
 
+$cachedResponse = CodeMatrixPopupPublicRequestGuard::getCachedResponse("discount", $popupId);
+if ($cachedResponse !== null) {
+	echo $cachedResponse["response"];
+	die();
+}
+
 $popup = new popup();
 if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y") {
 	if (!$popup->searchinMailList($email, $popupId)) {
@@ -89,6 +95,9 @@ if ($result === false) {
 	die();
 }
 if ($result !== null) {
+	// Сохраняем ответ до дополнительных действий, чтобы повтор не создавал новый купон.
+	CodeMatrixPopupPublicRequestGuard::rememberResponse("discount", $popupId, (string)$result);
+
 	// Группу назначаем только после успешного создания купона.
 	$userId = (int)$USER->GetID();
 	if ($userId > 0 && $groupId > 0) {

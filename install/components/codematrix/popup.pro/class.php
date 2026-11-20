@@ -209,7 +209,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				if (
 					$cenderData
 					&& ($tmpRes['USE_CONSENT_SHOW'] ?? 'N') === 'Y'
-					&& !empty($tmpRes['AGREEMENTS'])
+					&& !empty($tmpRes['CONSENT_LIST'])
 					&& $request->getPost('use_consent') !== 'Y'
 				) {
 					$errors['CONSENT'] = 'Необходимо подтвердить согласие на обработку персональных данных.';

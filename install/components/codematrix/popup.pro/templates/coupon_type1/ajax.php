@@ -49,9 +49,16 @@ if (
 	die();
 }
 
-$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("coupon", $popupId);
+$requestFingerprint = hash("sha256", serialize(array(
+	$ruleId,
+	$addToTable,
+	is_string($email) ? mb_strtolower(trim($email)) : "",
+)));
+$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse("coupon", $popupId, $requestFingerprint);
 if ($cachedResponse !== null) {
-	echo $cachedResponse["response"];
+	if (isset($cachedResponse["response"])) {
+		echo $cachedResponse["response"];
+	}
 	die();
 }
 
@@ -79,7 +86,7 @@ if ($addToTable === "Y") {
 	}
 	if ($result !== null) {
 		$popup->insertToMailList($email, "", $popupId);
-		\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result);
+		\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result, $requestFingerprint);
 		echo $result;
 	}
 	die();
@@ -100,7 +107,7 @@ if ($addToTable === null || $addToTable === "N") {
 		die();
 	}
 	if ($result !== null) {
-		\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result);
+		\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result, $requestFingerprint);
 		echo $result;
 	}
 }

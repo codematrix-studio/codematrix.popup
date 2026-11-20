@@ -309,15 +309,16 @@ class popupEdit extends popup{
 					$copyTemplate=$nextTemplate;
 					$copyTemplate['name']=$newname;
 					$copyTemplate['active']=false;
-					$ID = $DB->Insert($this->tableTemplates, array(
-						'type'=>"'".$DB->ForSql($type)."'",
-						'name'=>"'".$DB->ForSql($newname)."'",
-						'template'=>"'start'",
-					), $err_mess.__LINE__);
+					$saveResult = \\CodeMatrix\\Popup\\Model\\PopupTemplateTable::add(array(
+						'TYPE'=>$type,
+						'NAME'=>$newname,
+						'TEMPLATE'=>'start'
+					));
+					$ID = $saveResult->getId();
 					$copyTemplate['template']='custom_'.$ID;
-					$DB->Update($this->tableTemplates, array(
-						'template'=>"'".serialize($copyTemplate)."'",
-					),  "WHERE id=".$ID, $err_mess.__LINE__);
+					\\CodeMatrix\\Popup\\Model\\PopupTemplateTable::update($ID, array(
+						'TEMPLATE'=>serialize($copyTemplate)
+					));
 					CopyDirFiles($_SERVER["DOCUMENT_ROOT"].$oldPath, $_SERVER["DOCUMENT_ROOT"].$newPath.$ID, true, true, false);
 					if(LANG_CHARSET=='windows-1251'){
 						array_walk_recursive($copyTemplate, array($this, 'convertToUtf'));
@@ -343,10 +344,11 @@ class popupEdit extends popup{
 		$oldPath='/bitrix/components/codematrix/popup.pro/templates/'.$type.'_'.$template.'/themes/'.$colorstyle.'.css';
 		if(file_exists($_SERVER["DOCUMENT_ROOT"].$oldPath)){
 			global $DB;
-			$ID = $DB->Insert($this->tableColorThemes, array(
-				'template'=>'"'.$type.'_'.$template.'"',
-				'name'=>"'".$DB->ForSql($newname)."'"
-			), $err_mess.__LINE__);
+			$saveResult = \\CodeMatrix\\Popup\\Model\\PopupColorTable::add(array(
+				'TEMPLATE'=>$type.'_'.$template,
+				'NAME'=>$newname
+			));
+			$ID = $saveResult->getId();
 			$newPath=str_replace($colorstyle, 'custom_'.$ID, $oldPath);
 			copy($_SERVER["DOCUMENT_ROOT"].$oldPath , $_SERVER["DOCUMENT_ROOT"].$newPath);
 

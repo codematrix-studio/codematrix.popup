@@ -42,6 +42,13 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 			'countPages' => max(1, (int)($_SESSION['codematrix_popup_count_pages'] ?? 1)),
 		));
 	};
+	// Сессионные маркеры статистики должны иметь предсказуемый тип.
+	if (!isset($_SESSION['codematrix_popup_rendered']) || !is_array($_SESSION['codematrix_popup_rendered'])) {
+		$_SESSION['codematrix_popup_rendered'] = array();
+	}
+	if (!isset($_SESSION['codematrix_popup_statistic_started']) || !is_array($_SESSION['codematrix_popup_statistic_started'])) {
+		$_SESSION['codematrix_popup_statistic_started'] = array();
+	}
 	if(!empty($reqArr['type'])){
 		if($reqArr['type']=='getPopups'){
 			if(empty($_SESSION['codematrix_popup_count_pages'])){

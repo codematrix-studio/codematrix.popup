@@ -3,3 +3,4 @@ $MESS['flp.discount_send']='Номер дисконтной карты был о
 $MESS['flp.not_new']='На данный Email уже создана дисконтная карта!';
 $MESS['flp.not_valid']='Некорректный Email!';
 ?>
+$MESS['flp.auth_required']='Для получения скидки войдите в личный кабинет.';

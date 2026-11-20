@@ -126,6 +126,7 @@ $discountTitle = preg_replace_callback(
             <span class="not_new"><?=GetMessage('flp.not_new')?></span>
             <span class="not_valid"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?></span>
             <span class="auth_required" style="display:none;"><?=GetMessage('flp.auth_required')?></span>
+            <span class="consent_required" style="display:none;">Необходимо подтвердить согласие на обработку персональных данных.</span>
             <span class="coupon_error" style="display:none;"><?=GetMessage('flp.coupon_error')?></span>
 			<label class="<?= (($arResult['EMAIL_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> <?= (($arResult['EMAIL_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> one email">
 				<input <?= (($arResult['EMAIL_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_TITLE'] ?? ''))?>" />
@@ -166,6 +167,7 @@ $discountTitle = preg_replace_callback(
 		var data = {
 			idPopup: <?= (int)$arParams['ID_POPUP'] ?>,
 			addtotable: <?=json_encode((string)$arResult['EMAIL_ADD2BASE'])?>,
+			use_consent: (f.querySelector('input[name="use_consent"]') && f.querySelector('input[name="use_consent"]').checked) ? 'Y' : 'N',
 			email: email.value,
 			NAME: name,
 			LAST_NAME: lastname,
@@ -185,6 +187,9 @@ $discountTitle = preg_replace_callback(
 						f.querySelector('span.not_new').style.display='inline-block';
 					}else if(data=='auth_required'){
 						f.querySelector('span.auth_required').style.display='inline-block';
+						return;
+					}else if(data=='consent_required'){
+						f.querySelector('span.consent_required').style.display='inline-block';
 						return;
 					}else if(data=='coupon_error'){
 						f.querySelector('span.coupon_error').style.display='inline-block';

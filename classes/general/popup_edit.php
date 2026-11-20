@@ -219,7 +219,7 @@ class popupEdit extends popup{
 						return array('status' => 'error', 'data' => 'Список товаров содержит некорректный идентификатор.');
 					}
 					if(!empty($nextProd)){
-						$tmpProds[]=$nextProd;
+						$tmpProds[]=$productId;
 					}
 				}
 				$settings['condition'][$keyNextCond]=(count($tmpProds)==0)?'':$tmpProds;

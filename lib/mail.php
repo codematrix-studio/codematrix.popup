@@ -15,7 +15,13 @@ use Bitrix\Main\SiteTable;
  */
 class Mail
 {
-    public static function getTemplates($eventName)
+        /**
+     * Возвращает шаблоны почтовых событий с указанным кодом.
+     *
+     * @param string $eventName Код почтового события.
+     * @return array<int, array<string, mixed>>
+     */
+public static function getTemplates($eventName)
     {
         $result = EventMessageTable::getList([
             'select' => ['ID', 'EVENT_NAME'],
@@ -26,7 +32,16 @@ class Mail
         return $result->fetchAll();
     }
 
-    public static function ensureEventType($eventName, $languageId, $name, $description)
+        /**
+     * Находит тип почтового события или создаёт его для указанного языка.
+     *
+     * @param string $eventName Код почтового события.
+     * @param string $languageId Идентификатор языка.
+     * @param string $name Название типа события.
+     * @param string $description Описание типа события.
+     * @return int|false ID типа события либо false при ошибке создания.
+     */
+public static function ensureEventType($eventName, $languageId, $name, $description)
     {
         $eventName = (string)$eventName;
         $languageId = (string)$languageId;
@@ -55,7 +70,14 @@ class Mail
         return $result->isSuccess() ? (int)$result->getId() : false;
     }
 
-    public static function addTemplate(array $fields)
+        /**
+     * Создаёт почтовый шаблон и привязывает его к переданным сайтам из поля LID.
+     * При ошибке создания связи удаляет созданный шаблон.
+     *
+     * @param array $fields Поля шаблона; LID содержит один ID сайта или массив ID.
+     * @return int|false ID созданного шаблона либо false при ошибке.
+     */
+public static function addTemplate(array $fields)
     {
         $siteIds = $fields['LID'] ?? [];
         if (!is_array($siteIds)) {
@@ -99,7 +121,13 @@ class Mail
         return $templateId;
     }
 
-    public static function deleteTemplate($templateId)
+        /**
+     * Удаляет почтовый шаблон и его связи с сайтами.
+     *
+     * @param int $templateId ID почтового шаблона.
+     * @return bool Результат удаления шаблона.
+     */
+public static function deleteTemplate($templateId)
     {
         $templateId = (int)$templateId;
         if ($templateId <= 0) {
@@ -121,7 +149,13 @@ class Mail
         return EventMessageTable::delete($templateId)->isSuccess();
     }
 
-    public static function deleteTemplates($eventName)
+        /**
+     * Удаляет все почтовые шаблоны с указанным кодом события.
+     *
+     * @param string $eventName Код почтового события.
+     * @return void
+     */
+public static function deleteTemplates($eventName)
     {
         $templates = EventMessageTable::getList([
             'select' => ['ID'],
@@ -133,7 +167,13 @@ class Mail
         }
     }
 
-    public static function deleteEventTypes($eventName)
+        /**
+     * Удаляет все типы почтовых событий с указанным кодом.
+     *
+     * @param string $eventName Код почтового события.
+     * @return void
+     */
+public static function deleteEventTypes($eventName)
     {
         $types = EventTypeTable::getList([
             'select' => ['ID'],
@@ -145,7 +185,13 @@ class Mail
         }
     }
 
-    public static function send(array $fields)
+        /**
+     * Отправляет почтовое событие средствами D7 Mail API.
+     *
+     * @param array $fields Параметры события, включая EVENT_NAME и C_FIELDS.
+     * @return mixed Результат Bitrix\\Main\\Mail\\Event::send().
+     */
+public static function send(array $fields)
     {
         return Event::send($fields);
     }

@@ -65,10 +65,13 @@ if (!$USER->IsAuthorized()) {
 		die();
 	}
 
+	$name = $request->get("NAME");
+	$lastName = $request->get("LAST_NAME");
+	$phone = $request->get("PHONE");
 	$userFields = array(
-		"NAME" => (string)$request->get("NAME"),
-		"LAST_NAME" => (string)$request->get("LAST_NAME"),
-		"PERSONAL_PHONE" => (string)$request->get("PHONE"),
+		"NAME" => is_string($name) ? $name : "",
+		"LAST_NAME" => is_string($lastName) ? $lastName : "",
+		"PERSONAL_PHONE" => is_string($phone) ? $phone : "",
 	);
 	$user->Update((int)$USER->GetID(), $userFields);
 }

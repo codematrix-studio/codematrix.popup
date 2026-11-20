@@ -4,7 +4,10 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 }
 
 $linkHref = trim((string)($arResult["HREF_LINK"] ?? ""));
-if (preg_match("/^(?:javascript|data|vbscript):/i", $linkHref)) {
+if (
+	preg_match("/^[a-z][a-z0-9+.-]*:/i", $linkHref)
+	&& !preg_match("/^https?:\\/\\//i", $linkHref)
+) {
 	$linkHref = "#";
 }
 $popupId = (int)($arParams["ID_POPUP"] ?? 0);

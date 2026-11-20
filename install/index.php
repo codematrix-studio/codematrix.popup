@@ -1,6 +1,7 @@
 <?
-require_once dirname(__DIR__).'/lib/mail.php';
 use Bitrix\Main;
+
+require_once dirname(__DIR__).'/lib/mail.php';
 IncludeModuleLangFile(__FILE__);
 Class codematrix_popup extends CModule
 {

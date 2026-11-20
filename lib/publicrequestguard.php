@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeMatrix\\Popup;
+namespace CodeMatrix\Popup;
 
 /**
  * Ограничивает повторное выполнение публичных операций в рамках сессии.

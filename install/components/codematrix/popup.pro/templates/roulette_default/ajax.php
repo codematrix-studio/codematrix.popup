@@ -130,12 +130,17 @@ if ($mode === "draw") {
 		$sendJson(array("status" => "error", "code" => "invalid_roulette"));
 	}
 
-	$rouletteItems = array_values(array_filter($rouletteItems, static function ($element) {
-		return is_array($element) && isset($element["rule"]) && is_scalar($element["rule"]);
-	}));
-
+	// Повторяем порядок элементов компонента: служебный ключ count не является сектором.
+	unset($rouletteItems["count"]);
+	$rouletteItems = array_values($rouletteItems);
 	if (!$rouletteItems) {
 		$sendJson(array("status" => "error", "code" => "invalid_roulette"));
+	}
+
+	foreach ($rouletteItems as $element) {
+		if (!is_array($element) || !isset($element["rule"]) || !is_scalar($element["rule"])) {
+			$sendJson(array("status" => "error", "code" => "invalid_roulette"));
+		}
 	}
 
 	try {

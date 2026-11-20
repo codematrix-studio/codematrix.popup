@@ -25,19 +25,29 @@ class Tools{
 	}
 	public static function returnPropId($iblock_id, $prop_code, $prop_name){
 		\Bitrix\Main\Loader::includeModule('iblock');
-		$properties = \CIBlockProperty::GetList(Array("sort"=>"asc", "name"=>"asc"), Array("IBLOCK_ID"=>$iblock_id, 'CODE'=>strtoupper($prop_code)));
-		if($prop_fields = $properties->GetNext()){
-			return $prop_fields["ID"];
+		$iblockId = (int)$iblock_id;
+		$propertyCode = strtoupper((string)$prop_code);
+		$property = \Bitrix\Iblock\PropertyTable::getList(array(
+			'select' => array('ID'),
+			'filter' => array(
+				'=IBLOCK_ID' => $iblockId,
+				'=CODE' => $propertyCode
+			),
+			'order' => array('SORT' => 'ASC', 'NAME' => 'ASC'),
+			'limit' => 1
+		))->fetch();
+		if($property){
+			return $property['ID'];
 		}
-		$ibp = new \CIBlockProperty;
-		return $ibp->Add(array(
-			"NAME" => $prop_name,
-			"ACTIVE" => "Y",
-			"SORT" => "100",
-			"CODE" => strtoupper($prop_code),
-			"PROPERTY_TYPE" => "S",
-			"IBLOCK_ID" => $iblock_id
+		$result = \Bitrix\Iblock\PropertyTable::add(array(
+			'NAME' => (string)$prop_name,
+			'ACTIVE' => 'Y',
+			'SORT' => 100,
+			'CODE' => $propertyCode,
+			'PROPERTY_TYPE' => 'S',
+			'IBLOCK_ID' => $iblockId
 		));
+		return $result->isSuccess() ? $result->getId() : false;
 	}
 
 	public static function getUserGroup(){

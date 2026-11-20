@@ -35,12 +35,17 @@ $email = $request->getPost("email");
 $addToTable = $request->getPost("addtotable");
 // Проверка уникальности определяется сохранёнными настройками, а не параметром клиента.
 
+$consentRequired = ($props["USE_CONSENT_SHOW"] ?? "N") === "Y"
+	&& !empty($props["CONSENT_LIST"]);
+$consentValue = $request->getPost("use_consent");
+
 if (
 	$ruleId <= 0
 	|| !in_array($addToTable, array("Y"), true)
 	|| !is_string($email)
 	|| !filter_var($email, FILTER_VALIDATE_EMAIL)
 	|| ($props["EMAIL_ADD2BASE"] ?? "N") !== "Y"
+	|| ($consentRequired && $consentValue !== "Y")
 ) {
 	die();
 }
@@ -57,6 +62,24 @@ if ($cachedResponse !== null) {
 }
 
 $popup = new popup();
+
+// Сохраняем подтверждение согласия в журнале Битрикс до обработки персональных данных.
+if ($consentRequired) {
+	$consentData = array();
+	$referer = $_SERVER["HTTP_REFERER"] ?? "";
+	if (is_string($referer) && $referer !== "") {
+		$consentData["URL"] = $referer;
+	}
+	if (class_exists("\\Bitrix\\Main\\UserConsent\\Consent")) {
+		\\Bitrix\\Main\\UserConsent\\Consent::addByContext(
+			$props["CONSENT_LIST"],
+			"codematrix/popup",
+			$popupId,
+			$consentData
+		);
+	}
+}
+
 if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y") {
 	if (!$popup->searchinMailList($email, $popupId)) {
 		echo "not_unique";

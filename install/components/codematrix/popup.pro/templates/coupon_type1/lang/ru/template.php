@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS["POPUP_SALE"] = "Скидка";
 $MESS["POPUP_AVALIABLE"] = "Купон действует";
 $MESS["POPUP_DAYS_1"] = "день";

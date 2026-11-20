@@ -163,15 +163,21 @@ $discountTitle = preg_replace_callback(
 		var getContinue=true;
 		email = email.querySelector('input');
 		getContinue=validateEmail(email.value);
-		url+="?idPopup=<?= (int)$arParams['ID_POPUP'] ?>&addtotable="+encodeURIComponent(<?=json_encode((string)$arResult['EMAIL_ADD2BASE'])?>);
-		url+="&email="+encodeURIComponent(email.value);
-        url+='&NAME='+encodeURIComponent(name)+'&LAST_NAME='+encodeURIComponent(lastname)+'&PHONE='+encodeURIComponent(phone);
+		var data = {
+			idPopup: <?= (int)$arParams['ID_POPUP'] ?>,
+			addtotable: <?=json_encode((string)$arResult['EMAIL_ADD2BASE'])?>,
+			email: email.value,
+			NAME: name,
+			LAST_NAME: lastname,
+			PHONE: phone
+		};
 		if(getContinue){
 			if(!email.classList.contains('notshow')){
 				email.className="";
 			}
 			BX.ajax({
 				url:url,
+				data:data,
 				method:'POST',
 				onsuccess: function(data){
 					console.log(data);

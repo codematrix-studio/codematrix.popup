@@ -23,7 +23,7 @@ $props = $settings["view"]["props"];
 $rule = $request->get("id");
 $email = $request->get("email");
 $addToTable = $request->get("addtotable");
-$unique = $request->get("unique");
+// Проверка уникальности определяется сохранёнными настройками попапа.
 $requestedTiming = $request->get("avaliable");
 $timing = (string)($props["TIMING"] ?? "");
 $allowedResults = array();
@@ -60,7 +60,7 @@ if (
 	|| !is_string($email)
 	|| !filter_var($email, FILTER_VALIDATE_EMAIL)
 	|| !in_array($addToTable, array("Y", "N"), true)
-	|| !in_array($unique, array("Y", "N", null), true)
+
 ) {
 	die();
 }
@@ -71,12 +71,14 @@ if ($addToTable === "Y") {
 		die();
 	}
 
-	if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y" && $unique === "Y") {
+	if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y") {
 		if (!$popup->searchinMailList($email, $popupId)) {
 			echo "not_unique";
 			die();
 		}
 	}
+} elseif (($props["EMAIL_ADD2BASE"] ?? "N") === "Y") {
+	die();
 }
 
 $resultText = $allowedResults[$rule];

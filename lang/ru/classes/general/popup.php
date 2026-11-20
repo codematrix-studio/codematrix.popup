@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS['codematrix.popup_COND_ACTIVE'] = 'Активность';
 $MESS['codematrix.popup_COND_SORT'] = 'Сортировка';
 $MESS['codematrix.popup_COND_SITES'] = 'Показывать на сайтах';

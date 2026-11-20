@@ -1,4 +1,4 @@
-<?
+<?php
 namespace CodeMatrix\Popup;
 \Bitrix\Main\Loader::includeModule('iblock');
 use Bitrix\Main\Mail\Event;

@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS['GD_FL_RS_DATE_SUPPORT_TO'] = 'Обновления модуля доступны до <span>#DATE#</span>';
 $MESS['GD_FL_RS_EXPIRED_SOON'] = 'Техническая поддержка заканчивается <span>#DAYS_STR#</span>';
 $MESS['GD_FL_RS_EXPIRED'] = 'Для установки обновлений требуется продлить лицензию';

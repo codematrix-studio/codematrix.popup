@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS['codematrix.popup_EVENT_NAME_ROULETTE']='Отправка результата рулетки';
 $MESS['codematrix.popup_EVENT_NAME_DISCOUNT']='Отправка дисконтной карты';
 $MESS['codematrix.popup_EVENT_DESCRIPTION_ROULETTE']='#EMAIL# - Email

@@ -35,7 +35,7 @@ class Mail
             'select' => ['ID'],
             'filter' => [
                 '=EVENT_NAME' => $eventName,
-                '=LANGUAGE_ID' => $languageId,
+                '=LID' => $languageId,
             ],
             'limit' => 1,
         ])->fetch();
@@ -47,7 +47,7 @@ class Mail
         $result = EventTypeTable::add([
             'EVENT_NAME' => $eventName,
             'EVENT_TYPE' => 'email',
-            'LANGUAGE_ID' => $languageId,
+            'LID' => $languageId,
             'NAME' => (string)$name,
             'DESCRIPTION' => (string)$description,
         ]);

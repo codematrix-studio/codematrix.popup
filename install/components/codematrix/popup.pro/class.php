@@ -349,6 +349,6 @@ class CodeMatrixPopup extends \CBitrixComponent{
 		}
 		// Завершение подготовки данных согласия.
 		
-		$this->IncludeComponentTemplate($componentPage);
+		$this->IncludeComponentTemplate();
 	}
 }

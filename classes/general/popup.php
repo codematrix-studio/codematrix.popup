@@ -1062,10 +1062,13 @@ class popup{
 	}
 
 	private function getCustomColors($templates){
-		global $DB;
 		$additionalColorThemes=array();
-		$res = $DB->Query('select * from '.$this->tableColorThemes.' order by template, id;');
-		while($row = $res->Fetch()){
+		$res = \CodeMatrix\Popup\Model\PopupColorTable::getList(array(
+			'select'=>array('ID', 'TEMPLATE', 'NAME'),
+			'order'=>array('TEMPLATE'=>'ASC', 'ID'=>'ASC')
+		));
+		while($ormRow = $res->fetch()){
+			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 			$additionalColorThemes[$row['template']]['custom_'.$row['id']]=$row['name'].' ['.$row['id'].']';
 		}
 		$types=$this->getTypesPreset();

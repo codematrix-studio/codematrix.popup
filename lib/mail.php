@@ -126,9 +126,9 @@ class Mail
         $templates = EventMessageTable::getList([
             'select' => ['ID'],
             'filter' => ['=EVENT_NAME' => (string)$eventName],
-        ]);
+        ])->fetchAll();
 
-        while ($template = $templates->fetch()) {
+        foreach ($templates as $template) {
             self::deleteTemplate((int)$template['ID']);
         }
     }
@@ -138,9 +138,9 @@ class Mail
         $types = EventTypeTable::getList([
             'select' => ['ID'],
             'filter' => ['=EVENT_NAME' => (string)$eventName],
-        ]);
+        ])->fetchAll();
 
-        while ($type = $types->fetch()) {
+        foreach ($types as $type) {
             EventTypeTable::delete((int)$type['ID']);
         }
     }

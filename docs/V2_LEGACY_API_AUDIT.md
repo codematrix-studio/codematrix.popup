@@ -25,6 +25,9 @@
 - `CGroup::GetList()` — получение групп пользователей.
 - `CModule::IncludeModule("sale")` — старый способ подключения модуля; в этом же файле уже используется `Loader::includeModule()`.
 - `CSaleDiscount::GetByID()` — старый API скидок.
+- `CSaleBasket::GetBasketUserID()` и `CSaleBasket::GetList()` — старый API корзины.
+- `CCatalogSKU::getProductList()` — API каталога для сопоставления предложений и товаров.
+- `CJSCore::Init()` — подключение штатных JS-расширений ядра.
 - `CBitrixComponent` — используется для разрешения пути шаблона компонента.
 
 Предварительная классификация:
@@ -61,6 +64,9 @@
 Обнаружено:
 
 - `CFile::GetList()` и `CFile::Delete()`.
+- `CMain::IsHTTPS()` — определение протокола.
+- `CJSCore::RegisterExt()` и `CJSCore::Init()` — регистрация/подключение JS-расширений.
+- `CUtil::PhpToJSObject()` — сериализация PHP-данных для JS.
 - `CIBlockType::GetList()`, `CIBlockType::GetByIDLang()`, `CIBlock::GetList()`.
 - `CIBlockElement::GetList()`.
 - `CAdminSorting`, `CAdminList`, `CAdminResult`, `CDBResult`, `CAdminMessage`, `CAdminTabControl`.
@@ -78,6 +84,7 @@
 - `CUser::SetUserGroup()`.
 - `CIBlockElement::Add()`.
 - `CEvent::Send()`.
+- `CUtil::PhpToJSObject()` встречается в административных AJAX-ответах.
 - `CBitrixComponent` — базовый класс компонента.
 
 Классификация:
@@ -90,9 +97,19 @@
 Обнаружено:
 
 - `CUser::GetList()`.
-- `CUser::SetUserGroup()`.
+- `new CUser`.
+- `CUser::GetUserGroup()` и `CUser::SetUserGroup()`.
 
 Нужно проверить сценарий выдачи группы и фактический формат параметров запроса. Не менять до проверки совместимости и защиты входных данных.
+
+### `admin/codematrix_popup_ajax.php`
+
+Обнаружено:
+
+- `CUtil::PhpToJSObject()` для формирования ответов шести AJAX-действий.
+- `Application`/`Request` D7 уже используются для чтения параметров.
+
+Преобразование ответа на `Json::encode()` нельзя выполнять без фиксации фактического формата и проверки всех потребителей в JavaScript.
 
 ### `install/index.php`
 

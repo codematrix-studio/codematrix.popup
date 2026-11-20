@@ -206,14 +206,10 @@ if(!empty($request['id'])){
 	$oSort = new CAdminSorting($sTableID, "ID", "desc");
 	$lAdmin = new CAdminList($sTableID, $oSort);
 
-	// Защищаем пакетные изменения и редактирование списка CSRF-токеном Bitrix.
-	$hasListMutation = $request->isPost()
-		&& (
-			!empty($request->getPost('action'))
-			|| !empty($request->getPost('FIELDS'))
-		);
+	// Проверяем признаки изменения в любом источнике запроса, чтобы GET нельзя было использовать в обход защиты.
+	$hasListMutation = !empty($request->get('action')) || !empty($request->get('FIELDS'));
 
-	if ($hasListMutation && (!$moduleWriteAllowed || !check_bitrix_sessid())) {
+	if ($hasListMutation && (!$request->isPost() || !$moduleWriteAllowed || !check_bitrix_sessid())) {
 		http_response_code(403);
 		die();
 	}
@@ -227,7 +223,7 @@ if(!empty($request['id'])){
 	}
 
 	if($arID = $lAdmin->GroupAction()){
-		if($_REQUEST['action_target']=='selected'){
+		if($request->getPost('action_target')=='selected'){
 			$rsData = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 				'select' => array('ID')
 			));
@@ -239,7 +235,7 @@ if(!empty($request['id'])){
 			if(strlen($ID)<=0)
 				continue;
 			$ID = IntVal($ID);
-			switch($_REQUEST['action']){
+			switch($request->getPost('action')){
 				case "delete":
 					\CodeMatrix\Popup\Model\PopupTable::delete($ID);
 					break;
@@ -252,7 +248,7 @@ if(!empty($request['id'])){
 					));
 					$arFields = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($cData->fetch());
 					if($arFields){
-						$arFields["active"]=($_REQUEST['action']=="activate"?"Y":"N");
+						$arFields["active"]=($request->getPost('action')==="activate"?"Y":"N");
 						$tmpSetting = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($arFields['settings']);
 						if (empty($tmpSetting)) {
 							$lAdmin->AddGroupError(GetMessage("codematrix.popup_SAVE_ERROR")." ".GetMessage("codematrix.popup_POPUP_EMPTY"), $ID);

@@ -65,8 +65,11 @@ class popupEdit extends popup{
 		$strError = '';
 		$settings=array('view'=>array(), 'condition'=>array());
 
-		$type = (string)$request->getPost('type');
-		$templateName = (string)$request->getPost('template');
+		$type = $request->getPost('type');
+		$templateName = $request->getPost('template');
+		if (!is_string($type) || $type === '' || !is_string($templateName) || $templateName === '') {
+			return array('status' => 'error', 'data' => 'Не указаны корректные тип и шаблон попапа.');
+		}
 		$availableTemplates = $this->getTemplates();
 
 		if (!isset($availableTemplates[$type]) || !is_array($availableTemplates[$type])) {
@@ -90,11 +93,24 @@ class popupEdit extends popup{
 		}
 
 		$settings['view']['type'] = $type;
-		$settings['view']['color_style'] = $request->getPost('color_style');
+		$colorStyle = $request->getPost('color_style');
+		if (!is_string($colorStyle) || $colorStyle === '') {
+			return array('status' => 'error', 'data' => 'Не указана корректная цветовая тема попапа.');
+		}
+		$settings['view']['color_style'] = $colorStyle;
 		$settings['view']['template'] = $templateName;
 		$viewStructure = $selectedTemplate['props'];
 		foreach($viewStructure as $keyNextViewEl=>$nextViewEl){
 			$tmpPost=$request->getPost($keyNextViewEl);
+			if (
+				$tmpPost !== null
+				&& (
+					(is_array($nextViewEl) && !is_array($tmpPost))
+					|| (!is_array($nextViewEl) && !is_scalar($tmpPost))
+				)
+			) {
+				return array('status' => 'error', 'data' => 'Передано значение недопустимого типа для параметра «' . $keyNextViewEl . '».');
+			}
 			if($keyNextViewEl=='EMAIL_TEMPLATE'){
 				if($request->getPost('id_popup')=='new'){
 					$template['LID']=array();
@@ -167,6 +183,12 @@ class popupEdit extends popup{
 				$settings['condition']['timeInterval']='';
 				$tmpPeriodFrom=$request->getPost('period_from');
 				$tmpPeriodTo=$request->getPost('period_to');
+				if (
+					($tmpPeriodFrom !== null && !is_scalar($tmpPeriodFrom))
+					|| ($tmpPeriodTo !== null && !is_scalar($tmpPeriodTo))
+				) {
+					return array('status' => 'error', 'data' => 'Некорректно задан временной интервал.');
+				}
 				if(!empty($tmpPeriodFrom) || !empty($tmpPeriodTo)){
 					$settings['condition']['timeInterval']=$tmpPeriodFrom.'#'.$tmpPeriodTo;
 				}
@@ -174,13 +196,28 @@ class popupEdit extends popup{
 				// Получаем формат именно текущего сайта в формате, ожидаемом MakeTimeStamp().
 				$dateTimeFormat = \CSite::GetDateFormat('FULL', SITE_ID);
 
+				$dateValue = $request->getPost($keyNextCond);
+				if ($dateValue !== null && !is_scalar($dateValue)) {
+					return array('status' => 'error', 'data' => 'Некорректно задана дата показа попапа.');
+				}
 				$settings['condition'][$keyNextCond] = MakeTimeStamp(
-					$request->getPost($keyNextCond),
+					(string)$dateValue,
 					$dateTimeFormat
 				);
 			}elseif($keyNextCond=='saleIDProdInBasket'){
 				$tmpProds=array();
-				foreach($request->getPost('saleIDProdInBasket') as $nextProd){
+				$productIds = $request->getPost('saleIDProdInBasket');
+				if ($productIds === null) {
+					$productIds = array();
+				}
+				if (!is_array($productIds)) {
+					return array('status' => 'error', 'data' => 'Некорректный список товаров корзины.');
+				}
+				foreach($productIds as $nextProd){
+					$productId = filter_var($nextProd, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1)));
+					if ($productId === false) {
+						return array('status' => 'error', 'data' => 'Список товаров содержит некорректный идентификатор.');
+					}
 					if(!empty($nextProd)){
 						$tmpProds[]=$nextProd;
 					}
@@ -233,6 +270,15 @@ class popupEdit extends popup{
 		}
 		if($settings['view']['type']=='roulette'){
 			$countRow = $request->getPost("roulette_element_count");
+			if ($countRow === null) {
+				$countRow = 8;
+			}
+			$countRow = filter_var($countRow, FILTER_VALIDATE_INT, array(
+				'options' => array('min_range' => 1, 'max_range' => 100),
+			));
+			if ($countRow === false) {
+				return array('status' => 'error', 'data' => 'Количество элементов рулетки должно быть от 1 до 100.');
+			}
 			for($i=1;$i<=$countRow;$i++){
 				$settings['roulett'][$i]['text']=$request->getPost("roulette_".$i."_text");
 				$settings['roulett'][$i]['color']=$request->getPost("roulette_".$i."_color");
@@ -241,7 +287,10 @@ class popupEdit extends popup{
 			$settings['roulett']['count']=$countRow;
 		}
 		$serviceName=$request->getPost("service_name");
-		$serviceName=(!empty($serviceName))?$serviceName:GetMessage("codematrix.popup_TABCOND_SERVICE_NAME").'_'.$this->idPopup;
+		if ($serviceName !== null && !is_scalar($serviceName)) {
+			return array('status' => 'error', 'data' => 'Некорректное название попапа.');
+		}
+		$serviceName=(!empty($serviceName))?(string)$serviceName:GetMessage("codematrix.popup_TABCOND_SERVICE_NAME").'_'.$this->idPopup;
 		$arFieldsInsert=array(
 			'SORT'=>$request->getPost("sort"),
 			'ACTIVE'=>$request->getPost("active"),

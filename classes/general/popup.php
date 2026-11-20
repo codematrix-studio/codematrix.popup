@@ -880,9 +880,7 @@ class popup{
 		);
 		if (\Bitrix\Main\Loader::IncludeModule('sale')){
 			/* 9. Купон на скидку */
-			$template_message=CEventMessage::GetList($by="site_id", $order="desc", array('TYPE_ID'=>'CODEMATRIX_POPUP_SEND_COUPON'));
-			$serviceMessage=array();
-			while($t_m=$template_message->Fetch()){$serviceMessage[]=$t_m;}
+			$serviceMessage=\CodeMatrix\Popup\Mail::getTemplates('CODEMATRIX_POPUP_SEND_COUPON');
 			 $templates['coupon']=array(
 				array(
 					'template'=>'type1',
@@ -923,9 +921,7 @@ class popup{
 				),
 			);
 		}
-		$template_message_roulette=CEventMessage::GetList($by="site_id", $order="desc", array('TYPE_ID'=>'CODEMATRIX_POPUP_ROULETTE_SEND'));
-		$serviceMessageRoulette=array();
-		while($t_m_r=$template_message_roulette->Fetch()){$serviceMessageRoulette[]=$t_m_r;}
+		$serviceMessageRoulette=\CodeMatrix\Popup\Mail::getTemplates('CODEMATRIX_POPUP_ROULETTE_SEND');
 		$templates['roulette']=array(
 				array(
 					'template'=>'default',
@@ -966,9 +962,7 @@ class popup{
 		$templates['roulette'][0]['props']['POSITION_BOTTOM']='';
 		
 		if (\Bitrix\Main\Loader::IncludeModule('sale')){
-			$template_message_discount=CEventMessage::GetList($by="site_id", $order="desc", array('TYPE_ID'=>'CODEMATRIX_POPUP_DISCOUNT_SEND'));
-			$serviceMessageDiscount=array();
-			while($t_m_d=$template_message_discount->Fetch()){$serviceMessageDiscount[]=$t_m_d;}
+			$serviceMessageDiscount=\CodeMatrix\Popup\Mail::getTemplates('CODEMATRIX_POPUP_DISCOUNT_SEND');
 			$templates['discount']=array(array(
 				'template'=>'default',
 					'name'=>GetMessage("codematrix.popup_TYPE_NAME_DISCOUNT_T1"),

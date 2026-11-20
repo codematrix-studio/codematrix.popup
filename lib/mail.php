@@ -1,11 +1,11 @@
 <?php
-namespace CodeMatrix\\Popup;
+namespace CodeMatrix\Popup;
 
-use Bitrix\\Main\\Mail\\Event;
-use Bitrix\\Main\\Mail\\Internal\\EventMessageSiteTable;
-use Bitrix\\Main\\Mail\\Internal\\EventMessageTable;
-use Bitrix\\Main\\Mail\\Internal\\EventTypeTable;
-use Bitrix\\Main\\SiteTable;
+use Bitrix\Main\Mail\Event;
+use Bitrix\Main\Mail\Internal\EventMessageSiteTable;
+use Bitrix\Main\Mail\Internal\EventMessageTable;
+use Bitrix\Main\Mail\Internal\EventTypeTable;
+use Bitrix\Main\SiteTable;
 
 /**
  * D7-операции почтовой подсистемы модуля.

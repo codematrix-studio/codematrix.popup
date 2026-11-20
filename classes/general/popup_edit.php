@@ -220,26 +220,26 @@ class popupEdit extends popup{
 			}
 			$settings['roulett']['count']=$countRow;
 		}
-		global $DB;
 		$serviceName=$request->getPost("service_name");
 		$serviceName=(!empty($serviceName))?$serviceName:GetMessage("codematrix.popup_TABCOND_SERVICE_NAME").'_'.$this->idPopup;
 		$arFieldsInsert=array(
-			'sort'=>$DB->ForSql($request->getPost("sort")),
-			'active'=>"'".$DB->ForSql($request->getPost("active"))."'",
-			'name'=>"'".$DB->ForSql($serviceName)."'",
-			'type'=>"'".$DB->ForSql($request->getPost("type"))."'",
-			'settings'=>"'".$DB->ForSql(serialize($settings))."'"
+			'SORT'=>$request->getPost("sort"),
+			'ACTIVE'=>$request->getPost("active"),
+			'NAME'=>$serviceName,
+			'TYPE'=>$request->getPost("type"),
+			'SETTINGS'=>serialize($settings)
 		);
 		if(!empty($settings['contact']['posttemplate'])){
-			$arFieldsInsert['cont_posttemplate']=$settings['contact']['posttemplate'];
+			$arFieldsInsert['CONT_POSTTEMPLATE']=$settings['contact']['posttemplate'];
 		}
 		if(!empty($settings['contact']['iblock'])){
-			$arFieldsInsert['cont_iblock']=$settings['contact']['iblock'];
+			$arFieldsInsert['CONT_IBLOCK']=$settings['contact']['iblock'];
 		}
 		if($request->getPost("id_popup")=='new'){
-			$ID = $DB->Insert($this->tableSetting, $arFieldsInsert, $err_mess.__LINE__);
+			$saveResult = \\CodeMatrix\\Popup\\Model\\PopupTable::add($arFieldsInsert);
+			$ID = $saveResult->getId();
 		}else{
-			$DB->Update($this->tableSetting, $arFieldsInsert,  "WHERE id=".$request->getPost("id_popup"), $err_mess.__LINE__);
+			\\CodeMatrix\\Popup\\Model\\PopupTable::update($request->getPost("id_popup"), $arFieldsInsert);
 			$ID = $request->getPost("id_popup");
 		}
 		if(strlen($strError)>0){

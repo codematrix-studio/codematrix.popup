@@ -1,7 +1,11 @@
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
 use \Bitrix\Main\Application,
 	Bitrix\Main\Request,
-	Bitrix\Main\Localization\Loc,\n\tBitrix\Main\Page\Asset,
+	Bitrix\Main\Localization\Loc,
+	Bitrix\Main\Page\Asset,
+	Bitrix\Iblock\TypeTable,
+	Bitrix\Iblock\TypeLanguageTable,
+	Bitrix\Iblock\IblockTable,
 	Bitrix\Sale\Internals;
 	Loc::loadMessages(__FILE__);
 
@@ -443,20 +447,38 @@ if(empty($idPopup)){
 
 					<div id="edit_content"></div>
 	<?
-		$db_iblock_type = CIBlockType::GetList();
-		$iblockTypes=array();
-		while($ar_iblock_type = $db_iblock_type->Fetch()){
-			$arIBType = CIBlockType::GetByIDLang($ar_iblock_type["ID"], LANG);
-			$iblockTypes[$ar_iblock_type['ID']]=$arIBType['NAME'];
+		$typeLanguages = array();
+		$typeLanguageResult = TypeLanguageTable::getList(array(
+			'select' => array('IBLOCK_TYPE_ID', 'NAME'),
+			'filter' => array('=LANGUAGE_ID' => LANG)
+		));
+		while ($typeLanguage = $typeLanguageResult->fetch()) {
+			$typeLanguages[$typeLanguage['IBLOCK_TYPE_ID']] = $typeLanguage['NAME'];
 		}
-		$res = CIBlock::GetList(Array('TYPE'=>'ASC', 'NAME'=>'ASC'), Array(), false);
-		$avIblocks=array();
-		$tmpType='';
-		while($ar_res = $res->Fetch()){
-			if($tmpType!=$ar_res['IBLOCK_TYPE_ID']){
-				$tmpType=$ar_res['IBLOCK_TYPE_ID'];
+
+		$iblockTypes = array();
+		$iblockTypeResult = TypeTable::getList(array(
+			'select' => array('ID'),
+			'order' => array('ID' => 'ASC')
+		));
+		while ($iblockType = $iblockTypeResult->fetch()) {
+			$typeId = $iblockType['ID'];
+			if (isset($typeLanguages[$typeId])) {
+				$iblockTypes[$typeId] = $typeLanguages[$typeId];
 			}
-			$avIblocks[$tmpType][$ar_res['ID']]=$ar_res['NAME'];
+		}
+
+		$iblockResult = IblockTable::getList(array(
+			'select' => array('ID', 'NAME', 'IBLOCK_TYPE_ID'),
+			'order' => array('IBLOCK_TYPE_ID' => 'ASC', 'NAME' => 'ASC')
+		));
+		$avIblocks = array();
+		$tmpType = '';
+		while ($iblock = $iblockResult->fetch()) {
+			if ($tmpType != $iblock['IBLOCK_TYPE_ID']) {
+				$tmpType = $iblock['IBLOCK_TYPE_ID'];
+			}
+			$avIblocks[$tmpType][$iblock['ID']] = $iblock['NAME'];
 		}
 
 		$editArr=$editableWindow->getConditions();

@@ -16,8 +16,9 @@ final class PublicRequestGuard
      *
      * @param string $action Название публичной операции.
      * @param int $popupId Идентификатор попапа.
+     * @param string $fingerprint Хеш значимых параметров запроса без сохранения персональных данных.
      * @param int $windowSeconds Период защиты в секундах.
-     * @return array|null Массив с ключом response либо null, если запроса ещё не было.
+     * @return array|null Массив с response для точного повтора, blocked для другого запроса в период блокировки либо null.
      */
     public static function getCachedResponse($action, $popupId, $fingerprint = '', $windowSeconds = 60)
     {
@@ -60,6 +61,7 @@ final class PublicRequestGuard
      * @param string $action Название публичной операции.
      * @param int $popupId Идентификатор попапа.
      * @param string $response Ответ, который должен получить повторный запрос.
+     * @param string $fingerprint Хеш значимых параметров исходного запроса.
      * @return void
      */
     public static function rememberResponse($action, $popupId, $response, $fingerprint = '')

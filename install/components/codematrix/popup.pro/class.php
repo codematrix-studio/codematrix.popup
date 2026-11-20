@@ -31,7 +31,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 		return $params;
 	}
 
-		/**
+	/**
 	 * Формирует результат компонента и подключает выбранный шаблон попапа.
 	 *
 	 * @return mixed

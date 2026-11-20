@@ -274,10 +274,13 @@ class popupEdit extends popup{
 	}
 	
 	public function getAllPopups(){
-		global $DB;
-		$res = $DB->Query('select * from '.$this->tableSetting.' order by id;');
+		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
+			'select'=>array('ID', 'SETTINGS'),
+			'order'=>array('ID'=>'ASC')
+		));
 		$retArr=array();
-		while($row = $res->Fetch()){
+		while($ormRow = $res->fetch()){
+			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 			$retArr[$row['id']]=unserialize($row['settings']);
 		}
 		return $retArr;

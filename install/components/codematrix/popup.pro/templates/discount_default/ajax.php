@@ -86,7 +86,7 @@ if ($consentRequired) {
 			$popupId,
 			$consentData
 		);
-	} catch (\\Throwable $exception) {
+	} catch (\Throwable $exception) {
 		echo "coupon_error";
 		die();
 	}

@@ -250,8 +250,14 @@ class popupEdit extends popup{
 	
 	public function editFromTableList($id, $arFields){
 		global $DB;
-		$res = $DB->Query('select * from '.$this->tableSetting.' where id='.$id.' limit 1;');
-		 if($row = $res->Fetch()){
+		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+			'filter'=>array('=ID'=>$id),
+			'select'=>array('*'),
+			'limit'=>1
+		));
+		$ormRow = $res->fetch();
+		$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		 if($row){
 			 $tmpSetting=unserialize($row['settings']);
 			 $updFields=array();
 			 $updFields['active']="'N'";
@@ -362,9 +368,14 @@ class popupEdit extends popup{
 	
 	public function CopyPopup($id){
 		global $DB;
-		$res = $DB->Query('select sort,active,name,type,settings,cont_iblock,cont_posttemplate from '.$this->tableSetting.' where id='.$id);
+		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+			'filter'=>array('=ID'=>$id),
+			'select'=>array('SORT', 'ACTIVE', 'NAME', 'TYPE', 'SETTINGS', 'CONT_IBLOCK', 'CONT_POSTTEMPLATE')
+		));
 		$tmpFields=array();
-		if($r=$res->Fetch()){
+		$ormRow = $res->fetch();
+		$r = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		if($r){
 			foreach($r as $code=>$value)
 				$tmpFields[$code]="'".$DB->ForSql($value)."'";
 			$res=$DB->Insert($this->tableSetting,$tmpFields,$err_mess.__LINE__);

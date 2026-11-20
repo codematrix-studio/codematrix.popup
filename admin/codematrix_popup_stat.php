@@ -1,4 +1,4 @@
-<?
+<?php
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 use \Bitrix\Main\Application,
 	Bitrix\Main\Page\Asset,
@@ -20,4 +20,4 @@ echo GetMessage("codematrix.popup_STAT_TITLE");
 ?>
 
 CodeMatrix Popup STAT
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");?>
+<?phprequire($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");?>

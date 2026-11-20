@@ -1,1 +1,1 @@
-<? require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/codematrix.popup/admin/codematrix_popup_stat.php"); ?>
+<?php require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/codematrix.popup/admin/codematrix_popup_stat.php"); ?>

@@ -1317,9 +1317,14 @@ class popup{
 
 	public function getSetting($id=0){
 		if($id==0){return false;}
-		global $DB;
-		 $res = $DB->Query('select * from '.$this->tableSetting.' where id='.$id.' limit 1;');
-		 if($row = $res->Fetch()){
+		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+			'filter'=>array('=ID'=>$id),
+			'select'=>array('*'),
+			'limit'=>1
+		));
+		$ormRow = $res->fetch();
+		$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+		if($row){
 			 $retArr=unserialize($row['settings']);
 			 $retArr['service_name']=$row['name'];
 			 $retArr['row']=$row;

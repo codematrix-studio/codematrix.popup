@@ -190,6 +190,12 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						$reqValue = $request->getPost($keyContact);
 						if(isset($reqValue)){
 							$cenderData=true;
+							if (!is_scalar($reqValue)) {
+								$errors[$keyContact] = $tmpRes[$keyContact.'_TITLE'] ?: 'Некорректное значение поля.';
+								$tmpRes[$keyContact] = '';
+								continue;
+							}
+							$reqValue = (string)$reqValue;
 							$tmpRes[$keyContact]=$reqValue;
 							if(empty($reqValue) && $tmpRes[$keyContact.'_REQUIRED']=='Y'){
 								$errors[$keyContact]=$tmpRes[$keyContact.'_TITLE'];

@@ -26,9 +26,13 @@ $addToTable = $request->get("addtotable");
 // Проверка уникальности определяется сохранёнными настройками попапа.
 $requestedTiming = $request->get("avaliable");
 $timing = (string)($props["TIMING"] ?? "");
+$rouletteItems = $settings["roulett"] ?? array();
+if (!is_array($rouletteItems)) {
+	die();
+}
 $allowedResults = array();
 
-foreach (($settings["roulett"] ?? array()) as $element) {
+foreach ($rouletteItems as $element) {
 	if (is_array($element) && isset($element["rule"])) {
 		$allowedResults[(string)$element["rule"]] = (string)($element["text"] ?? "");
 	}

@@ -1,4 +1,4 @@
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
+<?phprequire($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
 use \Bitrix\Main\Application,
 	Bitrix\Main\Request,
 	Bitrix\Main\Localization\Loc,
@@ -412,7 +412,7 @@ if(empty($idPopup)){
 		(window.BX||top.BX).message({'JSADM_FILES':'<?=GetMessage("codematrix.popup_JSADM_FILES")?>'});
 	</script>
 	<section class="popup_detail"><form action="" enctype="multipart/form-data" method="post" name="detail_popup">
-		<input type="hidden" name="id_popup" value="<?=$idPopup?>" /><?
+		<input type="hidden" name="id_popup" value="<?=$idPopup?>" /><?php
 	$aTabs = array(
 		array("DIV" => "fl_popup_settings".$nextPopup["id"], "TAB" => GetMessage("codematrix.popup_TAB_SETTING_NAME"), "TITLE" => GetMessage("codematrix.popup_TAB_SETTING_DESC"), "ONSELECT"=>'selectPreviewTab()'),
 		array("DIV" => "fl_popup_condition".$nextPopup["id"], "TAB" => GetMessage("codematrix.popup_TAB_CONDITION_NAME"), "TITLE" => GetMessage("codematrix.popup_TAB_CONDITION_DESC")),
@@ -428,7 +428,7 @@ if(empty($idPopup)){
 		<td>
 			<h3><?=GetMessage("codematrix.popup_VIEWS_STEP_1")?></h3>
 			<div class="slide_type">
-			<?
+			<?php
 			$formType='';
 			foreach($types as $nextType){
 				$activeClass='';
@@ -441,7 +441,7 @@ if(empty($idPopup)){
 					<h4><?=$nextType['name']?></h4>
 					<img src="/bitrix/themes/.default/<?=$module_id?>/types/<?=$nextType['code']?>.jpg" alt="<?=$nextType['name']?>" />
 				</a>
-			<?}?>
+			<?php}?>
 			</div>
 			<input type="hidden" name="type" value="<?=$formType?>" />
 			<h3><?=GetMessage("codematrix.popup_VIEWS_STEP_2")?></h3>
@@ -458,7 +458,7 @@ if(empty($idPopup)){
 				<section>
 
 					<div id="edit_content"></div>
-	<?
+	<?php
 		$typeLanguages = array();
 		$typeLanguageResult = TypeLanguageTable::getList(array(
 			'select' => array('IBLOCK_TYPE_ID', 'NAME'),
@@ -538,22 +538,22 @@ if(empty($idPopup)){
 				<input type="checkbox" name="contact_save_to_iblock" value="Y"<?=$checkSaveToIblock?> />
 			</label>
 
-			<?if(count($avIblocks)>0){?>
+			<?phpif(count($avIblocks)>0){?>
 				<label class="pref">
 				    <span><?=GetMessage("codematrix.popup_CONTACT_SAVE_LIST_IBLOCK")?></span>
 
-					<select name="contact_iblock"><option value="">...</option><?
+					<select name="contact_iblock"><option value="">...</option><?php
 					$list='';
 					foreach($avIblocks as $keyType=>$nextType){?>
-						<optgroup label="<?=$iblockTypes[$keyType]?>"><?
+						<optgroup label="<?=$iblockTypes[$keyType]?>"><?php
 						foreach($nextType as $keyBlock=>$valBlock){
 							$selected=(!empty($editArr['contact']['iblock']) && $editArr['contact']['iblock']==$keyBlock)?' selected="selected"':'';
 							?>
 							<option value="<?=$keyBlock?>"<?=$selected?>><?=$valBlock?> [<?=$keyBlock?>]</option>
-						<?}?></optgroup>
-					<?}?></select>
+						<?php}?></optgroup>
+					<?php}?></select>
 				</label>
-			<?}
+			<?php}
 			if (\Bitrix\Main\ModuleManager::isModuleInstalled('sender')){?>
 			<label class="pref">
 			    <span><?=GetMessage("codematrix.popup_CONTACT_SAVE_TO_LIST")?></span>
@@ -571,7 +571,7 @@ if(empty($idPopup)){
 				</script>
 			    <input type="checkbox" name="contact_save_to_list" value="Y"<?=$checkSaveToList?> />
 			</label>
-			<?}?>
+			<?php}?>
 			<label class="pref">
 				<span><?=GetMessage("codematrix.popup_CONTACT_REGISTER")?></span>
 				<span class="flp-item-hint" id="hint_contact_register">?</span>
@@ -606,7 +606,7 @@ if(empty($idPopup)){
 					hint:'<?=GetMessage("codematrix.popup_TIMER_ENABLE_HINT")?>'
 				});
 			</script>
-			<?$checkTimer=($editArr['timer']['enabled']=='Y')?'checked="checked"':'';?>
+			<?php$checkTimer=($editArr['timer']['enabled']=='Y')?'checked="checked"':'';?>
 			<input type="checkbox" name="timer_enable" value="Y" <?=$checkTimer?>>
 		</label>
 		<label class="pref">
@@ -629,7 +629,7 @@ if(empty($idPopup)){
 			</div>
 		</label>
 		<label class="pref">
-			<?//var_dump($_POST["timer_text"]);?>
+			<?php//var_dump($_POST["timer_text"]);?>
 			<span><?=GetMessage("codematrix.popup_TIMER_TEXT")?></span>
 			<span class="flp-item-hint" id="hint_timer_text">?</span>
 			<script>
@@ -643,39 +643,39 @@ if(empty($idPopup)){
 					hint:'<?=GetMessage("codematrix.popup_TIMER_TEXT_HINT")?>'
 				});
 			</script>
-			<input type="text" name="timer_text" value="<?echo (!empty($editArr['timer']['text']))?$editArr['timer']['text']:GetMessage("codematrix.popup_TIMER_TEXT_DEFAULT")?>">
+			<input type="text" name="timer_text" value="<?phpecho (!empty($editArr['timer']['text']))?$editArr['timer']['text']:GetMessage("codematrix.popup_TIMER_TEXT_DEFAULT")?>">
 		</label>
 		<label class="pref">
 			<span><?=GetMessage("codematrix.popup_TIMER_LEFT")?></span>
-			<?$checkTimerLeft=($editArr['timer']['left']=='Y'||empty($editArr['timer']['left']))?'checked="checked"':'';?>
+			<?php$checkTimerLeft=($editArr['timer']['left']=='Y'||empty($editArr['timer']['left']))?'checked="checked"':'';?>
 			<input type="checkbox" value="Y" <?=$checkTimerLeft?>>
 
 			<input type="hidden" name="timer_left" value="<?=(!empty($editArr['timer']['left']))?$editArr['timer']['left']:'Y'?>">
 		</label>
 		<label class="pref">
 			<span><?=GetMessage("codematrix.popup_TIMER_RIGHT")?></span>
-			<?$checkTimerRight=($editArr['timer']['right']=='Y')?'checked="checked"':'';?>
+			<?php$checkTimerRight=($editArr['timer']['right']=='Y')?'checked="checked"':'';?>
 			<input type="checkbox" value="Y" <?=$checkTimerRight?>>
 
 			<input type="hidden" name="timer_right" value="<?=(!empty($editArr['timer']['right']))?$editArr['timer']['right']:'N'?>">
 		</label>
 		<label class="pref">
 			<span><?=GetMessage("codematrix.popup_TIMER_TOP")?></span>
-			<?$checkTimerTop=($editArr['timer']['top']=='Y'||empty($editArr['timer']['top']))?'checked="checked"':'';?>
+			<?php$checkTimerTop=($editArr['timer']['top']=='Y'||empty($editArr['timer']['top']))?'checked="checked"':'';?>
 			<input type="checkbox" value="Y" <?=$checkTimerTop?>>
 
 			<input type="hidden" name="timer_top" value="<?=(!empty($editArr['timer']['top']))?$editArr['timer']['top']:'Y'?>">
 		</label>
 		<label class="pref">
 			<span><?=GetMessage("codematrix.popup_TIMER_BOTTOM")?></span>
-			<?$checkTimerBottom=($editArr['timer']['bottom']=='Y')?'checked="checked"':'';?>
+			<?php$checkTimerBottom=($editArr['timer']['bottom']=='Y')?'checked="checked"':'';?>
 			<input type="checkbox" value="Y" <?=$checkTimerBottom?>>
 
 			<input type="hidden" name="timer_bottom" value="<?=(!empty($editArr['timer']['bottom']))?$editArr['timer']['bottom']:'N'?>">
 		</label>
 	</div>
 	<div class="block roulette">
-		<?
+		<?php
 			$colors = array(
 				'#ff9ff3'=>'Jigglypuff',
 				'#f368e0'=>'Lian Hong lotus pink',
@@ -759,7 +759,7 @@ if(empty($idPopup)){
 							dx:2,
 							preventHide:true,
 							min_width:400,
-							hint:'<?echo GetMessage("codematrix.popup_ROULETTE_RULE_INFO_BASIC"); echo (\Bitrix\Main\Loader::IncludeModule('sale'))?GetMessage("codematrix.popup_ROULETTE_RULE_INFO_SALE"):''?>'
+							hint:'<?phpecho GetMessage("codematrix.popup_ROULETTE_RULE_INFO_BASIC"); echo (\Bitrix\Main\Loader::IncludeModule('sale'))?GetMessage("codematrix.popup_ROULETTE_RULE_INFO_SALE"):''?>'
 						});
 					</script>
 					</div></td>
@@ -779,20 +779,20 @@ if(empty($idPopup)){
 					</td>
 					<td class="adm-list-table-cell">
 						<select name="roulette_1_color" class="color_selector">
-							<?foreach($colors as $hex=>$colorname){?>
-								<option style="background:<?=$hex?>;color:<?=$hex?>" <?echo ($editArr['roulett'][1]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
-							<?}?>
+							<?phpforeach($colors as $hex=>$colorname){?>
+								<option style="background:<?=$hex?>;color:<?=$hex?>" <?phpecho ($editArr['roulett'][1]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
+							<?php}?>
 						</select>
 					</td>
 					<td class="adm-list-table-cell">
 						<select name="roulette_1_rule" class="rule_selector">
-						<?
+						<?php
 						foreach($tmpBasketRule as $rule=>$name){
 							echo ($rule=='nothing')?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_BASIC").'">':'';
 							echo ($tmpFirstBasketRule==$rule)?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_RULES").'">':'';
 							?>
-							<option value="<?=$rule?>" <?echo ($editArr['roulett'][1]['rule']==$rule)?'selected':''?> ><?=$name?></option>
-						<?
+							<option value="<?=$rule?>" <?phpecho ($editArr['roulett'][1]['rule']==$rule)?'selected':''?> ><?=$name?></option>
+						<?php
 							echo ($rule=='win')?'</optgroup>':'';
 							echo ($tmpLastBasketRule==$rule)?'</optgroup>':'';
 						}?>
@@ -816,20 +816,20 @@ if(empty($idPopup)){
 					</td>
 					<td class="adm-list-table-cell">
 						<select name="roulette_2_color" class="color_selector">
-							<?foreach($colors as $hex=>$colorname){?>
-								<option style="background:<?=$hex?>;color:<?=$hex?>" <?echo ($editArr['roulett'][2]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
-							<?}?>
+							<?phpforeach($colors as $hex=>$colorname){?>
+								<option style="background:<?=$hex?>;color:<?=$hex?>" <?phpecho ($editArr['roulett'][2]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
+							<?php}?>
 						</select>
 					</td>
 					<td class="adm-list-table-cell">
 						<select name="roulette_2_rule" class="rule_selector">
-						<?
+						<?php
 						foreach($tmpBasketRule as $rule=>$name){
 							echo ($rule=='nothing')?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_BASIC").'">':'';
 							echo ($tmpFirstBasketRule==$rule)?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_RULES").'">':'';
 							?>
-							<option value="<?=$rule?>" <?echo ($editArr['roulett'][2]['rule']==$rule)?'selected':''?> ><?=$name?></option>
-						<?
+							<option value="<?=$rule?>" <?phpecho ($editArr['roulett'][2]['rule']==$rule)?'selected':''?> ><?=$name?></option>
+						<?php
 							echo ($rule=='win')?'</optgroup>':'';
 							echo ($tmpLastBasketRule==$rule)?'</optgroup>':'';
 						}?>
@@ -851,20 +851,20 @@ if(empty($idPopup)){
 					</td>
 					<td class="adm-list-table-cell">
 						<select name="roulette_3_color"  class="color_selector">
-							<?foreach($colors as $hex=>$colorname){?>
-								<option style="background:<?=$hex?>;color:<?=$hex?>" <?echo ($editArr['roulett'][3]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
-							<?}?>
+							<?phpforeach($colors as $hex=>$colorname){?>
+								<option style="background:<?=$hex?>;color:<?=$hex?>" <?phpecho ($editArr['roulett'][3]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
+							<?php}?>
 						</select>
 					</td>
 					<td class="adm-list-table-cell draggable">
 						<select name="roulette_3_rule" class="rule_selector">
-						<?
+						<?php
 						foreach($tmpBasketRule as $rule=>$name){
 							echo ($rule=='nothing')?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_BASIC").'">':'';
 							echo ($tmpFirstBasketRule==$rule)?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_RULES").'">':'';
 							?>
-							<option value="<?=$rule?>" <?echo ($editArr['roulett'][3]['rule']==$rule)?'selected':''?> ><?=$name?></option>
-						<?
+							<option value="<?=$rule?>" <?phpecho ($editArr['roulett'][3]['rule']==$rule)?'selected':''?> ><?=$name?></option>
+						<?php
 							echo ($rule=='win')?'</optgroup>':'';
 							echo ($tmpLastBasketRule==$rule)?'</optgroup>':'';
 						}?>
@@ -886,20 +886,20 @@ if(empty($idPopup)){
 					</td>
 					<td class="adm-list-table-cell">
 						<select name="roulette_4_color" class="color_selector">
-							<?foreach($colors as $hex=>$colorname){?>
-								<option style="background:<?=$hex?>;color:<?=$hex?>" <?echo ($editArr['roulett'][4]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
-							<?}?>
+							<?phpforeach($colors as $hex=>$colorname){?>
+								<option style="background:<?=$hex?>;color:<?=$hex?>" <?phpecho ($editArr['roulett'][4]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option>
+							<?php}?>
 						</select>
 					</td>
 					<td class="adm-list-table-cell">
 						<select name="roulette_4_rule" class="rule_selector">
-						<?
+						<?php
 						foreach($tmpBasketRule as $rule=>$name){
 							echo ($rule=='nothing')?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_BASIC").'">':'';
 							echo ($tmpFirstBasketRule==$rule)?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_RULES").'">':'';
 							?>
-							<option value="<?=$rule?>" <?echo ($editArr['roulett'][4]['rule']==$rule)?'selected':''?> ><?=$name?></option>
-						<?
+							<option value="<?=$rule?>" <?phpecho ($editArr['roulett'][4]['rule']==$rule)?'selected':''?> ><?=$name?></option>
+						<?php
 							echo ($rule=='win')?'</optgroup>':'';
 							echo ($tmpLastBasketRule==$rule)?'</optgroup>':'';
 						}?>
@@ -909,17 +909,17 @@ if(empty($idPopup)){
 						<a href="javascript:;" onclick="remove_roulette_row(this);"><img width="20px" height='25px' src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAzNzguMzAzIDM3OC4zMDMiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDM3OC4zMDMgMzc4LjMwMzsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCI+Cjxwb2x5Z29uIHN0eWxlPSJmaWxsOiNGRjM1MDE7IiBwb2ludHM9IjM3OC4zMDMsMjguMjg1IDM1MC4wMTgsMCAxODkuMTUxLDE2MC44NjcgMjguMjg1LDAgMCwyOC4yODUgMTYwLjg2NywxODkuMTUxIDAsMzUwLjAxOCAgIDI4LjI4NSwzNzguMzAyIDE4OS4xNTEsMjE3LjQzNiAzNTAuMDE4LDM3OC4zMDIgMzc4LjMwMywzNTAuMDE4IDIxNy40MzYsMTg5LjE1MSAiLz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg=="></a>
 					</td>
 				</tr>
-				<?if(!empty($editArr['roulett']['count'])&&$editArr['roulett']['count']>4){
+				<?phpif(!empty($editArr['roulett']['count'])&&$editArr['roulett']['count']>4){
 					for($i=5;$i<=$editArr['roulett']['count'];$i++){?>
 							<tr class="adm-list-table-row draggable">
 								<td class="adm-list-table-cell"><div class="adm-list-table-popup drag_key"></div></td>
 								<td class="adm-list-table-cell"><?=$i?></td>
 								<td class="adm-list-table-cell"><input type="text" name="roulette_<?=$i?>_text" size="50" value="<?=$editArr['roulett'][$i]['text']?>"></td>
-								<td class="adm-list-table-cell"><select name="roulette_<?=$i?>_color" class="color_selector"><?foreach($colors as $hex=>$colorname){?><option style="background:<?=$hex?>;color:<?=$hex?>" <?echo ($editArr['roulett'][$i]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option><?}?></select></td>
-								<td class="adm-list-table-cell"><select name="roulette_<?=$i?>_rule" class="rule_selector"><?foreach($tmpBasketRule as $rule=>$name){echo ($rule=='nothing')?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_BASIC").'">':'';echo ($tmpFirstBasketRule==$rule)?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_RULES").'">':'';?><option value="<?=$rule?>" <?=($editArr['roulett'][$i]['rule']==$rule)?'selected':''?> ><?=$name?></option><?echo ($rule=='win')?'</optgroup>':'';echo ($tmpLastBasketRule==$rule)?'</optgroup>':'';}?></select></td>
+								<td class="adm-list-table-cell"><select name="roulette_<?=$i?>_color" class="color_selector"><?phpforeach($colors as $hex=>$colorname){?><option style="background:<?=$hex?>;color:<?=$hex?>" <?phpecho ($editArr['roulett'][$i]['color']==$hex)?'selected':''?> value="<?=$hex?>"><?=$colorname?></option><?php}?></select></td>
+								<td class="adm-list-table-cell"><select name="roulette_<?=$i?>_rule" class="rule_selector"><?phpforeach($tmpBasketRule as $rule=>$name){echo ($rule=='nothing')?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_BASIC").'">':'';echo ($tmpFirstBasketRule==$rule)?'<optgroup label="'.GetMessage("codematrix.popup_ROULETTE_RULES").'">':'';?><option value="<?=$rule?>" <?=($editArr['roulett'][$i]['rule']==$rule)?'selected':''?> ><?=$name?></option><?phpecho ($rule=='win')?'</optgroup>':'';echo ($tmpLastBasketRule==$rule)?'</optgroup>':'';}?></select></td>
 								<td class="adm-list-table-cell"><a href="javascript:;" onclick="remove_roulette_row(this);"><img width="20px" height='25px' src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAzNzguMzAzIDM3OC4zMDMiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDM3OC4zMDMgMzc4LjMwMzsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCI+Cjxwb2x5Z29uIHN0eWxlPSJmaWxsOiNGRjM1MDE7IiBwb2ludHM9IjM3OC4zMDMsMjguMjg1IDM1MC4wMTgsMCAxODkuMTUxLDE2MC44NjcgMjguMjg1LDAgMCwyOC4yODUgMTYwLjg2NywxODkuMTUxIDAsMzUwLjAxOCAgIDI4LjI4NSwzNzguMzAyIDE4OS4xNTEsMjE3LjQzNiAzNTAuMDE4LDM3OC4zMDIgMzc4LjMwMywzNTAuMDE4IDIxNy40MzYsMTg5LjE1MSAiLz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg=="></a></td>
 							</tr>
-					<?}
+					<?php}
 				}?>
 			</tbody>
 		</table>
@@ -935,7 +935,7 @@ if(empty($idPopup)){
 
 			<div id="popup_manager_files" style="display:none">
 				<div id="popup_img_list"></div>
-				<?$APPLICATION->IncludeComponent("bitrix:main.file.input", "drag_n_drop",
+				<?php$APPLICATION->IncludeComponent("bitrix:main.file.input", "drag_n_drop",
 				   array(
 					  "INPUT_NAME"=>"UPLOAD_IMG_POPUP",
 					  "MULTIPLE"=>"N",
@@ -953,8 +953,8 @@ if(empty($idPopup)){
 	</tr>
 
 
-	<?$tabControl->BeginNextTab();?>
-	<?
+	<?php$tabControl->BeginNextTab();?>
+	<?php
 	$editArr=$editableWindow->getConditions();
 	$activeCheckBox=($editArr['active'])?' checked="checked"':'';
 	$activeAlreadygoing=($editArr['alreadygoing'])?' checked="checked"':'';
@@ -1147,7 +1147,7 @@ if(empty($idPopup)){
 		</td>
 		<td><textarea name="hideOnlyPath" cols="50" rows="5" placeholder="<?=GetMessage("codematrix.popup_TABCOND_HIDEONLYPATH_EXAMPLE")?>"><?=$editArr['hideOnlyPath']?></textarea></td>
 	</tr>
-	<?/*<tr>
+	<?php/*<tr>
 		<td><?=GetMessage("codematrix.popup_TABCOND_PATHPRIORITY")?>
 			<span class="flp-item-hint" id="hint_maskpriority">?</span>
 			<script>
@@ -1218,7 +1218,7 @@ if(empty($idPopup)){
 		</td>
 		<td>
 			<?=GetMessage("FLP_AG_COND_TIME_FROM")?>
-			<?$APPLICATION->IncludeComponent("bitrix:main.clock","",Array(
+			<?php$APPLICATION->IncludeComponent("bitrix:main.clock","",Array(
 				"INPUT_ID" => "",
 				"INPUT_NAME" => "period_from",
 				"INPUT_TITLE" => GetMessage("codematrix.popup_TABCOND_TIMEINTERVAL_FROM"),
@@ -1226,7 +1226,7 @@ if(empty($idPopup)){
 				"STEP" => "1"
 			));?>
 			<?=GetMessage("FLP_AG_COND_TIME_TO")?>
-			<?$APPLICATION->IncludeComponent("bitrix:main.clock","",Array(
+			<?php$APPLICATION->IncludeComponent("bitrix:main.clock","",Array(
 				"INPUT_ID" => "",
 				"INPUT_NAME" => "period_to",
 				"INPUT_TITLE" => GetMessage("codematrix.popup_TABCOND_TIMEINTERVAL_TO"),
@@ -1251,7 +1251,7 @@ if(empty($idPopup)){
 			</script>
 		</td>
 		<td><input type="number" min="0" step="1" name="repeatTime" value="<?=$editArr['repeatTime']?>" />
-			<?
+			<?php
 			$hour=$day=$week=$month=$year='';
 			if(empty($editArr['repeatTime_type'])){
 				$day="selected";
@@ -1321,7 +1321,7 @@ if(empty($idPopup)){
 		</td>
 		<td><input type="text" name="onClickClassLink" value="<?=$editArr['onClickClassLink']?>" /></td>
 	</tr>
-	<?if(isset($editArr['saleCountProduct'])){?>
+	<?phpif(isset($editArr['saleCountProduct'])){?>
 	<tr>
 		<th colspan="2"><?=GetMessage("codematrix.popup_TABCOND_TITLE_SALE")?></th>
 	</tr>
@@ -1375,7 +1375,7 @@ if(empty($idPopup)){
 			</script>
 		</td>
 		<td>
-			<?
+			<?php
 			$currentBasketProduct=0;
 			if(is_array($editArr['saleIDProdInBasket'])){
 				$currentBasketProduct=count($editArr['saleIDProdInBasket']);
@@ -1392,8 +1392,8 @@ if(empty($idPopup)){
 						<input type="button" value="..." onclick="jsUtils.OpenWindow('/bitrix/admin/iblock_element_search.php?lang=<?=LANG?>&amp;n=saleIDProdInBasket_<?=$currentBasketProduct?>&amp;k=n&amp;', 900, 700);">
 						<span id="sp_'saleIDProdInBasket_<?=$key?>"><?=$tov_Names[$val]?></span>
 					</div>
-				<?}?>
-			<?}?>
+				<?php}?>
+			<?php}?>
 			<div class="button_add">
 				<input name="saleIDProdInBasket[]" id="saleIDProdInBasket_<?=$currentBasketProduct?>" value="" size="5" type="text">
 				<input type="button" value="..." onclick="jsUtils.OpenWindow('/bitrix/admin/iblock_element_search.php?lang=<?=LANG?>&amp;n=saleIDProdInBasket_<?=$currentBasketProduct?>&amp;k=n&amp;', 900, 700);">
@@ -1402,21 +1402,21 @@ if(empty($idPopup)){
 			<a href="javacript:void(0);" class="add_product_field"><?=GetMessage("codematrix.popup_TABCOND_SALEADDPRODUCT")?></a>
 		</td>
 	</tr>
-	<?}?>
+	<?php}?>
 	<tr>
-		<td colspan="2"><?CAdminMessage::ShowMessage(Array("TYPE"=>"MESSAGE", "MESSAGE"=>GetMessage("codematrix.popup_LOGIC_INFO")));?></td>
+		<td colspan="2"><?phpCAdminMessage::ShowMessage(Array("TYPE"=>"MESSAGE", "MESSAGE"=>GetMessage("codematrix.popup_LOGIC_INFO")));?></td>
 	</tr>
-	<?$tabControl->Buttons();?>
+	<?php$tabControl->Buttons();?>
 	<input type="submit" class="adm-btn-save" name="save" value="<?=GetMessage("codematrix.popup_TAB_BUTTON_SAVE")?>" title="<?=GetMessage("codematrix.popup_TAB_BUTTON_SAVE")?>" />&nbsp;
 	<input type="submit" class="button" name="apply" value="<?=GetMessage("codematrix.popup_TAB_BUTTON_APPLY")?>" title="<?=GetMessage("codematrix.popup_TAB_BUTTON_APPLY")?>" />&nbsp;
 	<input type="button" name="cancel" value="<?=GetMessage("codematrix.popup_TAB_BUTTON_CANCEL")?>" title="<?=GetMessage("codematrix.popup_TAB_BUTTON_CANCEL")?>" onclick="window.location.href='codematrix_popup.php?lang=<?=LANG?>'" />
-	<?$tabControl->End();?>
+	<?php$tabControl->End();?>
 	<script>
-		<?
+		<?php
 		$agreements=$editableWindow->getAgreements(array('button_caption'=>'#BUTTON_TEXT#'));
 		if(count($agreements)>0){
 
-			?>var agreements=<?=\CUtil::phpToJSObject($agreements);?>;<?
+			?>var agreements=<?=\CUtil::phpToJSObject($agreements);?>;<?php
 		}
 		?>
 		var popupMessages={
@@ -1445,9 +1445,9 @@ if(empty($idPopup)){
 		//(window.BX||top.BX).message({'JSADM_FILES':'<?=GetMessage("codematrix.popup_JSADM_FILES")?>'});
 	</script>
 	</form></section>
-<?}?>
+<?php}?>
 
-<?
+<?php
 if(isset($_REQUEST['save']) && $_REQUEST['save']==GetMessage("codematrix.popup_TAB_BUTTON_SAVE") && !empty($_REQUEST['id'])){
 	$CURRENT_PAGE = ($request->isHttps()) ? "https://" : "http://";
 	$CURRENT_PAGE .= $_SERVER["HTTP_HOST"];
@@ -1457,5 +1457,5 @@ if(isset($_REQUEST['save']) && $_REQUEST['save']==GetMessage("codematrix.popup_T
 }
 ?>
 
-<?//require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");?>
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_admin.php");?>
+<?php//require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");?>
+<?phprequire($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_admin.php");?>

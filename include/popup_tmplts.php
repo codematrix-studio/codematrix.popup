@@ -1,4 +1,4 @@
-<?
+<?php
 $popus=array(
 	'video'=>'<div>
 				<h2>Уже уходите?</h2>

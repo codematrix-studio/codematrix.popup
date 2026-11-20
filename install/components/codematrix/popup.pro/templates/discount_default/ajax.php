@@ -56,6 +56,7 @@ if (!$USER->IsAuthorized()) {
 
 	if ($userRecord) {
 		// Нельзя входить в существующую учётную запись только по адресу email.
+		echo "auth_required";
 		die();
 	}
 

@@ -10,33 +10,28 @@ class popupEdit extends popup{
 	
 	private function getPostTemplate(){
 		$tmpSettings=$this->getSetting($this->idPopup);
-		$rsET = CEventType::GetByID("CODEMATRIX_POPUP_SENDER", LANGUAGE_ID);
-		if(!$arET = $rsET->Fetch()){
-			$et = new CEventType;
-			$et->Add(array(
-				"LID" => 'ru',
-				"EVENT_NAME" => "CODEMATRIX_POPUP_SENDER",
-				"NAME" => GetMessage("codematrix.popup_EVENT_TYPE_NAME"),
-				"DESCRIPTION" => 
-					'#EMAIL# - mail
-					#NAME# - name
-					#PHONE# - phone
-					#DESCRIPTION# - description
-					#EMAIL_TITLE# - email_title
-					#NAME_TITLE# - name_title
-					#PHONE_TITLE# - phone_title
-					#DESCRIPTION_TITLE# - description_title'
-			));
-			$tmpSettings['row']['cont_posttemplate']='';
-		}
+		\CodeMatrix\Popup\Mail::ensureEventType(
+			'CODEMATRIX_POPUP_SENDER',
+			LANGUAGE_ID,
+			GetMessage("codematrix.popup_EVENT_TYPE_NAME"),
+			'#EMAIL# - mail
+#NAME# - name
+#PHONE# - phone
+#DESCRIPTION# - description
+#EMAIL_TITLE# - email_title
+#NAME_TITLE# - name_title
+#PHONE_TITLE# - phone_title
+#DESCRIPTION_TITLE# - description_title'
+		);
+
 		if(empty($tmpSettings['row']['cont_posttemplate'])){
-			$rsSites = CSite::GetList($by="sort", $order="desc");
 			$lids=array();
+			$rsSites = \Bitrix\Main\SiteTable::getList(['select' => ['LID'], 'order' => ['SORT' => 'DESC']]);
 			while ($arSite = $rsSites->Fetch()){
 				$lids[]=$arSite['LID'];
 			}
-			$emess = new CEventMessage;
-			$tmpSettings['row']['cont_posttemplate']=$emess->Add(array(
+
+			$tmpSettings['row']['cont_posttemplate']=\CodeMatrix\Popup\Mail::addTemplate(array(
 				'EVENT_NAME'=>'CODEMATRIX_POPUP_SENDER',
 				'ACTIVE'=>'Y',
 				'LID'=>$lids,
@@ -54,7 +49,7 @@ class popupEdit extends popup{
 		}
 		return $tmpSettings['row']['cont_posttemplate'];
 	}
-	
+
 	public function editPopup($request){		
 		$settings=array('view'=>array(), 'condition'=>array());
 		$viewStructure=$this->getTemplates();
@@ -72,9 +67,8 @@ class popupEdit extends popup{
 			$tmpPost=$request->getPost($keyNextViewEl);
 			if($keyNextViewEl=='EMAIL_TEMPLATE'){
 				if($request->getPost('id_popup')=='new'){
-					$obTemplate = new CEventMessage;
 					$template['LID']=array();
-					$sites=Bitrix\Main\SiteTable::getList();
+					$sites=\Bitrix\Main\SiteTable::getList(['select' => ['LID']]);
 					while($s=$sites->Fetch())
 						$template['LID'][]=$s['LID'];
 					$template['EVENT_NAME']="CODEMATRIX_POPUP_SEND_COUPON";
@@ -84,25 +78,20 @@ class popupEdit extends popup{
 					$template['SUBJECT']=GetMessage("codematrix.popup_TEMPLATE_SUBJECT");
 					$template['BODY_TYPE']='html';
 					$template['MESSAGE']=GetMessage("codematrix.popup_TEMPLATE_MESSAGE");
-					$tmpPost=$obTemplate->Add($template);
+					$tmpPost=\CodeMatrix\Popup\Mail::addTemplate($template);
 				}
 			}
 			if($keyNextViewEl=='MAIL_TEMPLATE'){
 				if($request->getPost('id_popup')=='new'){					
 					$keyPost='CODEMATRIX_POPUP_ROULETTE_SEND';
-					$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
-					if(!$arET = $rsET->Fetch()){
-						$obEventType = new CEventType;
-						$obEventType->Add(array(
-							'LID'=>'ru',
-							'EVENT_NAME'=>$keyPost,
-							"NAME"=>GetMessage("codematrix.popup_EVENT_NAME_ROULETTE"),
-							"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION_ROULETTE"))
-						));
-					}	
-					$obTemplate = new CEventMessage;
+					\CodeMatrix\Popup\Mail::ensureEventType(
+						$keyPost,
+						'ru',
+						GetMessage("codematrix.popup_EVENT_NAME_ROULETTE"),
+						str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION_ROULETTE"))
+					);
 					$template['LID']=array();
-					$sites=Bitrix\Main\SiteTable::getList();
+					$sites=\Bitrix\Main\SiteTable::getList(['select' => ['LID']]);
 					while($s=$sites->Fetch())
 						$template['LID'][]=$s['LID'];
 					$template['EVENT_NAME']=$keyPost;
@@ -112,25 +101,20 @@ class popupEdit extends popup{
 					$template['SUBJECT']=GetMessage("codematrix.popup_TEMPLATE_SUBJECT_ROULETTE");
 					$template['BODY_TYPE']='html';
 					$template['MESSAGE']=GetMessage("codematrix.popup_TEMPLATE_MESSAGE_ROULETTE");
-					$tmpPost=$obTemplate->Add($template);
+					$tmpPost=\CodeMatrix\Popup\Mail::addTemplate($template);
 				}
 			}
 			if($keyNextViewEl=='EMAIL_TEMPLATE_D'){
 				if($request->getPost('id_popup')=='new'){					
 					$keyPost='CODEMATRIX_POPUP_DISCOUNT_SEND';
-					$rsET = CEventType::GetList(array('EVENT_NAME'=>$keyPost));
-					if(!$arET = $rsET->Fetch()){
-						$obEventType = new CEventType;
-						$obEventType->Add(array(
-							'LID'=>'ru',
-							'EVENT_NAME'=>$keyPost,
-							"NAME"=>GetMessage("codematrix.popup_EVENT_NAME_DISCOUNT"),
-							"DESCRIPTION"=>str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION_DISCOUNT"))
-						));
-					}	
-					$obTemplate = new CEventMessage;
+					\CodeMatrix\Popup\Mail::ensureEventType(
+						$keyPost,
+						'ru',
+						GetMessage("codematrix.popup_EVENT_NAME_DISCOUNT"),
+						str_ireplace("\t", '',GetMessage("codematrix.popup_EVENT_DESCRIPTION_DISCOUNT"))
+					);
 					$template['LID']=array();
-					$sites=Bitrix\Main\SiteTable::getList();
+					$sites=\Bitrix\Main\SiteTable::getList(['select' => ['LID']]);
 					while($s=$sites->Fetch())
 						$template['LID'][]=$s['LID'];
 					$template['EVENT_NAME']=$keyPost;
@@ -140,7 +124,7 @@ class popupEdit extends popup{
 					$template['SUBJECT']=GetMessage("codematrix.popup_TEMPLATE_SUBJECT_DISCOUNT");
 					$template['BODY_TYPE']='html';
 					$template['MESSAGE']=GetMessage("codematrix.popup_TEMPLATE_MESSAGE_DISCOUNT");
-					$tmpPost=$obTemplate->Add($template);
+					$tmpPost=\CodeMatrix\Popup\Mail::addTemplate($template);
 				}
 			}
 			$currentVal=(!isset($tmpPost))?$nextViewEl:$tmpPost;

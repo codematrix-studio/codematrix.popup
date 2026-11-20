@@ -49,6 +49,9 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 	if (!isset($_SESSION['codematrix_popup_statistic_started']) || !is_array($_SESSION['codematrix_popup_statistic_started'])) {
 		$_SESSION['codematrix_popup_statistic_started'] = array();
 	}
+	if (!isset($_SESSION['codematrix_popup_statistic_action']) || !is_array($_SESSION['codematrix_popup_statistic_action'])) {
+		$_SESSION['codematrix_popup_statistic_action'] = array();
+	}
 	if(!empty($reqArr['type'])){
 		if($reqArr['type']=='getPopups'){
 			if(empty($_SESSION['codematrix_popup_count_pages'])){
@@ -91,6 +94,8 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 					$_SESSION['codematrix_popup_rendered'] = array();
 				}
 				$_SESSION['codematrix_popup_rendered'][$popupId] = time();
+				// Новая выдача HTML начинает новый цикл статистики для этого попапа.
+				unset($_SESSION['codematrix_popup_statistic_started'][$popupId], $_SESSION['codematrix_popup_statistic_action'][$popupId]);
 				$popupsO->getHTMLByPopup($popupId);
 			}
 		}elseif($reqArr['type']=='statisticShow' || $reqArr['type']=='statisticAction'){
@@ -101,15 +106,22 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 				: 0;
 			if($request->isPost() && $popupId!==false && $renderedAt>0 && $renderedAt>=time()-86400){
 				if($reqArr['type']=='statisticShow'){
-					// Серверное время начала показа не позволяет подменить длительность через popupTime.
-					if (!isset($_SESSION['codematrix_popup_statistic_started']) || !is_array($_SESSION['codematrix_popup_statistic_started'])) {
-						$_SESSION['codematrix_popup_statistic_started'] = array();
+					// Повторный запрос при уже открытом окне не должен повторно увеличивать счётчик.
+					$startedAt = (int)($_SESSION['codematrix_popup_statistic_started'][$popupId] ?? 0);
+					if ($startedAt <= 0 || $startedAt > time() || $startedAt < time() - 86400) {
+						$_SESSION['codematrix_popup_statistic_started'][$popupId] = time();
+						unset($_SESSION['codematrix_popup_statistic_action'][$popupId]);
+						$field = 'stat_show';
+					}else{
+						$field = '';
 					}
-					$_SESSION['codematrix_popup_statistic_started'][$popupId] = time();
-					$field = 'stat_show';
 				}else{
 					$startedAt = (int)($_SESSION['codematrix_popup_statistic_started'][$popupId] ?? 0);
-					$field = ($startedAt > 0 && $startedAt <= time()) ? 'stat_action' : '';
+					$actionRecorded = !empty($_SESSION['codematrix_popup_statistic_action'][$popupId]);
+					$field = ($startedAt > 0 && $startedAt <= time() && !$actionRecorded) ? 'stat_action' : '';
+					if ($field !== '') {
+						$_SESSION['codematrix_popup_statistic_action'][$popupId] = true;
+					}
 				}
 				if($field !== ''){
 					$retStr=$popupsO->setStatistic($popupId, 1, $field);
@@ -127,9 +139,9 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 				: 0;
 			if($request->isPost() && $popupId!==false && $renderedAt>0 && $renderedAt>=time()-86400 && $startedAt>0 && $startedAt<=time()){
 				// Длительность рассчитывается по серверным часам; клиентское popupTime не является доверенным.
-				$popupTime = min(86400, max(0, time() - $startedAt));
+				$popupTime = min(86400, max(1, time() - $startedAt));
 				$retStr=$popupsO->setStatistic($popupId, $popupTime, 'stat_time');
-				unset($_SESSION['codematrix_popup_statistic_started'][$popupId]);
+				unset($_SESSION['codematrix_popup_statistic_started'][$popupId], $_SESSION['codematrix_popup_statistic_action'][$popupId]);
 				$retStr=CUtil::PhpToJSObject($retStr);
 				echo str_replace("'", '"', $retStr);
 			}

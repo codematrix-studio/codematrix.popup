@@ -7,5 +7,6 @@ $MESS["POPUP_DAYS_5"] = "дней";
 $MESS["POPUP_INFO"] = "Для этого просто укажите ";
 $MESS["POPUP_COPYED"] = "Купон скопирован в буфер обмена";
 $MESS["POPUP_WRONG"] = "Неверный E-mail";
+$MESS["POPUP_COUPON_ERROR"] = "Не удалось создать купон. Попробуйте позже.";
 
 ?>

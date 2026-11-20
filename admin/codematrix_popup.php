@@ -103,20 +103,30 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 		}
 
 		if($request['command']=='gettemplate'){
+			$templateName = $request->get('template');
+			if (!is_string($templateName) || !preg_match('/^[a-z0-9_-]+$/iD', $templateName)) {
+				http_response_code(400);
+				die();
+			}
 			global $APPLICATION;
 			$APPLICATION->IncludeComponent(
 				"codematrix:popup.pro",
-				$request['template'],
+				$templateName,
 				Array(
 					"MODE" => "TEMPLATE",
 					"ID_POPUP" => "NEW"
 				)
 			);
 		}elseif($request['command']=='gettemplatepath'){
+			$templateName = $request->get('template');
+			if (!is_string($templateName) || !preg_match('/^[a-z0-9_-]+$/iD', $templateName)) {
+				http_response_code(400);
+				die();
+			}
 			global $APPLICATION;
 			$APPLICATION->IncludeComponent(
 				"codematrix:popup.pro",
-				$request['template'],
+				$templateName,
 				Array(
 					"MODE" => "GET_PATH",
 					"ID_POPUP" => "NEW"

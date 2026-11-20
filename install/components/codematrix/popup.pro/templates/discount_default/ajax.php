@@ -25,7 +25,7 @@ $groupId = (int)($props["USER_GROUP"] ?? 0);
 $mask = (string)($props["DISCOUNT_MASK"] ?? "");
 $email = $request->get("email");
 $addToTable = $request->get("addtotable");
-$unique = $request->get("unique");
+// Проверка уникальности определяется сохранёнными настройками, а не параметром клиента.
 
 if (
 	$ruleId <= 0
@@ -38,7 +38,7 @@ if (
 }
 
 $popup = new popup();
-if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y" && $unique === "Y") {
+if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y") {
 	if (!$popup->searchinMailList($email, $popupId)) {
 		echo "not_unique";
 		die();

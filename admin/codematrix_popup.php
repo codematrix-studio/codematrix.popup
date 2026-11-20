@@ -1512,7 +1512,7 @@ if(empty($idPopup)){
 <?php }?>
 
 <?php
-if(isset($_REQUEST['save']) && $_REQUEST['save']==GetMessage("codematrix.popup_TAB_BUTTON_SAVE") && !empty($_REQUEST['id'])){
+if ($request->getPost('save') === GetMessage("codematrix.popup_TAB_BUTTON_SAVE") && !empty($request->getPost('id'))) {
 	$CURRENT_PAGE = ($request->isHttps()) ? "https://" : "http://";
 	$CURRENT_PAGE .= $_SERVER["HTTP_HOST"];
 	$CURRENT_PAGE .= $APPLICATION->GetCurPage(true);

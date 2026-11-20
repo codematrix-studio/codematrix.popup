@@ -75,6 +75,12 @@ if (
 	die();
 }
 
+$cachedResponse = CodeMatrixPopupPublicRequestGuard::getCachedResponse("roulette", $popupId);
+if ($cachedResponse !== null) {
+	echo $cachedResponse["response"];
+	die();
+}
+
 $popup = new popup();
 if ($addToTable === "Y") {
 	if (($props["EMAIL_ADD2BASE"] ?? "N") !== "Y") {
@@ -94,6 +100,7 @@ if ($addToTable === "Y") {
 $resultText = $allowedResults[$rule];
 if ($rule === "win") {
 	$popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
+	CodeMatrixPopupPublicRequestGuard::rememberResponse("roulette", $popupId, "");
 	$addCookie();
 	$context->getResponse()->flush("");
 	die();
@@ -105,6 +112,7 @@ if ($result === false) {
 	die();
 }
 if ($result !== null) {
+	CodeMatrixPopupPublicRequestGuard::rememberResponse("roulette", $popupId, (string)$result);
 	if ($addToTable === "Y") {
 		$popup->insertToMailList($email, "", $popupId);
 	}

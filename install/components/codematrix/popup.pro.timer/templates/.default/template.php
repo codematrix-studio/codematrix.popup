@@ -1,5 +1,5 @@
-<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<div class="codematrix_popup_pro_timer <?phpecho ($arParams['LEFT']=='Y')?'left':'right'?> <?phpecho ($arParams['TOP']=='Y')?'top':'bottom'?>">
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<div class="codematrix_popup_pro_timer <?php echo ($arParams['LEFT']=='Y')?'left':'right'?> <?php echo ($arParams['TOP']=='Y')?'top':'bottom'?>">
     
     <svg width="30px"  height="30px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-bricks">
     <rect ng-attr-fill="{{config.c1}}" ng-attr-x="{{config.x}}" ng-attr-y="{{config.x}}" ng-attr-width="{{config.w}}" ng-attr-height="{{config.w}}" ng-attr-rx="{{config.radius}}" ng-attr-ry="{{config.radius}}" fill="#ff7c81" x="21.5" y="21.5" width="25" height="25" rx="3" ry="3">
@@ -32,8 +32,8 @@
             <span><?=GetMessage("FL_POPUP_TIMER_SECOND")?></span><br>
         </div>
         <div class="clock">
-            <?php$tmp = explode(':',$arResult['TIME']);
-            foreach($tmp as $key=>$t){?><span><?=$t?></span><?phpif($key!=3){echo "<span class='sep'>:</span>";}?><?php}?>
+            <?php $tmp = explode(':',$arResult['TIME']);
+            foreach($tmp as $key=>$t){?><span><?=$t?></span><?php if($key!=3){echo "<span class='sep'>:</span>";}?><?php }?>
         </div>
     </div>
 </div>

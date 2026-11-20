@@ -6,6 +6,12 @@ if (!\Bitrix\Main\Loader::includeModule("codematrix.popup")) {
 }
 
 $request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
+
+// Выдача купона изменяет данные магазина и допускается только через POST.
+if (!$request->isPost()) {
+	http_response_code(405);
+	die();
+}
 $popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
 	"options" => array("min_range" => 1),
 ));

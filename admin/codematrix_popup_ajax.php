@@ -89,14 +89,16 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 				}
 			}
 			if($popupId!==false && isset($availablePopups[$popupId]) && !$hasFormData){
-				// Фиксируем только те попапы, HTML которых действительно был выдан посетителю.
-				if (!isset($_SESSION['codematrix_popup_rendered']) || !is_array($_SESSION['codematrix_popup_rendered'])) {
-					$_SESSION['codematrix_popup_rendered'] = array();
-				}
-				$_SESSION['codematrix_popup_rendered'][$popupId] = time();
 				// Новая выдача HTML начинает новый цикл статистики для этого попапа.
 				unset($_SESSION['codematrix_popup_statistic_started'][$popupId], $_SESSION['codematrix_popup_statistic_action'][$popupId]);
-				$popupsO->getHTMLByPopup($popupId);
+				// Не выдаём сессионный маркер, если компонент не смог определить шаблон попапа.
+				$renderResult = $popupsO->getHTMLByPopup($popupId);
+				if ($renderResult !== false) {
+					if (!isset($_SESSION['codematrix_popup_rendered']) || !is_array($_SESSION['codematrix_popup_rendered'])) {
+						$_SESSION['codematrix_popup_rendered'] = array();
+					}
+					$_SESSION['codematrix_popup_rendered'][$popupId] = time();
+				}
 			}
 		}elseif($reqArr['type']=='statisticShow' || $reqArr['type']=='statisticAction'){
 			// Статистика меняет данные и принимается только POST-запросом.

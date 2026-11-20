@@ -12,10 +12,10 @@ if (!$request->isPost()) {
 	http_response_code(405);
 	die();
 }
-$popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
+$popupId = filter_var($request->getPost("idPopup"), FILTER_VALIDATE_INT, array(
 	"options" => array("min_range" => 1),
 ));
-$ruleId = filter_var($request->get("id"), FILTER_VALIDATE_INT, array(
+$ruleId = filter_var($request->getPost("id"), FILTER_VALIDATE_INT, array(
 	"options" => array("min_range" => 1),
 ));
 $settings = ($popupId !== false && \CodeMatrix\Popup\PublicRequestGuard::isPopupRendered($popupId))
@@ -33,9 +33,9 @@ if (
 $props = $settings["view"]["props"];
 $configuredRuleId = (int)($props["RULE_ID"] ?? 0);
 $configuredTiming = (string)($props["TIMING"] ?? "");
-$requestedTiming = $request->get("avaliable");
-$email = $request->get("email");
-$addToTable = $request->get("addtotable");
+$requestedTiming = $request->getPost("avaliable");
+$email = $request->getPost("email");
+$addToTable = $request->getPost("addtotable");
 // Параметр unique от клиента не является источником настроек: ниже используется конфигурация попапа.
 
 if (

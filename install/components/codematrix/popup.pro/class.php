@@ -17,6 +17,12 @@ Loc::loadMessages(__FILE__);
 
 class CodeMatrixPopup extends \CBitrixComponent{
 
+		/**
+	 * Подготавливает и дополняет параметры компонента попапа.
+	 *
+	 * @param array $params Параметры компонента.
+	 * @return array Подготовленные параметры компонента.
+	 */
 	public function onPrepareComponentParams($params){
 		if(empty($params['ID_POPUP'])){
 			$params['ID_POPUP']=1;
@@ -25,6 +31,11 @@ class CodeMatrixPopup extends \CBitrixComponent{
 		return $params;
 	}
 
+		/**
+	 * Формирует результат компонента и подключает выбранный шаблон попапа.
+	 *
+	 * @return mixed
+	 */
 	public function executeComponent(){
 		global $APPLICATION;
 		if(empty($this->arParams["ID_POPUP"])){

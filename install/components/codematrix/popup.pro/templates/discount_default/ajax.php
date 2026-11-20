@@ -36,7 +36,7 @@ $groupValue = $props["USER_GROUP"] ?? null;
 $groupId = (is_string($groupValue) || is_int($groupValue))
 	? filter_var($groupValue, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1)))
 	: false;
-if ($groupId === false || !\\Bitrix\\Main\\GroupTable::getById($groupId)->fetch()) {
+if ($groupId === false || !\Bitrix\Main\GroupTable::getById($groupId)->fetch()) {
 	// Неизвестная или удалённая группа не должна ломать выдачу карты.
 	$groupId = 0;
 }

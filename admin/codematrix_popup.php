@@ -152,7 +152,18 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 			}
 			echo $firstQueue.$lastQueue.'<a href="javascript:void(0);" onclick="showHideImgs(\'show_all\')" class="show_all">'.GetMessage("codematrix.popup_IMG_SHOWALL").'</a><a href="javascript:void(0);" onclick="showHideImgs(\'hide_all\')" class="hide_all">'.GetMessage("codematrix.popup_IMG_HIDEALL").'</a>';
 		}elseif($request['command']=='del_img'){
-			CFile::Delete($request['id']);
+			$fileId = filter_var(
+				$request->getPost('id'),
+				FILTER_VALIDATE_INT,
+				array('options' => array('min_range' => 1))
+			);
+			if ($fileId === false) {
+				http_response_code(400);
+				echo json_encode(array('status' => 'error', 'message' => 'Некорректный идентификатор файла'));
+				die();
+			}
+
+			CFile::Delete($fileId);
 			echo json_encode('success');
 		}elseif($request['command']=='add_custom_colortheme'){
 			$editableWindow=new popupEdit();

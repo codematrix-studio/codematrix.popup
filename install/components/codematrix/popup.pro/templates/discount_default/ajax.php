@@ -78,7 +78,11 @@ if (!$USER->IsAuthorized()) {
 }
 
 $result = $popup->getCoupon($ruleId, "infinite", $email, $popupId, "", $mask);
-if ($result !== false && $result !== null) {
+if ($result === false) {
+	echo "coupon_error";
+	die();
+}
+if ($result !== null) {
 	// Группу назначаем только после успешного создания купона.
 	$userId = (int)$USER->GetID();
 	if ($userId > 0 && $groupId > 0) {

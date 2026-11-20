@@ -48,6 +48,7 @@ function inducementWord($number, $wordArr) {
 					<input type="email" <?= $emailRequired ? 'required' : '' ?> value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?>"/>
 					<span class="error"><?=GetMessage("POPUP_WRONG")?></span>
 					<span class="not_new"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?></span>
+					<span class="coupon_error" style="display:none;"><?=GetMessage("POPUP_COUPON_ERROR")?></span>
 				</label>
 			<div class="coupon_block"><button onclick="getCoupon();"><?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?></button>
 			<input class="goodCoupon" type="text" disabled>
@@ -85,6 +86,9 @@ function inducementWord($number, $wordArr) {
 					
 					if(data=='not_unique'){
 						BX('codematrix_coupon_coupon').querySelector('span.not_new').style.display='inline-block';
+					}else if(data=='coupon_error'){
+						BX('codematrix_coupon_coupon').querySelector('span.coupon_error').style.display='inline-block';
+						return;
 					}else{
 						BX('codematrix_coupon_coupon').querySelector('span.not_new').style.display='none';
 						BX('codematrix_coupon_coupon').querySelector('label.input').remove()//.style.display='none';

@@ -1339,8 +1339,11 @@ class popup{
 			 $retArr['row']=$row;
 			 //var_dump($retArr['view']['type']);
 			 if($retArr['view']['type']=='coupon'){
-				CModule::IncludeModule("sale");
-				$res=CSaleDiscount::GetByID($retArr['view']['props']['RULE_ID']);
+				$res=Internals\DiscountTable::getList(array(
+					'filter'=>array('=ID'=>(int)$retArr['view']['props']['RULE_ID']),
+					'select'=>array('APPLICATION', 'CURRENCY'),
+					'limit'=>1
+				))->fetch();
 				$retArr['view']['props']['PERCENT']=$res;
 				//if($res['DISCOUNT_TYPE']=='P'){
 					$retArr['view']['props']['PERCENT']=explode('=>',$res['APPLICATION']);//['DISCOUNT_VALUE'].'%';

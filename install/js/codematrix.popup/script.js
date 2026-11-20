@@ -1,3 +1,10 @@
+function escapePopupHtml(value){
+	var entities = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+	return String(value == null ? '' : value).replace(/[&<>"']/g, function(character){
+		return entities[character];
+	});
+}
+
 var managerPopup={
 	type:'action', // Выбранный тип всплывающего окна.
 	imgType:'IMG_1_SRC', // Выбранный тип изображения для замены.
@@ -171,7 +178,7 @@ var managerPopup={
 				addTemplateName=currentTmplt[i].name;
 				activeOptionTemplate=' selected="selected"';
 				activeOptionColor=currentTmplt[i]['color_style'];
-				managerPopup.detailTemplateHeader.html(tmpName);
+				managerPopup.detailTemplateHeader.text(tmpName);
 
 				if(templatesType[type]['color_style'] && currentTmplt[i]['color_styles']){
 					var activeOptionColors=currentTmplt[i]['color_styles'];
@@ -224,25 +231,25 @@ var managerPopup={
 					if(templatesType[type]['props'][nextProp]){
 						if(nextProp.indexOf('IMG_')>-1){
 							var tmpImgVal=(tmpProp[nextProp+'_id'])?tmpProp[nextProp+'_id']:'';
-							contentBlock+='<input type="hidden" name="'+nextProp+'" value="'+tmpImgVal+'" /><label><span>'+templatesType[type]['props'][nextProp]['name']+'</span> <a href="javascript:void(0);" class="upload" data-idupload="'+nextProp+'">'+popupMessages.selectImg+'</a></label>';
+							contentBlock+='<input type="hidden" name="'+escapePopupHtml(nextProp)+'" value="'+escapePopupHtml(tmpImgVal)+'" /><label><span>'+escapePopupHtml(templatesType[type]['props'][nextProp]['name'])+'</span> <a href="javascript:void(0);" class="upload" data-idupload="'+escapePopupHtml(nextProp)+'">'+escapePopupHtml(popupMessages.selectImg)+'</a></label>';
 						}else{
 							var inputArea='';
 							
 							if(templatesType[type]['props'][nextProp]['tag'] && templatesType[type]['props'][nextProp]['tag']=='select'){
-								inputArea='<select name="'+nextProp+'">';
+								inputArea='<select name="'+escapePopupHtml(nextProp)+'">';
 								for(nextSel in templatesType[type]['props'][nextProp]['list']){
 									var selectOption=(nextSel==tmpProp[nextProp])?' selected="selected"':'';
-									inputArea+='<option value="'+nextSel+'"'+selectOption+'>'+templatesType[type]['props'][nextProp]['list'][nextSel]+'</option>';
+									inputArea+='<option value="'+escapePopupHtml(nextSel)+'"'+selectOption+'>'+escapePopupHtml(templatesType[type]['props'][nextProp]['list'][nextSel])+'</option>';
 								}
 								inputArea+='</select>';
 								if(nextProp=='RULE_ID'){
-									inputArea+='<a href="/bitrix/admin/sale_discount_edit.php?ID='+tmpProp[nextProp]+'" target="_blank">'+rule_info+'</a>';
+									inputArea+='<a href="/bitrix/admin/sale_discount_edit.php?ID='+encodeURIComponent(tmpProp[nextProp])+'" target="_blank">'+escapePopupHtml(rule_info)+'</a>';
 								}
 								if(nextProp=='EMAIL_TEMPLATE'||nextProp=='MAIL_TEMPLATE'){
-									inputArea+='<a href="/bitrix/admin/message_edit.php?lang=ru&ID='+tmpProp[nextProp]+'" target="_blank">'+rule_info+'</a>';
+									inputArea+='<a href="/bitrix/admin/message_edit.php?lang=ru&ID='+encodeURIComponent(tmpProp[nextProp])+'" target="_blank">'+escapePopupHtml(rule_info)+'</a>';
 								}
 							}else if(templatesType[type]['props'][nextProp]['tag'] && templatesType[type]['props'][nextProp]['tag']=='textarea'){
-								inputArea='<textarea rows="5"  name="'+nextProp+'">'+tmpProp[nextProp]+'</textarea>';
+								inputArea='<textarea rows="5" name="'+escapePopupHtml(nextProp)+'">'+escapePopupHtml(tmpProp[nextProp])+'</textarea>';
 							}else if(templatesType[type]['props'][nextProp]['tag'] && templatesType[type]['props'][nextProp]['tag']=='checkbox'){
 								tmpChecked=(tmpProp[nextProp]=='Y')?' checked="checked"':'';
 								tmpHiddenVal=(tmpProp[nextProp]=='Y')?'Y':'N';
@@ -267,7 +274,7 @@ var managerPopup={
 								
 								showparam='';
 							}else{
-								inputArea='<input type="text" name="'+nextProp+'" value="'+tmpProp[nextProp]+'" />';
+								inputArea='<input type="text" name="'+escapePopupHtml(nextProp)+'" value="'+escapePopupHtml(tmpProp[nextProp])+'" />';
 							}
 
 							var hint = '';
@@ -286,7 +293,7 @@ var managerPopup={
 								}
 							}
 							if(!(type=='discount'&&(nextProp=='EMAIL_ADD2BASE'||nextProp=='EMAIL_NOT_NEW'/*||nextProp==''||nextProp==''*/)))
-							contentBlock+=startblock+'<label><span>'+templatesType[type]['props'][nextProp]['name']+hint+'</span> '+inputArea+'</label>'+endblock;
+							contentBlock+=startblock+'<label><span>'+escapePopupHtml(templatesType[type]['props'][nextProp]['name'])+hint+'</span> '+inputArea+'</label>'+endblock;
 						}
 					}
 				}
@@ -338,9 +345,9 @@ var managerPopup={
 				managerPopup.detailEditContentBlock.find('input[type=text], textarea, select').on('keyup click change', function(){managerPopup.updatePreview();});
 				managerPopup.hint(hints,hints_text);
 			}
-			currentListTemplate+='<option'+activeOptionTemplate+' value="'+currentTmplt[i]['template']+'">'+tmpName+'</option>';
+			currentListTemplate+='<option'+activeOptionTemplate+' value="'+escapePopupHtml(currentTmplt[i]['template'])+'">'+escapePopupHtml(tmpName)+'</option>';
 		}
-		currentListTemplate+='</select> <a href="javascript:void(0);" class="addCustomTemplate">'+popupMessages.addColorTemplate+'  "<span>'+addTemplateName+'</span>"</a>';
+		currentListTemplate+='</select> <a href="javascript:void(0);" class="addCustomTemplate">'+escapePopupHtml(popupMessages.addColorTemplate)+'  "<span>'+escapePopupHtml(addTemplateName)+'</span>"</a>';
 
 		// Цветовые темы.
 		if(templatesType[type]['color_style']){
@@ -365,9 +372,9 @@ var managerPopup={
 					activeOptionTemplate=' selected="selected"';
 					addcustomColorName=tmpColors[nextColor];
 				}
-				currentListColors+=optGroupStart+'<option'+activeOptionTemplate+' value="'+nextColor+'">'+tmpColors[nextColor]+'</option>';
+				currentListColors+=optGroupStart+'<option'+activeOptionTemplate+' value="'+escapePopupHtml(nextColor)+'">'+escapePopupHtml(tmpColors[nextColor])+'</option>';
 			}
-			currentListColors+=optGroupEnd+'</select> <a href="javascript:void(0);" class="addCustomColorTheme">'+popupMessages.addColorTheme+' "<span>'+addcustomColorName+'</span>"</a>';
+			currentListColors+=optGroupEnd+'</select> <a href="javascript:void(0);" class="addCustomColorTheme">'+escapePopupHtml(popupMessages.addColorTheme)+' "<span>'+escapePopupHtml(addcustomColorName)+'</span>"</a>';
 			currentListColors=$(currentListColors);
 
 			if(!managerPopup.detailEditViewBlock){
@@ -655,10 +662,11 @@ $(document).ready(function(){
 					dataType:'json',
 					//dataType:'html',
 					success: function(data){
-						var successBlock='<span class="successBlock">'+popupMessages.customTemplateCreateSuccess+': <a href="/bitrix/admin/fileman_file_edit.php?path='+data.newPath+'" target="_blank">'+popupMessages.edit+'</a></span>';
+						var editLink=$('<a>').attr('href','/bitrix/admin/fileman_file_edit.php?path='+encodeURIComponent(data.newPath)).attr('target','_blank').text(popupMessages.edit);
+						var successBlock=$('<span>').addClass('successBlock').append(document.createTextNode(popupMessages.customTemplateCreateSuccess+': ')).append(editLink);
 						replaceBlock.replaceWith(successBlock);
 						templatesPopup[ajaxData.type].push(data.popup);
-						managerPopup.templatesListArea.find('select[name=template]').append('<option value="'+data.code+'">'+ajaxData.name+'['+data.id+']'+'</option>');
+						managerPopup.templatesListArea.find('select[name=template]').append($('<option>').val(data.code).text(ajaxData.name+'['+data.id+']'));
 						managerPopup.templatesListArea.find('select[name=template] option').prop('selected', false);
 						managerPopup.templatesListArea.find('select[name=template] option').last().prop('selected', true);
 						//managerPopup.templatesListArea.find('select[name=template]').trigger('change');
@@ -692,7 +700,8 @@ $(document).ready(function(){
 					data:ajaxData,
 					dataType:'json',
 					success: function(data){
-						var successBlock='<span class="successBlock">'+popupMessages.colorThemeCreateSuccess+': <a href="/bitrix/admin/fileman_file_edit.php?path='+data.newPath+'" target="_blank">'+popupMessages.edit+'</a></span>';
+						var editLink=$('<a>').attr('href','/bitrix/admin/fileman_file_edit.php?path='+encodeURIComponent(data.newPath)).attr('target','_blank').text(popupMessages.edit);
+						var successBlock=$('<span>').addClass('successBlock').append(document.createTextNode(popupMessages.colorThemeCreateSuccess+': ')).append(editLink);
 						replaceBlock.replaceWith(successBlock);
 						for(var i=0; i<templatesPopup[ajaxData.type].length; i++){
 							if(templatesPopup[ajaxData.type][i]['template']==ajaxData.template){
@@ -700,7 +709,7 @@ $(document).ready(function(){
 								break;
 							}
 						}
-						managerPopup.detailEditViewBlock.find('select[name=color_style]').append('<option value="'+data.code+'">'+ajaxData.name+'['+data.id+']'+'</option>');
+						managerPopup.detailEditViewBlock.find('select[name=color_style]').append($('<option>').val(data.code).text(ajaxData.name+'['+data.id+']'));
 						managerPopup.detailEditViewBlock.find('select[name=color_style] option').prop('selected', false);
 						managerPopup.detailEditViewBlock.find('select[name=color_style] option').last().prop('selected', true);
 					},

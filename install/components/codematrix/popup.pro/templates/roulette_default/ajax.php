@@ -39,7 +39,9 @@ if (
 
 $props = $settings["view"]["props"];
 $timingValue = $props["TIMING"] ?? "";
-$timing = is_scalar($timingValue) ? (string)$timingValue : null;
+$timing = (is_string($timingValue) || is_int($timingValue))
+	? (string)$timingValue
+	: null;
 if (
 	$timing === null
 	|| (
@@ -159,8 +161,8 @@ if ($mode === "draw") {
 		if (
 			!is_array($element)
 			|| !isset($element["rule"])
-			|| !is_scalar($element["rule"])
-			|| !is_scalar($element["text"] ?? "")
+			|| (!is_string($element["rule"]) && !is_int($element["rule"]))
+			|| (!is_string($element["text"] ?? "") && !is_int($element["text"] ?? ""))
 		) {
 			$sendJson(array("status" => "error", "code" => "invalid_roulette"));
 		}

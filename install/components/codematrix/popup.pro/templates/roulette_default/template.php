@@ -62,7 +62,7 @@ function rouletteRequest(data, callback){
 		method: 'POST',
 		dataType: 'json',
 		data: data,
-		timeout: 300,
+		timeout: 30000,
 		onsuccess: callback,
 		onfailure: function(){
 			rouletteBusy = false;

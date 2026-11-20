@@ -1119,6 +1119,12 @@ class popup{
 		return $templates;
 	}
 
+		/**
+	 * Формирует значения условий показа попапа по умолчанию.
+	 * В список входят сайты, группы пользователей и дополнительные условия модулей.
+	 *
+	 * @return array<string, mixed>
+	 */
 	private function getConditionsPreset(){
 		$conditionArr=array(
 			'active'=>false,

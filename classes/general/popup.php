@@ -1519,8 +1519,10 @@ class popup{
 	}
 
 	/**
-	* Добавляет данные всплывающих окон для показа в публичной части сайта.
-	*/
+	 * Подключает ресурсы модуля и передаёт данные попапов в публичную часть сайта.
+	 *
+	 * @return void
+	 */
 	public static function insertPopups(){
 		if(!defined('ADMIN_SECTION') && empty($_SERVER['HTTP_X_REQUESTED_WITH'])){
 			$afterTimeSecond=0;
@@ -1540,16 +1542,11 @@ class popup{
 			}
 			CJSCore::Init(array("ajax", "popup"));
 			
-			global $APPLICATION;
-			$APPLICATION->AddHeadScript('/bitrix/js/'.self::idModule.'/script_public.js');
-			$APPLICATION->SetAdditionalCSS('/bitrix/js/main/core/css/core_popup.css');
-			$APPLICATION->SetAdditionalCSS('/bitrix/themes/.default/codematrix.popup_public.css');
-			$APPLICATION->AddHeadString('<script> var codematrixPopups='.json_encode($codematrixPopups).'; </script>');
-			
-			/*Asset::getInstance()->addJs('/bitrix/js/'.self::idModule.'/script_public.js');
-			Asset::getInstance()->addCss('/bitrix/js/main/core/css/core_popup.css');
-			Asset::getInstance()->addCss('/bitrix/themes/.default/codematrix.popup_public.css');
-			Asset::getInstance()->addString('<script> var codematrixPopups='.json_encode($codematrixPopups).'; </script>');*/
+			$asset = Asset::getInstance();
+			$asset->addJs('/bitrix/js/'.self::idModule.'/script_public.js');
+			$asset->addCss('/bitrix/js/main/core/css/core_popup.css');
+			$asset->addCss('/bitrix/themes/.default/codematrix.popup_public.css');
+			$asset->addString('<script> var codematrixPopups='.json_encode($codematrixPopups).'; </script>');
 		}
 	}
 

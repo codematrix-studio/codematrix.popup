@@ -1378,7 +1378,19 @@ class popup{
 		 return false;
 	}
 	
+	/**
+	 * Создаёт купон скидки и при необходимости отправляет его по почте.
+	 *
+	 * @param int|string $id Идентификатор правила скидки либо win для сценария выигрыша.
+	 * @param int|string $avaliable Срок действия в днях либо infinite для многоразового купона.
+	 * @param string $email Email получателя.
+	 * @param int $popup_id Идентификатор попапа, определяющего почтовый шаблон.
+	 * @param string $result_text Текст результата для письма рулетки.
+	 * @param string $mask Маска генерируемого купона.
+	 * @return string|false|null Сгенерированный купон, false при некорректном ID; null для сценария win.
+	 */
 	public function getCoupon($id,$avaliable,$email='',$popup_id=0,$result_text='',$mask=''){
+		global $USER;
 		if(empty($id)||$id==0){return false;}
 		if($id!='win'){
 			$COUPON='';
@@ -1386,7 +1398,7 @@ class popup{
 			$startTime=new Bitrix\Main\Type\DateTime(ConvertTimeStamp($cTime, "FULL"));
 			$endTime=false;
 			if($avaliable!=''&&$avaliable!='infinite'){
-				$endTime = $endTime=AddToTimeStamp(array('DD'=>$avaliable), $cTime);
+				$endTime = AddToTimeStamp(array('DD'=>$avaliable), $cTime);
 				$endTime=new Bitrix\Main\Type\DateTime(ConvertTimeStamp($endTime, "FULL"));
 			}
 			$fields = array(
@@ -1399,7 +1411,6 @@ class popup{
 				'DESCRIPTION'=>$email,
 			);
 			if($avaliable==='infinite'){
-				global $USER;
 				$fields['TYPE']=Bitrix\Sale\Internals\DiscountCouponTable::TYPE_MULTI_ORDER;
 				$fields['MAX_USE']='';
 				$fields['USER_ID']=$USER->GetID();
@@ -1485,7 +1496,7 @@ class popup{
 			$couponsResult = \Bitrix\Sale\Internals\DiscountCouponTable::add($fields);
 			return $COUPON;
 		}elseif($id=='win'){
-			$COUPON=='';
+			$COUPON='';
 			if($popup_id!=0){
 				$settings=$this->getSetting($popup_id);
 				if(!empty($settings['view']['props']['MAIL_TEMPLATE'])){

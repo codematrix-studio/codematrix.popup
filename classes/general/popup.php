@@ -1839,11 +1839,22 @@ class popup{
 	}
 
 	public function setStatistic($idPopup, $value, $field){
-		if(!empty($field) && in_array($field, array('stat_show','stat_time','stat_action'))){
-			global $DB;
-			$res = $DB->Query('select * from '.$this->tableSetting.' where id='.$idPopup.' limit 1;');
-			if($row = $res->Fetch()){
-				$DB->Query('update '.$this->tableSetting.' set '.$field.'="'.($row[$field]+$value).'" where id='.$idPopup.' limit 1;');
+		$statisticFields=array(
+			'stat_show'=>'STAT_SHOW',
+			'stat_time'=>'STAT_TIME',
+			'stat_action'=>'STAT_ACTION'
+		);
+		if(!empty($field) && isset($statisticFields[$field])){
+			$ormRow = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+				'filter'=>array('=ID'=>$idPopup),
+				'select'=>array('ID', $statisticFields[$field]),
+				'limit'=>1
+			))->fetch();
+			$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
+			if($row){
+				\\CodeMatrix\\Popup\\Model\\PopupTable::update($idPopup, array(
+					$statisticFields[$field]=>$row[$field]+$value
+				));
 				return true;
 			}
 		}

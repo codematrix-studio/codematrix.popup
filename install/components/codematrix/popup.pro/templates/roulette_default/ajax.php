@@ -1,55 +1,93 @@
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
-use Bitrix\Main,
-	Bitrix\Main\Loader,
-	Bitrix\Main\Application,
-	Bitrix\Main\Web\Cookie,
-	Bitrix\Main\Context;
-\Bitrix\Main\Loader::IncludeModule("codematrix.popup");
-function addCookie(){
-	$context = Application::getInstance()->getContext();
-	$responce = $context->getResponse();
-	$cookie = new Cookie("codematrixPopupFilling_".$_REQUEST['idPopup'], 'Y', time()+864000000);
-	$cookie->setDomain($context->getServer()->getHttpHost());
-	$cookie->setHttpOnly(false);
-	$responce->addCookie($cookie);
-	$context->getResponse()->flush("");
-}
-$popup=new popup;
-$res='';
-$email = '';
-if(isset($_REQUEST['nothing'])&&isset($_REQUEST['idPopup'])){
-	addCookie();
+<?php
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
+
+if (!\Bitrix\Main\Loader::includeModule("codematrix.popup")) {
 	die();
 }
-if(isset($_REQUEST['email']))
-	$email=$_REQUEST['email'];
-if(!isset($_REQUEST['addtotable'])){
-	$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup'],$_REQUEST['resultText']);
-	echo $res;
-	addCookie();
+
+$request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
+$popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
+	"options" => array("min_range" => 1),
+));
+$settings = ($popupId !== false) ? (new popup())->getSetting($popupId) : false;
+
+if (
+	!is_array($settings)
+	|| ($settings["view"]["type"] ?? "") !== "roulette"
+	|| !is_array($settings["view"]["props"] ?? null)
+) {
 	die();
 }
-if(isset($_REQUEST['addtotable'])&&$_REQUEST['addtotable']!='Y'){
-	$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup'],$_REQUEST['resultText']);
-	echo $res;
-	addCookie();
-	die();
-}
-if(isset($_REQUEST['email'])&&isset($_REQUEST['idPopup'])&&$_REQUEST['addtotable']=='Y'){
-	if($_REQUEST['unique']=='Y'){
-		if($popup->searchinMailList($email)){
-			$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup'],$_REQUEST['resultText']);
-			$popup->insertToMailList($email,'',$_REQUEST['idPopup']);
-			addCookie();
-			echo $res;
-		}else{
-			echo 'not_unique';
-		}
-	}else{
-		$res = $popup->getCoupon($_REQUEST['id'],$_REQUEST['avaliable'],$email,$_REQUEST['idPopup'],$_REQUEST['resultText']);
-		$popup->insertToMailList($email,'',$_REQUEST['idPopup']);
-		addCookie();
-		echo $res;
+
+$props = $settings["view"]["props"];
+$rule = $request->get("id");
+$email = $request->get("email");
+$addToTable = $request->get("addtotable");
+$unique = $request->get("unique");
+$requestedTiming = $request->get("avaliable");
+$timing = (string)($props["TIMING"] ?? "");
+$allowedResults = array();
+
+foreach (($settings["roulett"] ?? array()) as $element) {
+	if (is_array($element) && isset($element["rule"])) {
+		$allowedResults[(string)$element["rule"]] = (string)($element["text"] ?? "");
 	}
 }
+
+$context = \Bitrix\Main\Application::getInstance()->getContext();
+$addCookie = static function () use ($context, $popupId) {
+	$cookie = new \Bitrix\Main\Web\Cookie(
+		"codematrixPopupFilling_" . $popupId,
+		"Y",
+		time() + 864000000
+	);
+	$cookie->setDomain($context->getServer()->getHttpHost());
+	$cookie->setHttpOnly(false);
+	$context->getResponse()->addCookie($cookie);
+};
+
+if ($request->get("nothing") !== null) {
+	$addCookie();
+	$context->getResponse()->flush("");
+	die();
+}
+
+if (
+	!is_string($rule)
+	|| !array_key_exists($rule, $allowedResults)
+	|| !is_string($requestedTiming)
+	|| $requestedTiming !== $timing
+	|| !is_string($email)
+	|| !filter_var($email, FILTER_VALIDATE_EMAIL)
+	|| !in_array($addToTable, array("Y", "N"), true)
+	|| !in_array($unique, array("Y", "N", null), true)
+) {
+	die();
+}
+
+$popup = new popup();
+if ($addToTable === "Y") {
+	if (($props["EMAIL_ADD2BASE"] ?? "N") !== "Y") {
+		die();
+	}
+
+	if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y" && $unique === "Y") {
+		if (!$popup->searchinMailList($email, $popupId)) {
+			echo "not_unique";
+			die();
+		}
+	}
+}
+
+$resultText = $allowedResults[$rule];
+$result = $popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
+if ($result !== false && $result !== null) {
+	if ($addToTable === "Y") {
+		$popup->insertToMailList($email, "", $popupId);
+	}
+	$addCookie();
+	$context->getResponse()->flush("");
+	echo $result;
+}
+
 die();

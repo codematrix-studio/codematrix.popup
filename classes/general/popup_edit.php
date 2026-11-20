@@ -153,10 +153,19 @@ class popupEdit extends popup{
 					$settings['condition']['timeInterval']=$tmpPeriodFrom.'#'.$tmpPeriodTo;
 				}
 			}elseif($keyNextCond=='dateStart' || $keyNextCond=='dateFinish'){
-				$site = \Bitrix\Main\SiteTable::getByPrimary(SITE_ID, ['select' => ['FORMAT_DATETIME']])->fetch();
+				// Формат даты и времени хранится в региональных настройках культуры, а не в SiteTable.
+				$context = \Bitrix\Main\Context::getCurrent();
+				$culture = ($context !== null) ? $context->getCulture() : null;
+				$dateTimeFormat = ($culture !== null) ? $culture->getDateTimeFormat() : '';
+
+				// Резервный вариант для окружений без доступной культуры текущего контекста.
+				if ($dateTimeFormat === '') {
+					$dateTimeFormat = \CSite::GetDateFormat('FULL', SITE_ID);
+				}
+
 				$settings['condition'][$keyNextCond] = MakeTimeStamp(
 					$request->getPost($keyNextCond),
-					$site['FORMAT_DATETIME']
+					$dateTimeFormat
 				);
 			}elseif($keyNextCond=='saleIDProdInBasket'){
 				$tmpProds=array();

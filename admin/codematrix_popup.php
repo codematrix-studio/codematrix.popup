@@ -200,7 +200,29 @@ if(!empty($request['id'])){
 	}
 
 
-	$rsData = $DB->Query('SELECT * FROM '.$sTableID.' order by '.$by.' '.$order.';', false, $err_mess.__LINE__);
+	// Сопоставляем параметры CAdminSorting с полями ORM, не передавая имена колонок напрямую.
+	$sortFields = array(
+		'id' => 'ID',
+		'sort' => 'SORT',
+		'active' => 'ACTIVE',
+		'name' => 'NAME',
+		'type' => 'TYPE',
+		'stat_show' => 'STAT_SHOW',
+		'stat_time' => 'STAT_TIME',
+		'stat_action' => 'STAT_ACTION'
+	);
+	$sortField = isset($sortFields[strtolower($by)]) ? $sortFields[strtolower($by)] : 'ID';
+	$sortDirection = (strtolower($order) === 'asc') ? 'ASC' : 'DESC';
+
+	$ormResult = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+		'select' => array('*'),
+		'order' => array($sortField => $sortDirection)
+	));
+
+	// CAdminResult ожидает классический CDBResult. InitFromArray сохраняет
+	// совместимость штатной административной навигации с данными D7 ORM.
+	$rsData = new CDBResult();
+	$rsData->InitFromArray($ormResult->fetchAll());
 	$rsData->NavStart(CAdminResult::GetNavSize());
 	$rsData = new CAdminResult($rsData, $sTableID);
 	$lAdmin->NavText($rsData->GetNavPrint(GetMessage("codematrix.popup_TABLELIST_PAGINATOR")));

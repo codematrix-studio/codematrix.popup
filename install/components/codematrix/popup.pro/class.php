@@ -27,7 +27,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 		if(empty($params['ID_POPUP'])){
 			$params['ID_POPUP']=1;
 		}
-		$params['REFERER']=$_SERVER['HTTP_REFERER'];
+		$params['REFERER']=$_SERVER['HTTP_REFERER'] ?? '';
 		return $params;
 	}
 
@@ -237,7 +237,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 							$insertArr=array(
 								'IBLOCK_ID'=>$popupSetting['contact']['iblock'],
 								'NAME'=>array_shift($forSendDataArr),
-								'PREVIEW_TEXT'=>$tmpInfo
+								'PREVIEW_TEXT'=>''
 							);
 							foreach($forSendDataArr as $keyData=>$nextData){
 								if(!empty($tmpRes[$keyData.'_TITLE'])){
@@ -271,8 +271,9 @@ class CodeMatrixPopup extends \CBitrixComponent{
 								'filter' => array('=EMAIL' => $forSendDataArr['EMAIL']),
 								'order' => array('ID' => 'DESC'),
 							));
-							$tmpRes['REG_RES'][]=!$tmpUsers->Fetch();
-							if(!$tmpUsers->Fetch()){
+							$existingUser = $tmpUsers->fetch();
+							$tmpRes['REG_RES'][] = !$existingUser;
+							if(!$existingUser){
 								$res=$USER->SimpleRegister($forSendDataArr['EMAIL']);
 							}
 						}
@@ -308,7 +309,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 			$this->arResult=$tmpRes;
 		}
 		$timer_array=array('banner','video','action','contact','html','coupon','roulette','discount');
-			if(in_array($popupSetting['view']['type'],$timer_array)){
+			if(!empty($popupSetting['view']['type']) && in_array($popupSetting['view']['type'],$timer_array)){
 				$this->arResult['TIMER']=$popupSetting['timer']['enabled'];
 				$this->arResult['TIMER_TEXT']=$popupSetting['timer']['text'];
 				if($this->arResult['TIMER']=='Y'){
@@ -325,7 +326,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				$this->arResult['TIMER_BOTTOM']=$popupSetting['timer']['bottom'];
 				}
 			}
-		if($popupSetting['view']['type']=='roulette'){
+		if(!empty($popupSetting['view']['type']) && $popupSetting['view']['type']=='roulette'){
 			$this->arResult['ELEMENTS']=$popupSetting['roulett'];
 			unset($this->arResult['ELEMENTS']['count']);
 			$this->arResult['ELEMENTS_COUNT']=$popupSetting['roulett']['count'];

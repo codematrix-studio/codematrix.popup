@@ -24,6 +24,12 @@ class popup{
 	protected $site_id;
 	const idModule='codematrix.popup';
 
+	/**
+	 * Инициализирует объект попапа и его таблицы хранения.
+	 *
+	 * @param int|string $id Идентификатор попапа либо new для нового попапа.
+	 * @return void
+	 */
 	function __construct($id='new'){
 		$this->tableSetting='codematrix_popup';
 		$this->tableColorThemes='codematrix_popup_add_colors';
@@ -33,6 +39,11 @@ class popup{
 		$this->site_id=SITE_ID;
 	}
 
+	/**
+	 * Возвращает активные пользовательские соглашения для выбора в настройках попапа.
+	 *
+	 * @return array<int|string, string> Список соглашений, индексированный по ID.
+	 */
 	public function getConsentList(){
 		if($this->consentList=='none'){
 			if (class_exists('Bitrix\Main\UserConsent\Agreement')){
@@ -53,6 +64,12 @@ class popup{
 		return ($this->consentList=='none')?array():$this->consentList;
 	}
 
+	/**
+	 * Формирует подписи активных пользовательских соглашений с учётом переданных данных.
+	 *
+	 * @param array $agrArr Данные, передаваемые объекту соглашения.
+	 * @return array<int|string, string> Подписи соглашений, индексированные по ID.
+	 */
 	public function getAgreements($agrArr=array()){
 		$retArr=array();
 		if (class_exists('Bitrix\Main\UserConsent\Agreement')){
@@ -68,14 +85,30 @@ class popup{
 		return $retArr;
 	}
 
+	/**
+	 * Устанавливает идентификатор попапа для последующих операций объекта.
+	 *
+	 * @param int|string $id Идентификатор попапа.
+	 * @return void
+	 */
 	public function setPopupId($id){
 		$this->idPopup=$id;
 	}
 
+	/**
+	 * Возвращает имя таблицы настроек попапов.
+	 *
+	 * @return string Имя таблицы.
+	 */
 	public function getTableSetting(){
 		return $this->tableSetting;
 	}
 
+	/**
+	 * Формирует базовое описание поддерживаемых типов попапов и их свойств.
+	 *
+	 * @return array<string, array<string, mixed>> Описание типов попапов.
+	 */
 	private function getTypesPreset(){
 		$type=array(
 			/* 1. Изображение (баннер) */
@@ -482,6 +515,11 @@ class popup{
 		return $type;
 	}
 
+	/**
+	 * Возвращает типы попапов с отметкой текущего типа для редактируемой записи.
+	 *
+	 * @return array<string, array<string, mixed>> Описание типов и их состояния.
+	 */
 	public function getTypes(){
 		$type=$this->getTypesPreset();
 		if($this->idPopup!='new'){
@@ -497,6 +535,11 @@ class popup{
 		return $type;
 	}
 
+	/**
+	 * Формирует базовый набор шаблонов и параметров отображения для типов попапов.
+	 *
+	 * @return array<string, array<int, array<string, mixed>>> Набор шаблонов.
+	 */
 	protected function getTemplatesPreset(){
 		$templates=array(
 			/* 1. Изображение (баннер) */
@@ -1039,6 +1082,11 @@ class popup{
 		return $templates;
 	}
 
+	/**
+	 * Возвращает базовые шаблоны с применёнными пользовательскими цветовыми темами.
+	 *
+	 * @return array<string, array<int, array<string, mixed>>> Итоговый набор шаблонов.
+	 */
 	private function getCustomPreset(){
 		$templates=$this->getTemplatesPreset();
 		$templates=$this->getCustomColors($templates);
@@ -1046,6 +1094,11 @@ class popup{
 		return $templates;
 	}
 
+	/**
+	 * Загружает пользовательские шаблоны из таблицы модуля.
+	 *
+	 * @return array<string, array<int, array<string, mixed>>> Шаблоны, сгруппированные по типу попапа.
+	 */
 	private function getCustomTemplates(){
 		$retArr=array();
 		$res = \CodeMatrix\Popup\Model\PopupTemplateTable::getList(array(
@@ -1059,6 +1112,12 @@ class popup{
 		}
 		return $retArr;
 	}
+	/**
+	 * Дополняет шаблоны пользовательскими цветовыми темами из таблицы модуля.
+	 *
+	 * @param array $templates Набор базовых шаблонов.
+	 * @return array Итоговый набор шаблонов с цветовыми темами.
+	 */
 	private function getCustomColors($templates){
 		$additionalColorThemes=array();
 		$res = \CodeMatrix\Popup\Model\PopupColorTable::getList(array(
@@ -1084,6 +1143,11 @@ class popup{
 	}
 
 
+	/**
+	 * Возвращает шаблоны с учётом пользовательских тем и текущих настроек попапа.
+	 *
+	 * @return array Набор шаблонов и их параметров.
+	 */
 	public function getTemplates(){
 		//$templates=$this->getTemplatesPreset();
 		$templates=$this->getCustomPreset();
@@ -1180,6 +1244,11 @@ class popup{
 		return $conditionArr;
 	}
 
+	/**
+	 * Возвращает условия показа по умолчанию или значения сохранённого попапа.
+	 *
+	 * @return array<string, mixed> Условия показа и дополнительные параметры.
+	 */
 	public function getConditions(){
 		$conditionArr=$this->getConditionsPreset();
 		if($this->idPopup!='new'){
@@ -1213,6 +1282,13 @@ class popup{
 		return $conditionArr;
 	}
 	
+	/**
+	 * Проверяет, отсутствует ли адрес электронной почты в списке рассылки попапа.
+	 *
+	 * @param string $mail Адрес электронной почты.
+	 * @param int|string $id Идентификатор попапа; 0 означает проверку общего списка.
+	 * @return bool true, если адрес можно добавить; false, если он уже есть или адрес пуст.
+	 */
 	public function searchinMailList($mail,$id=0){
 		$id=(int)$id;
 		if(!empty($mail)){
@@ -1526,6 +1602,12 @@ class popup{
 	}
 	// Публичная часть модуля.
 
+	/**
+	 * Преобразует количество секунд в локализованную строку дней, часов, минут и секунд.
+	 *
+	 * @param int $tm Продолжительность в секундах.
+	 * @return string Форматированная продолжительность.
+	 */
 	public static function convertTimeFromSecond($tm){
 		$tmStr='';
 		if($tm>86400){
@@ -1849,6 +1931,12 @@ class popup{
 		}
 	}
 
+	/**
+	 * Подключает компонент попапа с шаблоном, соответствующим его сохранённым настройкам.
+	 *
+	 * @param int|string $idPopup Идентификатор попапа.
+	 * @return mixed|false Результат подключения компонента либо false, если шаблон не определён.
+	 */
 	public function getHTMLByPopup($idPopup){
 		$componentResult=$this->getComponentResult($idPopup);
 		if(empty($componentResult['TEMPLATE_NAME'])){
@@ -1863,6 +1951,12 @@ class popup{
 		);
 	}
 
+	/**
+	 * Определяет пути шаблонов, CSS-файлов и цветовых тем для набора попапов.
+	 *
+	 * @param array<int, int|string> $idPopups Идентификаторы попапов.
+	 * @return array<int|string, array<string, mixed>>|false Пути ресурсов либо false для пустого списка.
+	 */
 	public function getComponentPath($idPopups){
 		if(count($idPopups)==0){return false;}
 		foreach($idPopups as $nextPopup){
@@ -1892,6 +1986,14 @@ class popup{
 		return $retArr;
 	}
 
+	/**
+	 * Увеличивает выбранный счётчик статистики попапа на переданное значение.
+	 *
+	 * @param int|string $idPopup Идентификатор попапа.
+	 * @param int|float $value Значение, добавляемое к счётчику.
+	 * @param string $field Ключ счётчика: stat_show, stat_time или stat_action.
+	 * @return bool true, если запись найдена и обновлена; иначе false.
+	 */
 	public function setStatistic($idPopup, $value, $field){
 		$statisticFields=array(
 			'stat_show'=>'STAT_SHOW',

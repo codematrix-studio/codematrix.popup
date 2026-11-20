@@ -1372,7 +1372,7 @@ if(empty($idPopup)){
 	<?$tabControl->Buttons();?>
 	<input type="submit" class="adm-btn-save" name="save" value="<?=GetMessage("codematrix.popup_TAB_BUTTON_SAVE")?>" title="<?=GetMessage("codematrix.popup_TAB_BUTTON_SAVE")?>" />&nbsp;
 	<input type="submit" class="button" name="apply" value="<?=GetMessage("codematrix.popup_TAB_BUTTON_APPLY")?>" title="<?=GetMessage("codematrix.popup_TAB_BUTTON_APPLY")?>" />&nbsp;
-	<input type="button" name="cancel" value="<?=GetMessage("codematrix.popup_TAB_BUTTON_CANCEL")?>" title="<?=GetMessage("codematrix.popup_TAB_BUTTON_CANCEL")?>" onclick="window.location.href='codematrix_popup.php?lang=<?=LANG?>'" />
+	<a class="adm-btn" href="/bitrix/admin/codematrix_popup.php?lang=<?=LANG?>" target="_top"><?=GetMessage("codematrix.popup_TAB_BUTTON_CANCEL")?></a>
 	<?$tabControl->End();?>
 	<script>
 		<?

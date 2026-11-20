@@ -61,7 +61,11 @@ if ($addToTable === "Y") {
 	}
 
 	$result = $popup->getCoupon($configuredRuleId, $configuredTiming, $email, $popupId);
-	if ($result !== false && $result !== null) {
+	if ($result === false) {
+		echo "coupon_error";
+		die();
+	}
+	if ($result !== null) {
 		$popup->insertToMailList($email, "", $popupId);
 		echo $result;
 	}

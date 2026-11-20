@@ -210,7 +210,13 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						}
 						
 						if(!empty($popupSetting['row']['cont_posttemplate'])){
-							CEvent::Send("CODEMATRIX_POPUP_SENDER", SITE_ID, $forSendDataArr, 'Y', $popupSetting['row']['cont_posttemplate']);
+							\Bitrix\Main\Mail\Event::send([
+								'EVENT_NAME' => 'CODEMATRIX_POPUP_SENDER',
+								'LID' => SITE_ID,
+								'C_FIELDS' => $forSendDataArr,
+								'DUPLICATE' => 'Y',
+								'MESSAGE_ID' => (int)$popupSetting['row']['cont_posttemplate'],
+							]);
 						}
 						if(!empty($popupSetting['contact']['emailList']) && $popupSetting['contact']['emailList']=='Y'){
 							$popup->insertToMailList($forSendDataArr['EMAIL'], $forSendDataArr['NAME'], $this->arParams['ID_POPUP']);

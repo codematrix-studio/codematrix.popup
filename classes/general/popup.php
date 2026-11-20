@@ -1560,8 +1560,11 @@ class popup{
 
 	public function getAvailablePopups($options){
 
-		global $DB;
-		$res = $DB->Query('select * from '.$this->tableSetting.' where active="Y" order by sort;');
+		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+			'filter'=>array('=ACTIVE'=>'Y'),
+			'select'=>array('*'),
+			'order'=>array('SORT'=>'ASC')
+		));
 		$retArr=array();
 
 		$context = Application::getInstance()->getContext();
@@ -1574,7 +1577,8 @@ class popup{
 		$serverBase=$httpType.$tmp;
 		$options['pageUrl'] = str_replace($serverBase, "", $options['pageUrl']);
 	
-		while($row = $res->Fetch()){
+		while($ormRow = $res->fetch()){
+			$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
 
 			$settings=unserialize($row['settings']);
 

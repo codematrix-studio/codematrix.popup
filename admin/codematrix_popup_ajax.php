@@ -19,11 +19,26 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 		'popupId'=>$request->get('popupId'),
 		'popupTime'=>$request->get('popupTime'),
 	);
-	$getAvailablePopups = static function () use ($popupsO) {
+	$pageUrl = (string)($_SERVER['HTTP_REFERER'] ?? '');
+	if ($pageUrl === '') {
+		$requestedPageUrl = $request->get('pageUrl');
+		if (is_string($requestedPageUrl) && $requestedPageUrl !== '') {
+			$requestedPageUrl = urldecode($requestedPageUrl);
+			$requestedHost = parse_url($requestedPageUrl, PHP_URL_HOST);
+			$currentHost = parse_url('http://' . (string)($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST);
+			if ($requestedHost === null || ($currentHost !== null && strcasecmp($requestedHost, $currentHost) === 0)) {
+				$pageUrl = $requestedPageUrl;
+			}
+		}
+	}
+	if ($pageUrl === '') {
+		$pageUrl = '/';
+	}
+	$getAvailablePopups = static function () use ($popupsO, $pageUrl) {
 		return $popupsO->getAvailablePopups(array(
 			'site' => defined('SITE_ID') ? SITE_ID : '',
 			'dateUser' => time(),
-			'pageUrl' => (string)($_SERVER['HTTP_REFERER'] ?? '/'),
+			'pageUrl' => $pageUrl,
 			'countPages' => max(1, (int)($_SESSION['codematrix_popup_count_pages'] ?? 1)),
 		));
 	};

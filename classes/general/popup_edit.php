@@ -152,7 +152,11 @@ class popupEdit extends popup{
 					$settings['condition']['timeInterval']=$tmpPeriodFrom.'#'.$tmpPeriodTo;
 				}
 			}elseif($keyNextCond=='dateStart' || $keyNextCond=='dateFinish'){
-				$settings['condition'][$keyNextCond]= MakeTimeStamp($request->getPost($keyNextCond), CSite::GetDateFormat("FULL"));
+				$site = \Bitrix\Main\SiteTable::getByPrimary(SITE_ID, ['select' => ['FORMAT_DATETIME']])->fetch();
+				$settings['condition'][$keyNextCond] = MakeTimeStamp(
+					$request->getPost($keyNextCond),
+					$site['FORMAT_DATETIME']
+				);
 			}elseif($keyNextCond=='saleIDProdInBasket'){
 				$tmpProds=array();
 				foreach($request->getPost('saleIDProdInBasket') as $nextProd){

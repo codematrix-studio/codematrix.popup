@@ -607,19 +607,32 @@ class popupEdit extends popup{
 	 * @return int|string|false ID новой записи либо false, если исходная запись не найдена.
 	 */
 	public function CopyPopup($id){
-		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
-			'filter'=>array('=ID'=>$id),
-			'select'=>array('SORT', 'ACTIVE', 'NAME', 'TYPE', 'SETTINGS', 'CONT_IBLOCK', 'CONT_POSTTEMPLATE')
+		$sourceId = filter_var($id, FILTER_VALIDATE_INT, array(
+			'options' => array('min_range' => 1)
 		));
-		$tmpFields=array();
+		if ($sourceId === false) {
+			return false;
+		}
+
+		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
+			'filter' => array('=ID' => $sourceId),
+			'select' => array('SORT', 'ACTIVE', 'NAME', 'TYPE', 'SETTINGS', 'CONT_IBLOCK', 'CONT_POSTTEMPLATE'),
+			'limit' => 1
+		));
 		$ormRow = $res->fetch();
 		$r = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
-		if($r){
-			$tmpFields=array_change_key_case($r, CASE_UPPER);
-			$saveResult = \CodeMatrix\Popup\Model\PopupTable::add($tmpFields);
-			return $saveResult->getId();
-		}else
+		if (!$r) {
 			return false;
+		}
+
+		$tmpFields = array_change_key_case($r, CASE_UPPER);
+		$saveResult = \CodeMatrix\Popup\Model\PopupTable::add($tmpFields);
+		if (!$saveResult->isSuccess()) {
+			return false;
+		}
+
+		$newId = (int)$saveResult->getId();
+		return $newId > 0 ? $newId : false;
 	}
 }
 

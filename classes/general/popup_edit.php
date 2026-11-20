@@ -268,8 +268,8 @@ class popupEdit extends popup{
 				));
 				if (
 					$contactIblockId === false
-					|| !\\Bitrix\\Main\\Loader::includeModule('iblock')
-					|| !\\Bitrix\\Iblock\\IblockTable::getById($contactIblockId)->fetch()
+					|| !\Bitrix\\Main\\Loader::includeModule('iblock')
+					|| !\Bitrix\\Iblock\\IblockTable::getById($contactIblockId)->fetch()
 				) {
 					return array('status' => 'error', 'data' => 'Выбранный инфоблок не существует или недоступен.');
 				}

@@ -222,7 +222,7 @@ if(!empty($request['id'])){
 	// CAdminResult ожидает классический CDBResult. InitFromArray сохраняет
 	// совместимость штатной административной навигации с данными D7 ORM.
 	$rsData = new CDBResult();
-	$rsData->InitFromArray($ormResult->fetchAll());
+	$rsData->InitFromArray(array_map(array('\\CodeMatrix\\Popup\\Model\\LegacyRowMapper', 'toLegacyRow'), $ormResult->fetchAll()));
 	$rsData->NavStart(CAdminResult::GetNavSize());
 	$rsData = new CAdminResult($rsData, $sTableID);
 	$lAdmin->NavText($rsData->GetNavPrint(GetMessage("codematrix.popup_TABLELIST_PAGINATOR")));

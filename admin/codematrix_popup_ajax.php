@@ -57,7 +57,7 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 			$popupId=filter_var($reqArr['popupId'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
 			$availablePopups=$getAvailablePopups();
 			$hasFormData=false;
-			foreach(array('NAME','EMAIL','LASTNAME','PHONE','DESCRIPTION') as $fieldName){
+			foreach(array('NAME','EMAIL','LASTNAME','PHONE','DESCRIPTION','checked') as $fieldName){
 				if($request->get($fieldName)!==null){
 					$hasFormData=true;
 					break;

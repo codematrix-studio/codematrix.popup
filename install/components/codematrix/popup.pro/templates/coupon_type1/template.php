@@ -18,7 +18,7 @@ $ruleId = (int)($arResult["RULE_ID"] ?? 0);
 $timing = (string)($arResult["TIMING"] ?? "");
 $addToTable = (($arResult["EMAIL_ADD2BASE"] ?? "N") === "Y") ? "Y" : "N";
 ?>
-<?phpif($arResult['TIMER']=='Y'){
+<?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],

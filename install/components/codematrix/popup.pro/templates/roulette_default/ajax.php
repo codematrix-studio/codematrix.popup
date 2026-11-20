@@ -15,7 +15,9 @@ if (!$request->isPost()) {
 $popupId = filter_var($request->get("idPopup"), FILTER_VALIDATE_INT, array(
 	"options" => array("min_range" => 1),
 ));
-$settings = ($popupId !== false) ? (new popup())->getSetting($popupId) : false;
+$settings = ($popupId !== false && \CodeMatrix\Popup\PublicRequestGuard::isPopupRendered($popupId))
+	? (new popup())->getSetting($popupId)
+	: false;
 
 if (
 	!is_array($settings)

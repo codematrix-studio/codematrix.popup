@@ -1051,16 +1051,18 @@ class popup{
 	}
 
 	private function getCustomTemplates(){
-		global $DB;
 		$retArr=array();
-		$res = $DB->Query('select * from '.$this->tableTemplates.' order by id;');
-		while($row = $res->Fetch()){
+		$res = \\CodeMatrix\\Popup\\Model\\PopupTemplateTable::getList(array(
+			'select'=>array('ID', 'NAME', 'TYPE', 'TEMPLATE'),
+			'order'=>array('ID'=>'ASC')
+		));
+		while($ormRow = $res->fetch()){
+			$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
 			$additionalColorThemes[$row['template']]['custom_'.$row['id']]=$row['name'].' ['.$row['id'].']';
 			$retArr[$row['type']][]=unserialize($row['template']);
 		}
 		return $retArr;
 	}
-
 	private function getCustomColors($templates){
 		$additionalColorThemes=array();
 		$res = \CodeMatrix\Popup\Model\PopupColorTable::getList(array(

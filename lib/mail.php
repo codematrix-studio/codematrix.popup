@@ -85,14 +85,7 @@ class Mail
         }
         $siteIds = array_values(array_unique(array_filter(array_map('strval', $siteIds))));
 
-        unset($fields['LID']);
-
-        $result = EventMessageTable::add($fields);
-        if (!$result->isSuccess()) {
-            return false;
-        }
-
-        $templateId = (int)$result->getId();
+        // Сначала проверяем сайты: не создаём шаблон, который останется без привязки.
         $validSites = [];
 
         if ($siteIds) {
@@ -105,6 +98,19 @@ class Mail
                 $validSites[] = $site['LID'];
             }
         }
+
+        if (!$validSites) {
+            return false;
+        }
+
+        unset($fields['LID']);
+
+        $result = EventMessageTable::add($fields);
+        if (!$result->isSuccess()) {
+            return false;
+        }
+
+        $templateId = (int)$result->getId();
 
         foreach ($validSites as $siteId) {
             $siteAdd = EventMessageSiteTable::add([

@@ -180,7 +180,14 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 
 			// Скрытая в интерфейсе кнопка не является защитой: повторно проверяем использование файла на сервере.
 			$editableWindow = new popupEdit();
-			$busyPopup = imageBusy($editableWindow->getAllPopups(), array(
+			$allSettings = $editableWindow->getAllPopups();
+			if (!is_array($allSettings)) {
+				http_response_code(500);
+				echo json_encode(array('status' => 'error', 'message' => 'Не удалось проверить использование изображения'));
+				die();
+			}
+
+			$busyPopup = imageBusy($allSettings, array(
 				'id' => $fileId,
 				'path' => '/upload/' . $file['SUBDIR'] . '/' . $file['FILE_NAME'],
 			));

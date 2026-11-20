@@ -12,6 +12,29 @@ namespace CodeMatrix\Popup;
 final class PublicRequestGuard
 {
     /**
+     * Проверяет, выдавался ли HTML попапа текущей PHP-сессии в допустимый период.
+     *
+     * @param int $popupId Идентификатор попапа.
+     * @param int $maxAgeSeconds Максимальный возраст маркера в секундах.
+     * @return bool
+     */
+    public static function isPopupRendered($popupId, $maxAgeSeconds = 86400)
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE || (int)$popupId <= 0) {
+            return false;
+        }
+
+        if (!isset($_SESSION['codematrix_popup_rendered']) || !is_array($_SESSION['codematrix_popup_rendered'])) {
+            return false;
+        }
+
+        $renderedAt = (int)($_SESSION['codematrix_popup_rendered'][(int)$popupId] ?? 0);
+        return $renderedAt > 0
+            && $renderedAt <= time()
+            && time() - $renderedAt <= max(1, (int)$maxAgeSeconds);
+    }
+
+    /**
      * Возвращает ранее сохранённый ответ, если запрос повторяется слишком быстро.
      *
      * @param string $action Название публичной операции.

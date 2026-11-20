@@ -38,7 +38,18 @@ if (
 }
 
 $props = $settings["view"]["props"];
-$timing = (string)($props["TIMING"] ?? "");
+$timingValue = $props["TIMING"] ?? "";
+$timing = is_scalar($timingValue) ? (string)$timingValue : null;
+if (
+	$timing === null
+	|| (
+		$timing !== ""
+		&& filter_var($timing, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1))) === false
+	)
+) {
+	http_response_code(400);
+	die();
+}
 $addToTable = $request->getPost("addtotable");
 $email = $request->getPost("email");
 $mode = $request->getPost("mode");

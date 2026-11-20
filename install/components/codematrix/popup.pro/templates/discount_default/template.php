@@ -1,4 +1,27 @@
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+
+<?php
+// В заголовке разрешена только базовая HTML-разметка оформления.
+// Атрибуты тегов удаляются, чтобы сохранить форматирование без риска внедрения скриптов.
+$discountTitle = (string)($arResult['TITLE'] ?? '');
+$discountTitle = preg_replace_callback(
+    '~</?([a-z][a-z0-9]*)\\b[^>]*>~i',
+    function ($matches) {
+        $tag = strtolower($matches[1]);
+
+        if ($tag === 'span') {
+            return (strpos($matches[0], '</') === 0) ? '</span>' : '<span>';
+        }
+
+        if ($tag === 'br') {
+            return '<br>';
+        }
+
+        return '';
+    },
+    $discountTitle
+);
+?>
 <?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
@@ -18,7 +41,7 @@
     </div>
     <?php if(!empty($arResult['IMG_2_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_2_SRC'] ?? ''))?>"><?php }?>
     <div class="content">
-        <h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
+        <h2><?=$discountTitle?></h2>
         <p><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></p>
         <form method="POST" onsubmit="getCoupon(this);return false;">
         <fieldset>

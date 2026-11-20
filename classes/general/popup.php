@@ -1291,56 +1291,73 @@ class popup{
 	 */
 	public function searchinMailList($mail,$id=0){
 		$id=(int)$id;
-		if(!empty($mail)){
-			$connection = \Bitrix\Main\Application::getConnection();
-			$conHelper = $connection->getSqlHelper();
-			$tmpMail = $conHelper->forSql($mail);
-			$filter = array(
-				'filter'=>array('EMAIL'=>$tmpMail)
-			);
-			if($id>0){
-				$groupList=\Bitrix\Sender\ListTable::GetList(array(
-					'filter'=>array('CODE'=>'codematrixPopup_'.$id)
-				));
-				$emailList=\Bitrix\Sender\ContactTable::GetList($filter);
-				$filter=array();
-				if($row=$emailList->fetch()){
-					$filter['filter']['CONTACT_ID']=$row['ID'];
-				}else{
-					return true;
-				}
-				if(!$row=$groupList->fetch()){
-					$rowPopup=$this->getSetting($id);
-					if(!$rowPopup){
-						return true;
-					}
-					$listAddDb = \Bitrix\Sender\ListTable::add(array(
-						'NAME' => $rowPopup['service_name'],
-						'CODE' => 'codematrixPopup_'.$id,
-					));
-					if(!$listAddDb->isSuccess()){
-						// Ошибка создания списка не должна приводить к обращению к неопределённому ID.
-						return true;
-					}
-					$listId = (int)$listAddDb->getId();
-				}else{
-					$listId = (int)$row['ID'];
-				}
-
-				if($listId<=0){
-					return true;
-				}
-				$filter['filter']['LIST_ID']=$listId;
-			}
-			$emailList=\Bitrix\Sender\ContactListTable::GetList($filter);
-			if(!$row=$emailList->fetch()){
-				return true;
-			}else{
-				return false;
-			}
-		}else{
+		if (!is_string($mail) || trim($mail) === '' || !\Bitrix\Main\Loader::includeModule('sender')) {
 			return false;
 		}
+
+		// В Sender адрес email хранится в CODE, а тип контакта определяется TYPE_ID.
+		$emailCode = mb_strtolower(trim($mail));
+		$emailResult = \Bitrix\Sender\ContactTable::getList(array(
+			'select' => array('ID'),
+			'filter' => array(
+				'=CODE' => $emailCode,
+				'=TYPE_ID' => \Bitrix\Sender\Recipient\Type::EMAIL,
+			),
+			'limit' => 1,
+		));
+
+		$contact = $emailResult->fetch();
+		if (!$contact) {
+			return true;
+		}
+
+		if ($id > 0) {
+			$groupList = \Bitrix\Sender\ListTable::getList(array(
+				'select' => array('ID'),
+				'filter' => array('=CODE' => 'codematrixPopup_' . $id),
+				'limit' => 1,
+			));
+			$list = $groupList->fetch();
+
+			if (!$list) {
+				$rowPopup = $this->getSetting($id);
+				if (!$rowPopup) {
+					return true;
+				}
+
+				$listAddResult = \Bitrix\Sender\ListTable::add(array(
+					'NAME' => $rowPopup['service_name'],
+					'CODE' => 'codematrixPopup_' . $id,
+				));
+				if (!$listAddResult->isSuccess()) {
+					return true;
+				}
+				$listId = (int)$listAddResult->getId();
+			} else {
+				$listId = (int)$list['ID'];
+			}
+
+			if ($listId <= 0) {
+				return true;
+			}
+
+			$contactListResult = \Bitrix\Sender\ContactListTable::getList(array(
+				'select' => array('CONTACT_ID'),
+				'filter' => array(
+					'=LIST_ID' => $listId,
+					'=CONTACT_ID' => (int)$contact['ID'],
+				),
+				'limit' => 1,
+			));
+			return !$contactListResult->fetch();
+		}
+
+		$contactListResult = \Bitrix\Sender\ContactListTable::getList(array(
+			'select' => array('CONTACT_ID'),
+			'filter' => array('=CONTACT_ID' => (int)$contact['ID']),
+			'limit' => 1,
+		));
+		return !$contactListResult->fetch();
 	}
 	
 	/**
@@ -1358,72 +1375,85 @@ class popup{
 		}elseif((int) $this->idPopup>0){
 			$tmpPopup=(int) $this->idPopup;
 		}
-		if($tmpPopup>0){
-			$connection = \Bitrix\Main\Application::getConnection();
-			$conHelper = $connection->getSqlHelper();
-			$curDateFunc = new \Bitrix\Main\Type\DateTime;
-
-			$rowPopup=$this->getSetting($tmpPopup);
-			if(!$rowPopup){
-				return false;
-			}
-
-			// Идентификатор списка рассылки.
-			$groupList=\Bitrix\Sender\ListTable::GetList(array(
-				'filter'=>array('CODE'=>'codematrixPopup_'.$tmpPopup)
-			));
-			if(!$row=$groupList->fetch()){
-				$listAddDb = \Bitrix\Sender\ListTable::add(array(
-					'NAME' => $rowPopup['service_name'],
-					'CODE' => 'codematrixPopup_'.$tmpPopup,
-				));
-				if(!$listAddDb->isSuccess()){
-					return false;
-				}
-				$listId = (int)$listAddDb->getId();
-			}else{
-				$listId = (int)$row['ID'];
-			}
-			// Идентификатор почтового шаблона.
-			$tmpMail = $conHelper->forSql($mail);
-			$emailList=\Bitrix\Sender\ContactTable::GetList(array(
-				'filter'=>array('EMAIL'=>$tmpMail)
-			));
-			if(!$row=$emailList->fetch()){
-				$listAddDb = \Bitrix\Sender\ContactTable::add(array(
-					'NAME' => $conHelper->forSql($name),
-					'EMAIL' => $tmpMail,
-					'DATE_INSERT' => $curDateFunc,
-					'DATE_UPDATE' => $curDateFunc
-				));
-				if(!$listAddDb->isSuccess()){
-					return false;
-				}
-				$mailId = (int)$listAddDb->getId();
-			}else{
-				$mailId = (int)$row['ID'];
-			}
-
-			if($listId<=0 || $mailId<=0){
-				return false;
-			}
-
-			// Добавить группу пользователей в список рассылки.
-			$unionList=\Bitrix\Sender\ContactListTable::GetList(array(
-				'filter'=>array('LIST_ID'=>$listId, 'CONTACT_ID'=>$mailId)
-			));
-			if(!$row=$unionList->fetch()){
-				$listAddDb = \Bitrix\Sender\ContactListTable::add(array(
-					'LIST_ID' => $listId,
-					'CONTACT_ID' => $mailId
-				));
-				if($listAddDb->isSuccess()){
-					return true;
-				}
-			}else{
-				return true;
-			}
+		if ($tmpPopup <= 0 || !is_string($mail) || trim($mail) === '' || !\Bitrix\Main\Loader::includeModule('sender')) {
+			return false;
 		}
+
+		$rowPopup = $this->getSetting($tmpPopup);
+		if (!$rowPopup) {
+			return false;
+		}
+
+		$listResult = \Bitrix\Sender\ListTable::getList(array(
+			'select' => array('ID'),
+			'filter' => array('=CODE' => 'codematrixPopup_' . $tmpPopup),
+			'limit' => 1,
+		));
+		$list = $listResult->fetch();
+		if (!$list) {
+			$listAddResult = \Bitrix\Sender\ListTable::add(array(
+				'NAME' => $rowPopup['service_name'],
+				'CODE' => 'codematrixPopup_' . $tmpPopup,
+			));
+			if (!$listAddResult->isSuccess()) {
+				return false;
+			}
+			$listId = (int)$listAddResult->getId();
+		} else {
+			$listId = (int)$list['ID'];
+		}
+
+		if ($listId <= 0) {
+			return false;
+		}
+
+		$emailCode = mb_strtolower(trim($mail));
+		$contactResult = \Bitrix\Sender\ContactTable::getList(array(
+			'select' => array('ID'),
+			'filter' => array(
+				'=CODE' => $emailCode,
+				'=TYPE_ID' => \Bitrix\Sender\Recipient\Type::EMAIL,
+			),
+			'limit' => 1,
+		));
+		$contact = $contactResult->fetch();
+
+		if (!$contact) {
+			$contactAddResult = \Bitrix\Sender\ContactTable::add(array(
+				'NAME' => is_string($name) ? trim($name) : '',
+				'CODE' => $emailCode,
+				'TYPE_ID' => \Bitrix\Sender\Recipient\Type::EMAIL,
+			));
+			if (!$contactAddResult->isSuccess()) {
+				return false;
+			}
+			$contactId = (int)$contactAddResult->getId();
+		} else {
+			$contactId = (int)$contact['ID'];
+		}
+
+		if ($contactId <= 0) {
+			return false;
+		}
+
+		$membershipResult = \Bitrix\Sender\ContactListTable::getList(array(
+			'select' => array('CONTACT_ID'),
+			'filter' => array(
+				'=LIST_ID' => $listId,
+				'=CONTACT_ID' => $contactId,
+			),
+			'limit' => 1,
+		));
+		if ($membershipResult->fetch()) {
+			return true;
+		}
+
+		$membershipAddResult = \Bitrix\Sender\ContactListTable::add(array(
+			'LIST_ID' => $listId,
+			'CONTACT_ID' => $contactId,
+		));
+		return $membershipAddResult->isSuccess();
+		
 		return false;
 	}
 

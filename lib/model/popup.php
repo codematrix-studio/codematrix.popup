@@ -10,8 +10,9 @@ use Bitrix\Main\ORM\Fields\TextField;
 /**
  * ORM-сущность таблицы окон.
  *
- * Имена полей намеренно оставлены в нижнем регистре:
- * это сохраняет ключи массивов, которые возвращает legacy-код V1.
+ * Bitrix ORM нормализует имена полей сущности в верхний регистр.
+ * При чтении для legacy-кода используется LegacyRowMapper, который
+ * возвращает ключи массивов в нижнем регистре.
  */
 class PopupTable extends DataManager
 {
@@ -33,41 +34,41 @@ class PopupTable extends DataManager
     public static function getMap()
     {
         return [
-            (new IntegerField('id'))
+            (new IntegerField('ID'))
                 ->configurePrimary()
                 ->configureAutocomplete(),
 
-            (new IntegerField('sort'))
+            (new IntegerField('SORT'))
                 ->configureRequired(),
 
-            (new StringField('active'))
+            (new StringField('ACTIVE'))
                 ->configureSize(1)
                 ->configureNullable(true),
 
-            (new StringField('name'))
+            (new StringField('NAME'))
                 ->configureSize(50)
                 ->configureNullable(true),
 
-            (new StringField('type'))
+            (new StringField('TYPE'))
                 ->configureSize(30)
                 ->configureRequired(),
 
-            (new IntegerField('stat_show'))
+            (new IntegerField('STAT_SHOW'))
                 ->configureNullable(true),
 
-            (new IntegerField('stat_time'))
+            (new IntegerField('STAT_TIME'))
                 ->configureNullable(true),
 
-            (new IntegerField('stat_action'))
+            (new IntegerField('STAT_ACTION'))
                 ->configureNullable(true),
 
-            (new TextField('settings'))
+            (new TextField('SETTINGS'))
                 ->configureRequired(),
 
-            (new IntegerField('cont_iblock'))
+            (new IntegerField('CONT_IBLOCK'))
                 ->configureNullable(true),
 
-            (new IntegerField('cont_posttemplate'))
+            (new IntegerField('CONT_POSTTEMPLATE'))
                 ->configureNullable(true),
         ];
     }

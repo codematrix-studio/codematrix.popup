@@ -6,7 +6,7 @@
 	<?if(!empty($arResult['ERRORS'])){?>
 		<div class="error"><p>Error:</p>
 		<?foreach($arResult['ERRORS'] as $nextError){?>
-			<p><?=$nextError?></p>
+			<p><?=htmlspecialcharsbx((string)$nextError)?></p>
 		<?}?>
 		</div>
 	<?}if(empty($arResult['SUCCESS'])){
@@ -21,12 +21,12 @@
 			'BOTTOM'=>$arResult['TIMER_BOTTOM'],
 		),$component);
 	}?>
-	<form action="<?=$templateFolder?>/ajax.php" method="POST" onsubmit="sendForm1(this);return false;">
-		<input type="hidden" name="id_popup" value="<?=$arParams['ID_POPUP']?>" />
+	<form action="<?=htmlspecialcharsbx((string)$templateFolder)?>/ajax.php" method="POST" onsubmit="sendForm1(this);return false;">
+		<input type="hidden" name="id_popup" value="<?= (int)$arParams['ID_POPUP'] ?>" />
 		<input type="hidden" name="template_name" value="<?=$templateName?>" />
-			<img id="img_going_s1" src="<?=$arResult['IMG_1_SRC']?>">
-			<h2><?=$arResult['TITLE']?></h2>
-			<h3><?=$arResult['SUBTITLE']?></h3>
+			<img id="img_going_s1" src="<?=htmlspecialcharsbx((string)($arResult['IMG_1_SRC'] ?? ''))?>">
+			<h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
+			<h3><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></h3>
 		<div class="fieldset">
 			<?
 			if($arResult['NAME_SHOW']=='Y'){
@@ -39,9 +39,9 @@
 				$param_consent[]=$arResult['NAME_TITLE'];
 			}
 			?>
-			<label class="<?=$arResult['NAME_SHOW']?> <?=$arResult['NAME_REQUIRED']?> input">
-				<input <?=$arResult['NAME_REQUIRED']?> name="NAME" type="text" value="<?=$arResult['NAME']?>" placeholder="<?=$arResult['NAME_PLACEHOLDER']?>"/>
-				<span><?=$arResult['NAME_TITLE']?><sup>*</sup></span>
+			<label class="<?=htmlspecialcharsbx((string)($arResult['NAME_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['NAME_REQUIRED'] ?? ''))?> input">
+				<input <?=htmlspecialcharsbx((string)($arResult['NAME_REQUIRED'] ?? ''))?> name="NAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['NAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['NAME_PLACEHOLDER'] ?? ''))?>"/>
+				<span><?=htmlspecialcharsbx((string)($arResult['NAME_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 			<?
 			if($arResult['PHONE_SHOW']=='Y'){
@@ -54,9 +54,9 @@
 				$param_consent[]=$arResult['PHONE_TITLE'];
 			}
 			?>
-			<label class="<?=$arResult['PHONE_SHOW']?> <?=$arResult['PHONE_REQUIRED']?> input">
-				<input <?=$arResult['PHONE_REQUIRED']?> type="text" value="<?=$arResult['PHONE']?>" name="PHONE" placeholder="<?=$arResult['PHONE_PLACEHOLDER']?>"/>
-				<span><?=$arResult['PHONE_TITLE']?><sup>*</sup></span>
+			<label class="<?=htmlspecialcharsbx((string)($arResult['PHONE_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['PHONE_REQUIRED'] ?? ''))?> input">
+				<input <?=htmlspecialcharsbx((string)($arResult['PHONE_REQUIRED'] ?? ''))?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['PHONE'] ?? ''))?>" name="PHONE" placeholder="<?=htmlspecialcharsbx((string)($arResult['PHONE_PLACEHOLDER'] ?? ''))?>"/>
+				<span><?=htmlspecialcharsbx((string)($arResult['PHONE_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 			<?
 			if($arResult['EMAIL_SHOW']=='Y'){
@@ -69,9 +69,9 @@
 				$param_consent[]=$arResult['EMAIL_TITLE'];
 			}
 			?>
-			<label class="<?=$arResult['EMAIL_SHOW']?> <?=$arResult['EMAIL_REQUIRED']?> input">
-				<input <?=$arResult['EMAIL_REQUIRED']?> type="text" value="<?=$arResult['EMAIL']?>" name="EMAIL" placeholder="<?=$arResult['EMAIL_PLACEHOLDER']?>"/>
-				<span><?=$arResult['EMAIL_TITLE']?><sup>*</sup></span>
+			<label class="<?=htmlspecialcharsbx((string)($arResult['EMAIL_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['EMAIL_REQUIRED'] ?? ''))?> input">
+				<input <?=htmlspecialcharsbx((string)($arResult['EMAIL_REQUIRED'] ?? ''))?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?>"/>
+				<span><?=htmlspecialcharsbx((string)($arResult['EMAIL_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 		</div>
 		<div class="fieldset last">
@@ -87,13 +87,13 @@
 				?>
 				
 			<?}?>
-			<label class="<?=$arResult['DESCRIPTION_SHOW']?> <?=$arResult['DESCRIPTION_REQUIRED']?> textarea">
-				<textarea <?=$arResult['DESCRIPTION_REQUIRED']?> name="DESCRIPTION" placeholder="<?=$arResult['DESCRIPTION_PLACEHOLDER']?>"><?=$arResult['DESCRIPTION']?></textarea>
-				<span><?=$arResult['DESCRIPTION_TITLE']?><sup>*</sup></span>
+			<label class="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?> textarea">
+				<textarea <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?> name="DESCRIPTION" placeholder="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_PLACEHOLDER'] ?? ''))?>"><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION'] ?? ''))?></textarea>
+				<span><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
 			
 			<label class="submit">
-				<button type="submit" onclick=""><?=$arResult['BUTTON_TEXT']?></button>
+				<button type="submit" onclick=""><?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?></button>
 			</label>
 			<?
 				if($arResult['USE_CONSENT_SHOW']=='N' || $arResult['USE_CONSENT_SHOW']=='Y'){
@@ -101,8 +101,8 @@
 				}
 			if($arResult['USE_CONSENT_SHOW']!='N' && count($arResult['AGREEMENTS'])>0){
 			?>
-			<div class="<?=$arResult['USE_CONSENT_SHOW']?> consentBlock">
-			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?=$arResult['CONSENT_ID']?>" target="_blank"><?=$arResult['CONSENT_LIST']?></a>
+			<div class="<?=htmlspecialcharsbx((string)($arResult['USE_CONSENT_SHOW'] ?? ''))?> consentBlock">
+			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)$arResult['CONSENT_ID'] ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
 			<?}?>
 			<div class="clear"></div>

@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS['codematrix.popup_MAIN_TITLE'] = 'Всплывающие окна CODEMATRIX';
 
 $MESS['codematrix.popup_LIST_TITLE'] = 'Всплывающие окна CODEMATRIX';

@@ -249,7 +249,33 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						$tmpRes['ERRORS']['FORM'] = 'Форма уже была отправлена. Повторите попытку позже.';
 					}else{
 						// Отправить письмо, сохранить данные в инфоблоке и добавить адрес в список рассылки.
-						if(!empty($popupSetting['contact'])){
+						// Сначала фиксируем согласие в журнале Битрикс и только затем обрабатываем данные формы.
+						$consentSaved = true;
+						if (
+							($tmpRes['USE_CONSENT_SHOW'] ?? 'N') === 'Y'
+							&& !empty($popupSetting['view']['props']['CONSENT_LIST'])
+						) {
+							if (!class_exists('Bitrix\\Main\\UserConsent\\Consent')) {
+								$consentSaved = false;
+							} else {
+								$dataArr = array();
+								if (!empty($this->arParams['REFERER'])) {
+									$dataArr['URL'] = $this->arParams['REFERER'];
+								}
+
+								try {
+									\\Bitrix\\Main\\UserConsent\\Consent::addByContext(
+										$popupSetting['view']['props']['CONSENT_LIST'],
+										'codematrix/popup',
+										$popupSetting['row']['id'],
+										$dataArr
+									);
+								} catch (\\Throwable $exception) {
+									$consentSaved = false;
+								}
+							}
+						}
+						if($consentSaved && !empty($popupSetting['contact'])){
 
 							$postTitle=array('NAME_TITLE', 'EMAIL_TITLE', 'PHONE_TITLE', 'DESCRIPTION_TITLE','LASTNAME_TITLE');
 							foreach($postTitle as $nextTitle){
@@ -288,20 +314,6 @@ class CodeMatrixPopup extends \CBitrixComponent{
 								$el = new CIBlockElement;
 								$el->Add($insertArr);
 							}
-							if($tmpRes['USE_CONSENT_SHOW']=='Y'){
-								$dataArr=array();
-								if(!empty($this->arParams['REFERER'])){
-									$dataArr['URL']=$this->arParams['REFERER'];
-								}
-								if (class_exists('Bitrix\\Main\\UserConsent\\Agreement')){
-									\Bitrix\Main\UserConsent\Consent::addByContext(
-										$popupSetting['view']['props']['CONSENT_LIST'],
-										'codematrix/popup',
-										$popupSetting['row']['id'],
-										$dataArr
-									);
-								}
-							}
 							global $USER;
 
 							if(!empty($popupSetting['contact']['register'])&&$popupSetting['contact']['register']=='Y'&&!empty($forSendDataArr['EMAIL'])&&!$USER->IsAuthorized()){
@@ -317,6 +329,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 								}
 							}
 						}
+						if ($consentSaved) {
 						$popup->setStatistic($popupSetting['row']['id'], 1, 'stat_action');
 						if (session_status() === PHP_SESSION_ACTIVE) {
 							if (!isset($_SESSION['codematrix_popup_statistic_action']) || !is_array($_SESSION['codematrix_popup_statistic_action'])) {
@@ -331,6 +344,9 @@ class CodeMatrixPopup extends \CBitrixComponent{
 							'SUCCESS',
 							$requestFingerprint
 						);
+						} else {
+							$tmpRes['ERRORS']['CONSENT'] = 'Не удалось сохранить согласие. Данные формы не отправлены.';
+						}
 					}
 
 					if (!empty($tmpRes['SUCCESS'])) {

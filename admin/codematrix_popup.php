@@ -161,7 +161,7 @@ if(!empty($request['id'])){
 
 	if($arID = $lAdmin->GroupAction()){
 		if($_REQUEST['action_target']=='selected'){
-			$rsData = \CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+			$rsData = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 				'select' => array('ID')
 			));
 			while($arRes = $rsData->fetch()){
@@ -174,21 +174,21 @@ if(!empty($request['id'])){
 			$ID = IntVal($ID);
 			switch($_REQUEST['action']){
 				case "delete":
-					\CodeMatrix\\Popup\\Model\\PopupTable::delete($ID);
+					\CodeMatrix\Popup\Model\PopupTable::delete($ID);
 					break;
 				case "activate":
 				case "deactivate":
-					$cData = \CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+					$cData = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 						'select' => array('ID', 'ACTIVE', 'SETTINGS'),
 						'filter' => array('=ID' => $ID),
 						'limit' => 1
 					));
-					$arFields = \CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($cData->fetch());
+					$arFields = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($cData->fetch());
 					if($arFields){
 						$arFields["active"]=($_REQUEST['action']=="activate"?"Y":"N");
 						$tmpSetting=unserialize($arFields['settings']);
 						$tmpSetting['condition']['active']=$arFields['active'];
-						\CodeMatrix\\Popup\\Model\\PopupTable::update($ID, array(
+						\CodeMatrix\Popup\Model\PopupTable::update($ID, array(
 							'ACTIVE' => $arFields['active'],
 							'SETTINGS' => serialize($tmpSetting)
 						));
@@ -214,7 +214,7 @@ if(!empty($request['id'])){
 	$sortField = isset($sortFields[strtolower($by)]) ? $sortFields[strtolower($by)] : 'ID';
 	$sortDirection = (strtolower($order) === 'asc') ? 'ASC' : 'DESC';
 
-	$ormResult = \CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+	$ormResult = \CodeMatrix\Popup\Model\PopupTable::getList(array(
 		'select' => array('*'),
 		'order' => array($sortField => $sortDirection)
 	));
@@ -222,7 +222,7 @@ if(!empty($request['id'])){
 	// CAdminResult ожидает классический CDBResult. InitFromArray сохраняет
 	// совместимость штатной административной навигации с данными D7 ORM.
 	$rsData = new CDBResult();
-	$rsData->InitFromArray(array_map(array('\CodeMatrix\\Popup\\Model\\LegacyRowMapper', 'toLegacyRow'), $ormResult->fetchAll()));
+	$rsData->InitFromArray(array_map(array('\CodeMatrix\Popup\Model\LegacyRowMapper', 'toLegacyRow'), $ormResult->fetchAll()));
 	$rsData->NavStart(CAdminResult::GetNavSize());
 	$rsData = new CAdminResult($rsData, $sTableID);
 	$lAdmin->NavText($rsData->GetNavPrint(GetMessage("codematrix.popup_TABLELIST_PAGINATOR")));

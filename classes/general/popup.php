@@ -1154,8 +1154,11 @@ class popup{
 		while ($arSite = $rsSites->Fetch()){
 			$conditionArr['sites'][]=array('active'=>false, 'id'=>$arSite['LID'], 'name'=>$arSite['NAME']);
 		}
-		$rsGroups = CGroup::GetList ($by = "c_sort", $order = "asc", Array ());
-		while($arGroup=$rsGroups->Fetch()){
+		$rsGroups = \Bitrix\Main\GroupTable::getList(array(
+			'select' => array('ID', 'NAME'),
+			'order' => array('C_SORT' => 'ASC', 'ID' => 'ASC')
+		));
+		while($arGroup = $rsGroups->fetch()){
 			$conditionArr['groups'][]=array('active'=>false, 'id'=>$arGroup['ID'], 'name'=>$arGroup['NAME']);
 		}
 		if(\Bitrix\Main\Loader::includeModule('sale')){

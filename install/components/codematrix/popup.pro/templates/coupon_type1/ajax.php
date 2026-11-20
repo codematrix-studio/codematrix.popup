@@ -31,8 +31,16 @@ if (
 }
 
 $props = $settings["view"]["props"];
-$configuredRuleId = (int)($props["RULE_ID"] ?? 0);
-$configuredTiming = (string)($props["TIMING"] ?? "");
+$configuredRuleId = filter_var($props["RULE_ID"] ?? null, FILTER_VALIDATE_INT, array(
+	"options" => array("min_range" => 1),
+));
+$timingValue = $props["TIMING"] ?? "";
+$configuredTiming = is_scalar($timingValue) ? (string)$timingValue : null;
+$validTiming = $configuredTiming !== null
+	&& (
+		$configuredTiming === ""
+		|| filter_var($configuredTiming, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1))) !== false
+	);
 $requestedTiming = $request->getPost("avaliable");
 $email = $request->getPost("email");
 $addToTable = $request->getPost("addtotable");
@@ -40,8 +48,9 @@ $addToTable = $request->getPost("addtotable");
 
 if (
 	$ruleId === false
-	|| $configuredRuleId <= 0
+	|| $configuredRuleId === false
 	|| $ruleId !== $configuredRuleId
+	|| !$validTiming
 	|| !is_string($requestedTiming)
 	|| $requestedTiming !== $configuredTiming
 	|| !in_array($addToTable, array(null, "Y", "N"), true)

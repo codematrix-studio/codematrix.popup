@@ -1,17 +1,17 @@
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 <div id="codematrix_contact_type1">
 	
 	<div class="bgColorBlock">
-	<?if(!empty($arResult['ERRORS'])){?>
+	<?phpif(!empty($arResult['ERRORS'])){?>
 		<div class="error"><p>Error:</p>
-		<?foreach($arResult['ERRORS'] as $nextError){?>
+		<?phpforeach($arResult['ERRORS'] as $nextError){?>
 			<p><?=htmlspecialcharsbx((string)$nextError)?></p>
-		<?}?>
+		<?php}?>
 		</div>
-	<?}if(empty($arResult['SUCCESS'])){
+	<?php}if(empty($arResult['SUCCESS'])){
 		$param_consent=array();?>
-		<?if($arResult['TIMER']=='Y'){
+		<?phpif($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
@@ -28,7 +28,7 @@
 			<h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
 			<h3><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></h3>
 		<div class="fieldset">
-			<?
+			<?php
 			if($arResult['NAME_SHOW']=='Y'){
 				if($arResult['NAME_REQUIRED']=='N' || $arResult['NAME_REQUIRED']=='Y'){
 					$arResult['NAME_REQUIRED']=($arResult['NAME_REQUIRED']=='N')?'':'required';
@@ -43,7 +43,7 @@
 				<input <?=htmlspecialcharsbx((string)($arResult['NAME_REQUIRED'] ?? ''))?> name="NAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['NAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['NAME_PLACEHOLDER'] ?? ''))?>"/>
 				<span><?=htmlspecialcharsbx((string)($arResult['NAME_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
-			<?
+			<?php
 			if($arResult['PHONE_SHOW']=='Y'){
 				if($arResult['PHONE_REQUIRED']=='N' || $arResult['PHONE_REQUIRED']=='Y'){
 					$arResult['PHONE_REQUIRED']=($arResult['PHONE_REQUIRED']=='N')?'':'required';
@@ -58,7 +58,7 @@
 				<input <?=htmlspecialcharsbx((string)($arResult['PHONE_REQUIRED'] ?? ''))?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['PHONE'] ?? ''))?>" name="PHONE" placeholder="<?=htmlspecialcharsbx((string)($arResult['PHONE_PLACEHOLDER'] ?? ''))?>"/>
 				<span><?=htmlspecialcharsbx((string)($arResult['PHONE_TITLE'] ?? ''))?><sup>*</sup></span>
 			</label>
-			<?
+			<?php
 			if($arResult['EMAIL_SHOW']=='Y'){
 				if($arResult['EMAIL_REQUIRED']=='N' || $arResult['EMAIL_REQUIRED']=='Y'){
 					$arResult['EMAIL_REQUIRED']=($arResult['EMAIL_REQUIRED']=='N')?'':'required';
@@ -75,7 +75,7 @@
 			</label>
 		</div>
 		<div class="fieldset last">
-			<?
+			<?php
 			if($arResult['DESCRIPTION_SHOW']=='Y'){
 				if($arResult['DESCRIPTION_REQUIRED']=='N' || $arResult['DESCRIPTION_REQUIRED']=='Y'){
 					$arResult['DESCRIPTION_REQUIRED']=($arResult['DESCRIPTION_REQUIRED']=='N')?'':'required';
@@ -86,7 +86,7 @@
 				$param_consent[]=$arResult['DESCRIPTION_TITLE'];
 				?>
 				
-			<?}?>
+			<?php}?>
 			<label class="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_SHOW'] ?? ''))?> <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?> textarea">
 				<textarea <?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_REQUIRED'] ?? ''))?> name="DESCRIPTION" placeholder="<?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_PLACEHOLDER'] ?? ''))?>"><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION'] ?? ''))?></textarea>
 				<span><?=htmlspecialcharsbx((string)($arResult['DESCRIPTION_TITLE'] ?? ''))?><sup>*</sup></span>
@@ -95,7 +95,7 @@
 			<label class="submit">
 				<button type="submit" onclick=""><?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?></button>
 			</label>
-			<?
+			<?php
 				if($arResult['USE_CONSENT_SHOW']=='N' || $arResult['USE_CONSENT_SHOW']=='Y'){
 					$arResult['USE_CONSENT_SHOW']=($arResult['USE_CONSENT_SHOW']=='N')?'notshow':'';
 				}
@@ -104,7 +104,7 @@
 			<div class="<?=htmlspecialcharsbx((string)($arResult['USE_CONSENT_SHOW'] ?? ''))?> consentBlock">
 			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)$arResult['CONSENT_ID'] ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
-			<?}?>
+			<?php}?>
 			<div class="clear"></div>
 		</div>
 	</form>
@@ -132,13 +132,13 @@
 			});
 		}
 	</script>
-	<?}if(!empty($arResult['SUCCESS']) && $arResult['SUCCESS']=='Y'){?>
+	<?php}if(!empty($arResult['SUCCESS']) && $arResult['SUCCESS']=='Y'){?>
 	<div class="success"><?=GetMessage("POPUP_THANKS")?></div>
 	<script>
 		BX.ready(function(){
 			positionBanner();
 		});
 	</script>
-	<?}?>
+	<?php}?>
 	<div>
 </div>

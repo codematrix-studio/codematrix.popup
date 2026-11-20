@@ -11,6 +11,11 @@ use \Bitrix\Main\Application,
 	Loc::loadMessages(__FILE__);
 
 $module_id='codematrix.popup';
+$moduleRight = $APPLICATION->GetGroupRight($module_id);
+if ($moduleRight === 'D') {
+	$APPLICATION->AuthForm(GetMessage('ACCESS_DENIED'));
+}
+$moduleWriteAllowed = ($moduleRight === 'W');
 \Bitrix\Main\Loader::includeModule('codematrix.popup');
 \Bitrix\Main\Loader::includeModule('iblock');
 // Подключаем поставляемую с модулем jQuery как явную зависимость административного скрипта.
@@ -53,6 +58,10 @@ function imageBusy($popupArr, $img){
 	return false;
 }
 if ($request->getPost('action_button') === 'copy') {
+	if (!$moduleWriteAllowed) {
+		http_response_code(403);
+		die();
+	}
 	if (!$request->isPost() || !check_bitrix_sessid()) {
 		http_response_code(403);
 		die();
@@ -87,7 +96,7 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 		$mutatingCommands = array('del_img', 'add_custom_colortheme', 'add_custom_template');
 		if (
 			in_array($request['command'], $mutatingCommands, true)
-			&& (!$request->isPost() || !check_bitrix_sessid())
+			&& (!$moduleWriteAllowed || !$request->isPost() || !check_bitrix_sessid())
 		) {
 			http_response_code(403);
 			die();
@@ -204,7 +213,7 @@ if(!empty($request['id'])){
 			|| !empty($request->getPost('FIELDS'))
 		);
 
-	if ($hasListMutation && !check_bitrix_sessid()) {
+	if ($hasListMutation && (!$moduleWriteAllowed || !check_bitrix_sessid())) {
 		http_response_code(403);
 		die();
 	}
@@ -424,7 +433,10 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_aft
 // Создание или редактирование всплывающего окна.
 $editFlag = $request->getPost("id_popup");
 if(!empty($editFlag) && $request->isPost()){
-	if (!check_bitrix_sessid()) {
+	if (!$moduleWriteAllowed) {
+		http_response_code(403);
+		CAdminMessage::ShowMessage(array("TYPE" => "ERROR", "MESSAGE" => GetMessage('ACCESS_DENIED')));
+	} elseif (!check_bitrix_sessid()) {
 		http_response_code(403);
 		CAdminMessage::ShowMessage(array("TYPE" => "ERROR", "MESSAGE" => "Сессия формы истекла. Обновите страницу и повторите сохранение."));
 	} else {

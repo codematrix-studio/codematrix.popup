@@ -9,6 +9,9 @@ use \Bitrix\Main\Application,
 Loc::loadMessages(__FILE__);
 
 $module_id="codematrix.popup";
+if ($APPLICATION->GetGroupRight($module_id) === 'D') {
+	$APPLICATION->AuthForm(GetMessage('ACCESS_DENIED'));
+}
 
 // Подключение административной части страницы статистики.
 \Bitrix\Main\Loader::IncludeModule($module_id);

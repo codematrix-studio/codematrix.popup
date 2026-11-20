@@ -224,86 +224,112 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				if(count($errors)>0){
 					$tmpRes['ERRORS']=$errors;
 				}elseif($cenderData){
-					// Отправить письмо, сохранить данные в инфоблоке и добавить адрес в список рассылки.
-					if(!empty($popupSetting['contact'])){
+					$popupId = (int)$this->arParams['ID_POPUP'];
+					$requestFingerprint = hash('sha256', serialize(array(
+						$forSendDataArr,
+						$request->getPost('use_consent'),
+					)));
+					$cachedResponse = \CodeMatrix\Popup\PublicRequestGuard::getCachedResponse(
+						'contact',
+						$popupId,
+						$requestFingerprint
+					);
 
-						$postTitle=array('NAME_TITLE', 'EMAIL_TITLE', 'PHONE_TITLE', 'DESCRIPTION_TITLE','LASTNAME_TITLE');
-						foreach($postTitle as $nextTitle){
-							$forSendDataArr[$nextTitle]='';
-							if(!empty($popupSetting['view']['props'][$nextTitle])){
-								$forSendDataArr[$nextTitle]=$popupSetting['view']['props'][$nextTitle];
-							}
-						}
-						
-						if(!empty($popupSetting['row']['cont_posttemplate'])){
-							\Bitrix\Main\Mail\Event::send([
-								'EVENT_NAME' => 'CODEMATRIX_POPUP_SENDER',
-								'LID' => SITE_ID,
-								'LANGUAGE_ID' => LANGUAGE_ID,
-								'C_FIELDS' => $forSendDataArr,
-								'DUPLICATE' => 'Y',
-								'MESSAGE_ID' => (int)$popupSetting['row']['cont_posttemplate'],
-							]);
-						}
-						if(!empty($popupSetting['contact']['emailList']) && $popupSetting['contact']['emailList']=='Y'){
-							$popup->insertToMailList($forSendDataArr['EMAIL'], $forSendDataArr['NAME'], $this->arParams['ID_POPUP']);
-						}
-						if(!empty($popupSetting['contact']['iblock'])){
-							$insertArr=array(
-								'IBLOCK_ID'=>$popupSetting['contact']['iblock'],
-								'NAME'=>array_shift($forSendDataArr),
-								'PREVIEW_TEXT'=>''
-							);
-							foreach($forSendDataArr as $keyData=>$nextData){
-								if(!empty($tmpRes[$keyData.'_TITLE'])){
-									$insertArr['PREVIEW_TEXT'].=$tmpRes[$keyData.'_TITLE'].' - '.$nextData.PHP_EOL;
-									$propId=CodeMatrix\Popup\Tools::returnPropId($popupSetting['contact']['iblock'], $keyData, $tmpRes[$keyData.'_TITLE']);
-									$insertArr['PROPERTY_VALUES'][$propId]=$nextData;
+					if ($cachedResponse !== null && isset($cachedResponse['response'])) {
+						// Точный повтор уже обработанной формы подтверждаем без повторных побочных действий.
+						$tmpRes['SUCCESS'] = 'Y';
+					}elseif($cachedResponse !== null){
+						// Не позволяем заменить данные и повторно выполнить отправку в коротком интервале.
+						$tmpRes['ERRORS']['FORM'] = 'Форма уже была отправлена. Повторите попытку позже.';
+					}else{
+						// Отправить письмо, сохранить данные в инфоблоке и добавить адрес в список рассылки.
+						if(!empty($popupSetting['contact'])){
+
+							$postTitle=array('NAME_TITLE', 'EMAIL_TITLE', 'PHONE_TITLE', 'DESCRIPTION_TITLE','LASTNAME_TITLE');
+							foreach($postTitle as $nextTitle){
+								$forSendDataArr[$nextTitle]='';
+								if(!empty($popupSetting['view']['props'][$nextTitle])){
+									$forSendDataArr[$nextTitle]=$popupSetting['view']['props'][$nextTitle];
 								}
 							}
-							$el = new CIBlockElement;
-							$el->Add($insertArr);
-						}
-						if($tmpRes['USE_CONSENT_SHOW']=='Y'){
-							$dataArr=array();
-							if(!empty($this->arParams['REFERER'])){
-								$dataArr['URL']=$this->arParams['REFERER'];
-							}
-							if (class_exists('Bitrix\Main\UserConsent\Agreement')){
-								\Bitrix\Main\UserConsent\Consent::addByContext(
-									$popupSetting['view']['props']['CONSENT_LIST'],
-									'codematrix/popup',
-									$popupSetting['row']['id'],
-									$dataArr
-								);
-							}
-						}
-						global $USER;
-						
-						if(!empty($popupSetting['contact']['register'])&&$popupSetting['contact']['register']=='Y'&&!empty($forSendDataArr['EMAIL'])&&!$USER->IsAuthorized()){
-							$tmpUsers=UserTable::getList(array(
-								'select' => array('ID'),
-								'filter' => array('=EMAIL' => $forSendDataArr['EMAIL']),
-								'order' => array('ID' => 'DESC'),
-							));
-							$existingUser = $tmpUsers->fetch();
-							$tmpRes['REG_RES'][] = !$existingUser;
-							if(!$existingUser){
-								$res=$USER->SimpleRegister($forSendDataArr['EMAIL']);
-							}
-						}
-					}
-					$popup->setStatistic($popupSetting['row']['id'], 1, 'stat_action');
-					$tmpRes['SUCCESS']='Y';
 
-					// Установить cookie, чтобы повторно не показывать окно пользователю, отправившему форму.
-					$responce = $context->getResponse();
-					$cookie = new Cookie("codematrixPopupFilling_".$this->arParams['ID_POPUP'], 'Y', time()+864000000);
-					$cookie->setDomain($context->getServer()->getHttpHost());
-					$cookie->setHttpOnly(false);
-					$responce->addCookie($cookie);
-				}
-			}elseif($popupSetting['view']['type']=='coupon'){
+							if(!empty($popupSetting['row']['cont_posttemplate'])){
+								\Bitrix\Main\Mail\Event::send([
+									'EVENT_NAME' => 'CODEMATRIX_POPUP_SENDER',
+									'LID' => SITE_ID,
+									'LANGUAGE_ID' => LANGUAGE_ID,
+									'C_FIELDS' => $forSendDataArr,
+									'DUPLICATE' => 'Y',
+									'MESSAGE_ID' => (int)$popupSetting['row']['cont_posttemplate'],
+								]);
+							}
+							if(!empty($popupSetting['contact']['emailList']) && $popupSetting['contact']['emailList']=='Y'){
+								$popup->insertToMailList($forSendDataArr['EMAIL'], $forSendDataArr['NAME'], $this->arParams['ID_POPUP']);
+							}
+							if(!empty($popupSetting['contact']['iblock'])){
+								$insertArr=array(
+									'IBLOCK_ID'=>$popupSetting['contact']['iblock'],
+									'NAME'=>array_shift($forSendDataArr),
+									'PREVIEW_TEXT'=>''
+								);
+								foreach($forSendDataArr as $keyData=>$nextData){
+									if(!empty($tmpRes[$keyData.'_TITLE'])){
+										$insertArr['PREVIEW_TEXT'].=$tmpRes[$keyData.'_TITLE'].' - '.$nextData.PHP_EOL;
+										$propId=CodeMatrix\Popup\Tools::returnPropId($popupSetting['contact']['iblock'], $keyData, $tmpRes[$keyData.'_TITLE']);
+										$insertArr['PROPERTY_VALUES'][$propId]=$nextData;
+									}
+								}
+								$el = new CIBlockElement;
+								$el->Add($insertArr);
+							}
+							if($tmpRes['USE_CONSENT_SHOW']=='Y'){
+								$dataArr=array();
+								if(!empty($this->arParams['REFERER'])){
+									$dataArr['URL']=$this->arParams['REFERER'];
+								}
+								if (class_exists('Bitrix\\Main\\UserConsent\\Agreement')){
+									\Bitrix\Main\UserConsent\Consent::addByContext(
+										$popupSetting['view']['props']['CONSENT_LIST'],
+										'codematrix/popup',
+										$popupSetting['row']['id'],
+										$dataArr
+									);
+								}
+							}
+							global $USER;
+
+							if(!empty($popupSetting['contact']['register'])&&$popupSetting['contact']['register']=='Y'&&!empty($forSendDataArr['EMAIL'])&&!$USER->IsAuthorized()){
+								$tmpUsers=UserTable::getList(array(
+									'select' => array('ID'),
+									'filter' => array('=EMAIL' => $forSendDataArr['EMAIL']),
+									'order' => array('ID' => 'DESC'),
+								));
+								$existingUser = $tmpUsers->fetch();
+								$tmpRes['REG_RES'][] = !$existingUser;
+								if(!$existingUser){
+									$res=$USER->SimpleRegister($forSendDataArr['EMAIL']);
+								}
+							}
+						}
+						$popup->setStatistic($popupSetting['row']['id'], 1, 'stat_action');
+						$tmpRes['SUCCESS']='Y';
+						\CodeMatrix\Popup\PublicRequestGuard::rememberResponse(
+							'contact',
+							$popupId,
+							'SUCCESS',
+							$requestFingerprint
+						);
+					}
+
+					if (!empty($tmpRes['SUCCESS'])) {
+						// Установить cookie, чтобы повторно не показывать окно пользователю, отправившему форму.
+						$responce = $context->getResponse();
+						$cookie = new Cookie("codematrixPopupFilling_".$this->arParams['ID_POPUP'], 'Y', time()+864000000);
+						$cookie->setDomain($context->getServer()->getHttpHost());
+						$cookie->setHttpOnly(false);
+						$responce->addCookie($cookie);
+					}
+				}elseif($popupSetting['view']['type']=='coupon'){
 				
 				foreach($popupSetting['view']['props'] as $key=>$prop){
 					if($key!='IMG_1_SRC'&&$key!='EMAIL_PLACEHOLDER')

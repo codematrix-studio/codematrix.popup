@@ -1258,12 +1258,20 @@ class popup{
 		}
 	}
 	
+	/**
+	 * Добавляет контакт в список рассылки, связанный с попапом.
+	 *
+	 * @param string $mail Email-адрес контакта.
+	 * @param string $name Имя контакта.
+	 * @param int $idPopup Идентификатор попапа; если не задан, используется текущий.
+	 * @return bool True, если контакт уже состоит в списке или успешно добавлен.
+	 */
 	public function insertToMailList($mail, $name, $idPopup=0){
 		$tmpPopup=0;
 		if((int) $idPopup>0){
 			$tmpPopup=(int) $idPopup;
 		}elseif((int) $this->idPopup>0){
-			$tmpPopup=(int) $this->idPopup>0;
+			$tmpPopup=(int) $this->idPopup;
 		}
 		if($tmpPopup>0){
 			$connection = \Bitrix\Main\Application::getConnection();
@@ -1580,6 +1588,12 @@ class popup{
 		return $basket;
 	}
 
+	/**
+	 * Возвращает активные попапы, условия показа которых подходят текущему запросу.
+	 *
+	 * @param array $options Контекст страницы и пользователя для проверки условий показа.
+	 * @return array Условия и параметры показа подходящих попапов.
+	 */
 	public function getAvailablePopups($options){
 
 		$res = \CodeMatrix\Popup\Model\PopupTable::getList(array(
@@ -1611,7 +1625,8 @@ class popup{
 			}
 
 			// Окно не предназначено для текущего сайта.
-			if($settings['condition']['sites'][0]!='all' & !in_array($options['site'], $settings['condition']['sites'])){
+			$allowedSites = $settings['condition']['sites'] ?? array();
+			if(($allowedSites[0] ?? null)!='all' && !in_array($options['site'], $allowedSites)){
 				continue;
 			}
 			// Текущая дата не соответствует дате начала показа.

@@ -79,21 +79,50 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 				}
 			}
 			if($popupId!==false && isset($availablePopups[$popupId]) && !$hasFormData){
+				// Фиксируем только те попапы, HTML которых действительно был выдан посетителю.
+				if (!isset($_SESSION['codematrix_popup_rendered']) || !is_array($_SESSION['codematrix_popup_rendered'])) {
+					$_SESSION['codematrix_popup_rendered'] = array();
+				}
+				$_SESSION['codematrix_popup_rendered'][$popupId] = time();
 				$popupsO->getHTMLByPopup($popupId);
 			}
 		}elseif($reqArr['type']=='statisticShow' || $reqArr['type']=='statisticAction'){
+			// Статистика меняет данные и принимается только POST-запросом.
 			$popupId=filter_var($reqArr['popupId'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
-			if($popupId!==false){
-				$field=($reqArr['type']=='statisticShow') ? 'stat_show' : 'stat_action';
-				$retStr=$popupsO->setStatistic($popupId, 1, $field);
-				$retStr=CUtil::PhpToJSObject($retStr);
-				echo str_replace("'", '"', $retStr);
+			$renderedAt = ($popupId !== false && isset($_SESSION['codematrix_popup_rendered'][$popupId]))
+				? (int)$_SESSION['codematrix_popup_rendered'][$popupId]
+				: 0;
+			if($request->isPost() && $popupId!==false && $renderedAt>0 && $renderedAt>=time()-86400){
+				if($reqArr['type']=='statisticShow'){
+					// Серверное время начала показа не позволяет подменить длительность через popupTime.
+					if (!isset($_SESSION['codematrix_popup_statistic_started']) || !is_array($_SESSION['codematrix_popup_statistic_started'])) {
+						$_SESSION['codematrix_popup_statistic_started'] = array();
+					}
+					$_SESSION['codematrix_popup_statistic_started'][$popupId] = time();
+					$field = 'stat_show';
+				}else{
+					$startedAt = (int)($_SESSION['codematrix_popup_statistic_started'][$popupId] ?? 0);
+					$field = ($startedAt > 0 && $startedAt <= time()) ? 'stat_action' : '';
+				}
+				if($field !== ''){
+					$retStr=$popupsO->setStatistic($popupId, 1, $field);
+					$retStr=CUtil::PhpToJSObject($retStr);
+					echo str_replace("'", '"', $retStr);
+				}
 			}
 		}elseif($reqArr['type']=='statisticTime'){
 			$popupId=filter_var($reqArr['popupId'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
-			$popupTime=filter_var($reqArr['popupTime'], FILTER_VALIDATE_INT, array('options'=>array('min_range'=>1)));
-			if($popupId!==false && $popupTime!==false){
+			$renderedAt = ($popupId !== false && isset($_SESSION['codematrix_popup_rendered'][$popupId]))
+				? (int)$_SESSION['codematrix_popup_rendered'][$popupId]
+				: 0;
+			$startedAt = ($popupId !== false && isset($_SESSION['codematrix_popup_statistic_started'][$popupId]))
+				? (int)$_SESSION['codematrix_popup_statistic_started'][$popupId]
+				: 0;
+			if($request->isPost() && $popupId!==false && $renderedAt>0 && $renderedAt>=time()-86400 && $startedAt>0 && $startedAt<=time()){
+				// Длительность рассчитывается по серверным часам; клиентское popupTime не является доверенным.
+				$popupTime = min(86400, max(0, time() - $startedAt));
 				$retStr=$popupsO->setStatistic($popupId, $popupTime, 'stat_time');
+				unset($_SESSION['codematrix_popup_statistic_started'][$popupId]);
 				$retStr=CUtil::PhpToJSObject($retStr);
 				echo str_replace("'", '"', $retStr);
 			}

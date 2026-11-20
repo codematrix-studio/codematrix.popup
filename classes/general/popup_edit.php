@@ -249,7 +249,6 @@ class popupEdit extends popup{
 	}
 	
 	public function editFromTableList($id, $arFields){
-		global $DB;
 		$res = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
 			'filter'=>array('=ID'=>$id),
 			'select'=>array('*'),
@@ -257,26 +256,26 @@ class popupEdit extends popup{
 		));
 		$ormRow = $res->fetch();
 		$row = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
-		 if($row){
-			 $tmpSetting=unserialize($row['settings']);
-			 $updFields=array();
-			 $updFields['active']="'N'";
-			 $tmpSetting['condition']['active']='N';
-			 if(!empty($arFields['active'])){
-				 $updFields['active']="'".$arFields['active']."'";
-				 $tmpSetting['condition']['active']=$arFields['active'];
-			 }
-			 if(!empty($arFields['SORT'])){
-				 $updFields['sort']=intval($arFields['SORT']);
-				 $tmpSetting['condition']['sort']=intval($arFields['SORT']);
-			 }
-			 if(!empty($arFields['NAME'])){
-				 $updFields['name']="'".$DB->ForSql($arFields['NAME'])."'";
-				 $tmpSetting['condition']['service_name']=$arFields['NAME'];
-			 }
-			 $updFields['settings']="'".serialize($tmpSetting)."'";
-			 $DB->Update($this->tableSetting, $updFields,  "WHERE id=".$id, $err_mess.__LINE__);
-		 }
+		if($row){
+			$tmpSetting=unserialize($row['settings']);
+			$updFields=array();
+			$updFields['ACTIVE']='N';
+			$tmpSetting['condition']['active']='N';
+			if(!empty($arFields['active'])){
+				$updFields['ACTIVE']=$arFields['active'];
+				$tmpSetting['condition']['active']=$arFields['active'];
+			}
+			if(!empty($arFields['SORT'])){
+				$updFields['SORT']=intval($arFields['SORT']);
+				$tmpSetting['condition']['sort']=intval($arFields['SORT']);
+			}
+			if(!empty($arFields['NAME'])){
+				$updFields['NAME']=$arFields['NAME'];
+				$tmpSetting['condition']['service_name']=$arFields['NAME'];
+			}
+			$updFields['SETTINGS']=serialize($tmpSetting);
+			\\CodeMatrix\\Popup\\Model\\PopupTable::update($id, $updFields);
+		}
 	}
 	
 	public function getAllPopups(){
@@ -376,10 +375,9 @@ class popupEdit extends popup{
 		$ormRow = $res->fetch();
 		$r = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($ormRow);
 		if($r){
-			foreach($r as $code=>$value)
-				$tmpFields[$code]="'".$DB->ForSql($value)."'";
-			$res=$DB->Insert($this->tableSetting,$tmpFields,$err_mess.__LINE__);
-			return $res;
+			$tmpFields=array_change_key_case($r, CASE_UPPER);
+			$saveResult = \\CodeMatrix\\Popup\\Model\\PopupTable::add($tmpFields);
+			return $saveResult->getId();
 		}else
 			return false;
 	}

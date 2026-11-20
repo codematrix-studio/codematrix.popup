@@ -42,7 +42,6 @@ function inducementWord($number, $wordArr) {
 			<span class="sale"><?=GetMessage("POPUP_SALE")?> <?=htmlspecialcharsbx((string)($arResult['PERCENT'] ?? ''))?></span><span class="avaliable"><?=GetMessage("POPUP_AVALIABLE")?> <?=htmlspecialcharsbx($timing)?>
 			<?=GetMessage("POPUP_DAYS_" . inducementWord((int)$timing, array(1, 2, 5)))?>
 			</span>
-			<?
 <?php $param_consent[] = (string)($arResult["EMAIL_TITLE"] ?? ""); ?>
 				<label class="<?= $emailShow ? '' : 'notshow' ?> input">
 					<p><?=GetMessage("POPUP_INFO")?><?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?></p>

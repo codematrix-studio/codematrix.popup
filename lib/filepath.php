@@ -1,8 +1,8 @@
 <?php
 
-namespace CodeMatrix\\Popup;
+namespace CodeMatrix\Popup;
 
-use Bitrix\\Main\\FileTable;
+use Bitrix\Main\FileTable;
 
 /**
  * Предоставляет совместимые с прежним API пути к загруженным файлам.
@@ -31,15 +31,12 @@ final class FilePath
             'limit' => 1,
         ))->fetch();
 
-        if (
-            !is_array($file)
-            || empty($file['FILE_NAME'])
-        ) {
+        if (!is_array($file) || empty($file['FILE_NAME'])) {
             return false;
         }
 
-        $subDirectory = trim((string)($file['SUBDIR'] ?? ''), '/\\\\');
-        $fileName = ltrim((string)$file['FILE_NAME'], '/\\\\');
+        $subDirectory = trim((string)($file['SUBDIR'] ?? ''), '/');
+        $fileName = ltrim((string)$file['FILE_NAME'], '/');
 
         if ($fileName === '') {
             return false;

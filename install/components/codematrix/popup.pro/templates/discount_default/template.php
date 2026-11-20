@@ -32,8 +32,8 @@
 				$arResult['NAME_SHOW']=($arResult['NAME_SHOW']=='N')?'notshow':'';
 				$param_consent[]=$arResult['NAME_TITLE'];
 			}?>
-			<label class="one <?=$arResult['NAME_SHOW']?> <?=$arResult['NAME_REQUIRED']?>">
-				<input <?=$arResult['NAME_REQUIRED']?> name="NAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['NAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['NAME_TITLE'] ?? ''))?>" />
+			<label class="one <?= (($arResult['NAME_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> <?= (($arResult['NAME_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?>">
+				<input <?= (($arResult['NAME_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> name="NAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['NAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['NAME_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
             <?
@@ -46,8 +46,8 @@
 				$arResult['LASTNAME_SHOW']=($arResult['LASTNAME_SHOW']=='N')?'notshow':'';
 				$param_consent[]=$arResult['LASTNAME_TITLE'];
 			}?>
-			<label class="one <?=$arResult['LASTNAME_SHOW']?> <?=$arResult['LASTNAME_REQUIRED']?>">
-				<input <?=$arResult['LASTNAME_REQUIRED']?> name="LASTNAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['LASTNAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['LASTNAME_TITLE'] ?? ''))?>" />
+			<label class="one <?= (($arResult['LASTNAME_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> <?= (($arResult['LASTNAME_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?>">
+				<input <?= (($arResult['LASTNAME_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> name="LASTNAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['LASTNAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['LASTNAME_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
 			<?
@@ -61,8 +61,8 @@
 				$param_consent[]=$arResult['PHONE_TITLE'];
 			}
             ?>
-			<label class="one <?=$arResult['PHONE_SHOW']?> <?=$arResult['PHONE_REQUIRED']?>">
-				<input <?=$arResult['PHONE_REQUIRED']?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['PHONE'] ?? ''))?>" name="PHONE" placeholder="<?=htmlspecialcharsbx((string)($arResult['PHONE_TITLE'] ?? ''))?>" />
+			<label class="one <?= (($arResult['PHONE_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> <?= (($arResult['PHONE_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?>">
+				<input <?= (($arResult['PHONE_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['PHONE'] ?? ''))?>" name="PHONE" placeholder="<?=htmlspecialcharsbx((string)($arResult['PHONE_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
 			<?
@@ -77,8 +77,8 @@
 			}?>
             <span class="not_new"><?=GetMessage('flp.not_new')?></span>
             <span class="not_valid"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?></span>
-			<label class="<?=$arResult['EMAIL_SHOW']?> <?=$arResult['EMAIL_REQUIRED']?> one email">
-				<input <?=$arResult['EMAIL_REQUIRED']?> type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_TITLE'] ?? ''))?>" />
+			<label class="<?= (($arResult['EMAIL_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> <?= (($arResult['EMAIL_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> one email">
+				<input <?= (($arResult['EMAIL_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> type="email" value="<?=htmlspecialcharsbx((string)($arResult['EMAIL'] ?? ''))?>" name="EMAIL" placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
 
@@ -90,7 +90,7 @@
 			}
 			if($arResult['USE_CONSENT_SHOW']!='N' && count($arResult['AGREEMENTS'])>0){
 			?>
-			<div class="<?=$arResult['USE_CONSENT_SHOW']?> consentBlock">
+			<div class="<?= (($arResult['USE_CONSENT_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> consentBlock">
 			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)($arResult['CONSENT_ID'] ?? 0) ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
 			<?}?>

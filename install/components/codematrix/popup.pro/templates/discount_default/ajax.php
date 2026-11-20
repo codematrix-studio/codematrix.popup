@@ -36,7 +36,8 @@ $groupValue = $props["USER_GROUP"] ?? null;
 $groupId = (is_string($groupValue) || is_int($groupValue))
 	? filter_var($groupValue, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1)))
 	: false;
-if ($groupId === false) {
+if ($groupId === false || !\\Bitrix\\Main\\GroupTable::getById($groupId)->fetch()) {
+	// Неизвестная или удалённая группа не должна ломать выдачу карты.
 	$groupId = 0;
 }
 $maskValue = $props["DISCOUNT_MASK"] ?? "";
@@ -126,9 +127,12 @@ if (!$USER->IsAuthorized()) {
 		die();
 	}
 
-	$user = new CUser();
+	// SimpleRegister возвращает массив сообщений, а не булев результат.
+	// Фактический успех регистрации подтверждаем по авторизованной сессии и ID.
 	$registerResult = $USER->SimpleRegister($email);
-	if (!$registerResult || !$USER->IsAuthorized()) {
+	$userId = (int)$USER->GetID();
+	if (!is_array($registerResult) || !$USER->IsAuthorized() || $userId <= 0) {
+		echo "coupon_error";
 		die();
 	}
 
@@ -140,7 +144,9 @@ if (!$USER->IsAuthorized()) {
 		"LAST_NAME" => is_string($lastName) ? $lastName : "",
 		"PERSONAL_PHONE" => is_string($phone) ? $phone : "",
 	);
-	$user->Update((int)$USER->GetID(), $userFields);
+	// Обновляем профиль через текущий объект пользователя, чтобы почтовые события
+	// ниже получили актуальные имя и фамилию из авторизованной сессии.
+	$USER->Update($userId, $userFields);
 }
 
 $result = $popup->getCoupon($ruleId, "infinite", $email, $popupId, "", $mask);

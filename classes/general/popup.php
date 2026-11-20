@@ -1544,17 +1544,23 @@ class popup{
 		}
 	}
 
+	/**
+	 * Возвращает товары и общую сумму текущей незакрытой корзины посетителя.
+	 *
+	 * @return array{products: array, summ: float|int} Идентификаторы товаров и сумма корзины.
+	 */
 	public static function GetBasketInfo(){
 		$basket=array('products'=>array(), 'summ'=>0);
-		$basketNum=CSaleBasket::GetBasketUserID(true);
+		$fuserId=\Bitrix\Sale\Fuser::getId();
 		$tmpOffers=array();
-		if(!empty($basketNum)){
-			$dbBasketItems = CSaleBasket::GetList(array(),	array("FUSER_ID" =>$basketNum, "LID" => SITE_ID, "ORDER_ID" => "NULL"), false, false, array("*"));
-			while($arItems = $dbBasketItems->Fetch()){
-				$basket['products'][]=$arItems['PRODUCT_ID'];
-				$basket['summ']+=$arItems['PRICE']*$arItems['QUANTITY'];
-				if($arItems['PRODUCT_XML_ID']!=$arItems['PRODUCT_ID']){
-					$tmpOffers[]=$arItems['PRODUCT_ID'];
+		if(!empty($fuserId)){
+			$userBasket=\Bitrix\Sale\Basket::loadItemsForFUser($fuserId, SITE_ID);
+			foreach($userBasket->getBasketItems() as $basketItem){
+				$productId=$basketItem->getProductId();
+				$basket['products'][]=$productId;
+				$basket['summ']+=$basketItem->getPrice()*$basketItem->getQuantity();
+				if($basketItem->getField('PRODUCT_XML_ID')!=$productId){
+					$tmpOffers[]=$productId;
 				}
 			}
 			if(count($tmpOffers)>0){

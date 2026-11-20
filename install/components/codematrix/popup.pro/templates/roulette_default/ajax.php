@@ -140,11 +140,10 @@ if ($mode === "draw") {
 	}
 
 	// Служебный ключ count не является сектором колеса.
-	$configuredCount = filter_var(
-		$rouletteItems["count"] ?? null,
-		FILTER_VALIDATE_INT,
-		array("options" => array("min_range" => 1))
-	);
+	$countValue = $rouletteItems["count"] ?? null;
+	$configuredCount = (is_string($countValue) || is_int($countValue))
+		? filter_var($countValue, FILTER_VALIDATE_INT, array("options" => array("min_range" => 1)))
+		: false;
 	unset($rouletteItems["count"]);
 	$rouletteItems = array_values($rouletteItems);
 

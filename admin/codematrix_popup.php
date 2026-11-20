@@ -204,13 +204,13 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 			$dataStatus=true;
 			$requiredVal=array('template', 'color_style', 'name', 'type');
 			foreach($requiredVal as $nextVal){
-				if(empty($request[$nextVal])){
+				if(empty($request->getPost($nextVal))){
 					$dataStatus=false;
 					break;
 				}
 			}
 			if($dataStatus){
-				$retArr=$editableWindow->setColorTheme($request['type'], $request['template'], $request['color_style'], $request['name']);
+				$retArr=$editableWindow->setColorTheme($request->getPost('type'), $request->getPost('template'), $request->getPost('color_style'), $request->getPost('name'));
 			}else{
 				$retArr=array('status'=>'do not data');
 			}
@@ -226,7 +226,7 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 				}
 			}
 			if($dataStatus){
-				$retArr=$editableWindow->setTemplate($request['type'], $request['template'], $request['name']);
+				$retArr=$editableWindow->setTemplate($request->getPost('type'), $request->getPost('template'), $request->getPost('name'));
 				if($retArr===false){
 					$retArr=array('status'=>'error copy');
 				}

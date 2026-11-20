@@ -55,7 +55,6 @@ $addCookie = static function () use ($context, $popupId) {
 		"Y",
 		time() + 864000000
 	);
-	$cookie->setDomain($context->getServer()->getHttpHost());
 	$cookie->setHttpOnly(false);
 	$context->getResponse()->addCookie($cookie);
 };

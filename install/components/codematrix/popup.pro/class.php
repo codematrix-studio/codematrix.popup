@@ -264,13 +264,13 @@ class CodeMatrixPopup extends \CBitrixComponent{
 								}
 
 								try {
-									\\Bitrix\\Main\\UserConsent\\Consent::addByContext(
+									\Bitrix\Main\UserConsent\Consent::addByContext(
 										$popupSetting['view']['props']['CONSENT_LIST'],
 										'codematrix/popup',
 										$popupSetting['row']['id'],
 										$dataArr
 									);
-								} catch (\\Throwable $exception) {
+								} catch (\Throwable $exception) {
 									$consentSaved = false;
 								}
 							}

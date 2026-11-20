@@ -6,7 +6,8 @@ use Bitrix\Main,
 	Bitrix\Main\Web\Cookie,
 	Bitrix\Main\Context,
 	Bitrix\Main\UserConsent\Internals\AgreementTable,
-	Bitrix\Main\UserConsent\Agreement;
+	Bitrix\Main\UserConsent\Agreement,
+	Bitrix\Main\UserTable;
 
 \Bitrix\Main\Loader::IncludeModule("iblock");
 \Bitrix\Main\Loader::IncludeModule("codematrix.popup");
@@ -160,8 +161,7 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				$contactArr=array('NAME'=>'', 'EMAIL'=>'','LASTNAME'=>'', 'PHONE'=>'', 'DESCRIPTION'=>'');
 				global $USER;
 				if($USER->IsAuthorized()){
-					$rsUser = CUser::GetByID($USER->GetID());
-					$arUser = $rsUser->Fetch();
+					$arUser = UserTable::getById($USER->GetID())->fetch();
 					$contactArr['EMAIL']=$arUser['EMAIL'];
 					$contactArr['NAME']=$arUser['NAME'];
 					$contactArr['LASTNAME']=$arUser['LAST_NAME'];
@@ -255,7 +255,11 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						global $USER;
 						
 						if(!empty($popupSetting['contact']['register'])&&$popupSetting['contact']['register']=='Y'&&!empty($forSendDataArr['EMAIL'])&&!$USER->IsAuthorized()){
-							$tmpUsers=CUser::GetList(($by="ID"),($order="desc"),array('EMAIL'=>$forSendDataArr['EMAIL']));
+							$tmpUsers=UserTable::getList(array(
+								'select' => array('ID'),
+								'filter' => array('=EMAIL' => $forSendDataArr['EMAIL']),
+								'order' => array('ID' => 'DESC'),
+							));
 							$tmpRes['REG_RES'][]=!$tmpUsers->Fetch();
 							if(!$tmpUsers->Fetch()){
 								$res=$USER->SimpleRegister($forSendDataArr['EMAIL']);

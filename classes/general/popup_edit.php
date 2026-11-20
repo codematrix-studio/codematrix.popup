@@ -8,6 +8,11 @@ use \Bitrix\Main\Application,
 Loc::loadMessages(__FILE__);
 class popupEdit extends popup{
 	
+	/**
+	 * Возвращает ID почтового шаблона контактной формы, при необходимости создавая тип события и шаблон.
+	 *
+	 * @return int|string|false ID почтового шаблона.
+	 */
 	private function getPostTemplate(){
 		$tmpSettings=$this->getSetting($this->idPopup);
 		\CodeMatrix\Popup\Mail::ensureEventType(
@@ -50,6 +55,12 @@ class popupEdit extends popup{
 		return $tmpSettings['row']['cont_posttemplate'];
 	}
 
+	/**
+	 * Сохраняет настройки попапа из POST-запроса, включая параметры его почтовых шаблонов.
+	 *
+	 * @param \Bitrix\Main\HttpRequest $request HTTP-запрос с параметрами формы.
+	 * @return mixed Результат сохранения.
+	 */
 	public function editPopup($request){		
 		$settings=array('view'=>array(), 'condition'=>array());
 		$viewStructure=$this->getTemplates();

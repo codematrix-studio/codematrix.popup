@@ -93,12 +93,16 @@ if ($consentRequired) {
 	}
 
 	try {
-		\Bitrix\Main\UserConsent\Consent::addByContext(
+		$consentRecordId = \Bitrix\Main\UserConsent\Consent::addByContext(
 			$props["CONSENT_LIST"],
 			"codematrix/popup",
 			$popupId,
 			$consentData
 		);
+		if (!$consentRecordId) {
+			echo "coupon_error";
+			die();
+		}
 	} catch (\Throwable $exception) {
 		echo "coupon_error";
 		die();

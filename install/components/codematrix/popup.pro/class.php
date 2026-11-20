@@ -333,20 +333,20 @@ class CodeMatrixPopup extends \CBitrixComponent{
 							}
 						}
 						if ($consentSaved) {
-						$popup->setStatistic($popupSetting['row']['id'], 1, 'stat_action');
-						if (session_status() === PHP_SESSION_ACTIVE) {
-							if (!isset($_SESSION['codematrix_popup_statistic_action']) || !is_array($_SESSION['codematrix_popup_statistic_action'])) {
-								$_SESSION['codematrix_popup_statistic_action'] = array();
+							$popup->setStatistic($popupSetting['row']['id'], 1, 'stat_action');
+							if (session_status() === PHP_SESSION_ACTIVE) {
+								if (!isset($_SESSION['codematrix_popup_statistic_action']) || !is_array($_SESSION['codematrix_popup_statistic_action'])) {
+									$_SESSION['codematrix_popup_statistic_action'] = array();
+								}
+								$_SESSION['codematrix_popup_statistic_action'][$popupId] = true;
 							}
-							$_SESSION['codematrix_popup_statistic_action'][$popupId] = true;
-						}
-						$tmpRes['SUCCESS']='Y';
-						\CodeMatrix\Popup\PublicRequestGuard::rememberResponse(
-							'contact',
-							$popupId,
-							'SUCCESS',
-							$requestFingerprint
-						);
+							$tmpRes['SUCCESS']='Y';
+							\\CodeMatrix\\Popup\\PublicRequestGuard::rememberResponse(
+								'contact',
+								$popupId,
+								'SUCCESS',
+								$requestFingerprint
+							);
 						} else {
 							$tmpRes['ERRORS']['CONSENT'] = 'Не удалось сохранить согласие. Данные формы не отправлены.';
 						}

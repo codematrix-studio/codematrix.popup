@@ -1108,7 +1108,10 @@ class popup{
 		while($ormRow = $res->fetch()){
 			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 			$additionalColorThemes[$row['template']]['custom_'.$row['id']]=$row['name'].' ['.$row['id'].']';
-			$retArr[$row['type']][]=unserialize($row['template']);
+			$customTemplate = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($row['template']);
+			if (!empty($customTemplate)) {
+				$retArr[$row['type']][] = $customTemplate;
+			}
 		}
 		return $retArr;
 	}
@@ -1473,7 +1476,10 @@ class popup{
 		$ormRow = $res->fetch();
 		$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 		if($row){
-			 $retArr=unserialize($row['settings']);
+			 $retArr = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($row['settings']);
+			if (empty($retArr['view']) || !is_array($retArr['view'])) {
+				return false;
+			}
 			 $retArr['service_name']=$row['name'];
 			 $retArr['row']=$row;
 			 //var_dump($retArr['view']['type']);
@@ -1771,7 +1777,10 @@ class popup{
 		while($ormRow = $res->fetch()){
 			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 
-			$settings=unserialize($row['settings']);
+			$settings = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($row['settings']);
+			if (empty($settings['view']) || !is_array($settings['view']) || empty($settings['condition']) || !is_array($settings['condition'])) {
+				continue;
+			}
 
 			// Не показывать окно пользователям, уже заполнившим форму.
 			$cCookie=$request->getCookie("codematrixPopupFilling_".$row['id']);
@@ -1954,7 +1963,10 @@ class popup{
 		$ormRow = $res->fetch();
 		$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 		if($row){
-			$settings=unserialize($row['settings']);
+			$settings = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($row['settings']);
+			if (empty($settings['view']) || !is_array($settings['view']) || empty($settings['view']['type']) || !is_array($settings['view']['props'] ?? null)) {
+				return false;
+			}
 
 			// В старых или неполных записях может отсутствовать выбранный шаблон.
 			if(empty($settings['view']['template']) && !empty($settings['view']['type'])){

@@ -284,7 +284,10 @@ class popupEdit extends popup{
 		$ormRow = $res->fetch();
 		$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
 		if($row){
-			$tmpSetting=unserialize($row['settings']);
+			$tmpSetting = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($row['settings']);
+			if (empty($tmpSetting)) {
+				return;
+			}
 			$updFields=array();
 			$updFields['ACTIVE']='N';
 			$tmpSetting['condition']['active']='N';
@@ -318,7 +321,7 @@ class popupEdit extends popup{
 		$retArr=array();
 		while($ormRow = $res->fetch()){
 			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
-			$retArr[$row['id']]=unserialize($row['settings']);
+			$retArr[$row['id']] = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($row['settings']);
 		}
 		return $retArr;
 	}

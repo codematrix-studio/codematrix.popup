@@ -244,7 +244,11 @@ if(!empty($request['id'])){
 					$arFields = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($cData->fetch());
 					if($arFields){
 						$arFields["active"]=($_REQUEST['action']=="activate"?"Y":"N");
-						$tmpSetting=unserialize($arFields['settings']);
+						$tmpSetting = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($arFields['settings']);
+						if (empty($tmpSetting)) {
+							$lAdmin->AddGroupError(GetMessage("codematrix.popup_SAVE_ERROR")." ".GetMessage("codematrix.popup_POPUP_EMPTY"), $ID);
+							break;
+						}
 						$tmpSetting['condition']['active']=$arFields['active'];
 						\CodeMatrix\Popup\Model\PopupTable::update($ID, array(
 							'ACTIVE' => $arFields['active'],
@@ -356,11 +360,12 @@ if(!empty($request['id'])){
 		$row->AddViewField("STAT_TIME", popup::convertTimeFromSecond($f_stat_time));
 		$row->AddViewField("STAT_ACTION", $f_stat_action);
 
-		$f_settings=unserialize($arRes['settings']);
+		$f_settings = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($arRes['settings']);
 
 		$row->AddViewField("MASK_IN", htmlspecialcharsbx($f_settings['condition']['showOnlyPath'] ?? ''));
 		$row->AddViewField("MASK_OUT", htmlspecialcharsbx($f_settings['condition']['hideOnlyPath'] ?? ''));
-		$tmpSites=implode(',',$f_settings['condition']['sites']);
+		$sites = $f_settings['condition']['sites'] ?? array();
+		$tmpSites = implode(',', is_array($sites) ? $sites : array());
 		$tmpSites=str_ireplace('all', '', $tmpSites);
 		$tmpSites=str_ireplace(',,', ',', $tmpSites);
 		$row->AddViewField("SITES", htmlspecialcharsbx($tmpSites));

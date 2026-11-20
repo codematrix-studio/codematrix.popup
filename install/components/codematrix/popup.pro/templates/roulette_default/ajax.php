@@ -94,7 +94,11 @@ if ($rule === "win") {
 }
 
 $result = $popup->getCoupon($rule, $timing, $email, $popupId, $resultText);
-if ($result !== false && $result !== null) {
+if ($result === false) {
+	echo "coupon_error";
+	die();
+}
+if ($result !== null) {
 	if ($addToTable === "Y") {
 		$popup->insertToMailList($email, "", $popupId);
 	}

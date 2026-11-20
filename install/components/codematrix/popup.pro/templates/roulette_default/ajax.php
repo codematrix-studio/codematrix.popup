@@ -106,23 +106,20 @@ if ($mode === "draw") {
 
 	$pendingDraw = $_SESSION[$drawsKey][$popupId] ?? null;
 	if (is_array($pendingDraw)) {
-		$createdAt = (int)($pendingDraw["created_at"] ?? 0);
-		if ($createdAt > 0 && $createdAt <= time() && time() - $createdAt <= 300) {
-			if (
-				hash_equals((string)($pendingDraw["email_hash"] ?? ""), $emailHash)
-				&& ($pendingDraw["add_to_table"] ?? null) === $addToTable
-			) {
-				$sendJson(array(
-					"status" => "ok",
-					"index" => (int)$pendingDraw["index"],
-					"token" => (string)$pendingDraw["token"],
-				));
-			}
-
-			$sendJson(array("status" => "error", "code" => "draw_pending"));
+		// Пока выбранный приз не подтверждён, повторный draw возвращает тот же результат.
+		// Истечение времени или закрытие вкладки не должно позволять перебросить колесо.
+		if (
+			hash_equals((string)($pendingDraw["email_hash"] ?? ""), $emailHash)
+			&& ($pendingDraw["add_to_table"] ?? null) === $addToTable
+		) {
+			$sendJson(array(
+				"status" => "ok",
+				"index" => (int)$pendingDraw["index"],
+				"token" => (string)$pendingDraw["token"],
+			));
 		}
 
-		unset($_SESSION[$drawsKey][$popupId]);
+		$sendJson(array("status" => "error", "code" => "draw_pending"));
 	}
 
 	$rouletteItems = $settings["roulett"] ?? array();
@@ -226,8 +223,6 @@ if (
 	|| !hash_equals($pendingDraw["token_hash"], hash("sha256", $token))
 	|| !hash_equals((string)$pendingDraw["email_hash"], $emailHash)
 	|| $pendingDraw["add_to_table"] !== $addToTable
-	|| (int)$pendingDraw["created_at"] > time()
-	|| time() - (int)$pendingDraw["created_at"] > 300
 ) {
 	$sendJson(array("status" => "error", "code" => "invalid_token"));
 }

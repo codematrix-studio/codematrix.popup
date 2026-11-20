@@ -51,6 +51,9 @@
               onsuccess: function(data){
                 if(data=='not_unique'){
                   BX('codematrix_roulette').querySelector('p.result_roll_not_unique').style.display='inline-block';
+                }else if(data=='coupon_error'){
+                  BX('codematrix_roulette').querySelector('p.result_roll_coupon_error').style.display='inline-block';
+                  return;
                 }else{
                   BX('codematrix_roulette').querySelector('p.result_roll_not_unique').style.display='none';
                   BX('codematrix_roulette').querySelector('label.input').remove()//.style.display='none';
@@ -171,6 +174,7 @@ return dataset.length;
         <input placeholder="<?=htmlspecialcharsbx((string)($arResult['EMAIL_PLACEHOLDER'] ?? ''))?>" type="email" name="email">
         <p class="result_roll_fail" style="display:none;"><?=GetMessage('codematrix.roulette_wrong')?><span></span></p>
         <p class="result_roll_not_unique" style="display:none;"><?=htmlspecialcharsbx((string)($arResult['EMAIL_NOT_NEW_TEXT'] ?? ''))?><span></span></p>
+    <p class="result_roll_coupon_error" style="display:none;"><?=GetMessage("codematrix.roulette_coupon_error")?></p>
       </label>
       <button class="roll_roulette"><?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?></button>
     

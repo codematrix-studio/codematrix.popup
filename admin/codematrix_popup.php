@@ -161,9 +161,11 @@ if(!empty($request['id'])){
 
 	if($arID = $lAdmin->GroupAction()){
 		if($_REQUEST['action_target']=='selected'){
-			$rsData = $DB->Query('SELECT * FROM '.$sTableID.';', false, $err_mess.__LINE__);
-			while($arRes = $rsData->Fetch()){
-				$arID[] = $arRes['id'];
+			$rsData = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+				'select' => array('ID')
+			));
+			while($arRes = $rsData->fetch()){
+				$arID[] = $arRes['ID'];
 			}
 		}
 		foreach($arID as $ID){
@@ -172,16 +174,24 @@ if(!empty($request['id'])){
 			$ID = IntVal($ID);
 			switch($_REQUEST['action']){
 				case "delete":
-					$DB->Query('DELETE FROM '.$sTableID.' WHERE id='.$ID.';', false, $err_mess.__LINE__);
+					\\CodeMatrix\\Popup\\Model\\PopupTable::delete($ID);
 					break;
 				case "activate":
 				case "deactivate":
-					$cData = $DB->Query('SELECT * FROM '.$sTableID.' WHERE id='.$ID.';', false, $err_mess.__LINE__);
-					if($arFields = $cData->Fetch()){
+					$cData = \\CodeMatrix\\Popup\\Model\\PopupTable::getList(array(
+						'select' => array('ID', 'ACTIVE', 'SETTINGS'),
+						'filter' => array('=ID' => $ID),
+						'limit' => 1
+					));
+					$arFields = \\CodeMatrix\\Popup\\Model\\LegacyRowMapper::toLegacyRow($cData->fetch());
+					if($arFields){
 						$arFields["active"]=($_REQUEST['action']=="activate"?"Y":"N");
 						$tmpSetting=unserialize($arFields['settings']);
 						$tmpSetting['condition']['active']=$arFields['active'];
-						$DB->Query('UPDATE '.$sTableID.' SET active="'.$arFields["active"].'", settings=\''.serialize($tmpSetting).'\' WHERE id='.$ID.';', false, $err_mess.__LINE__);
+						\\CodeMatrix\\Popup\\Model\\PopupTable::update($ID, array(
+							'ACTIVE' => $arFields['active'],
+							'SETTINGS' => serialize($tmpSetting)
+						));
 					}else
 						$lAdmin->AddGroupError(GetMessage("codematrix.popup_SAVE_ERROR")." ".GetMessage("codematrix.popup_POPUP_EMPTY"), $ID);
 					break;

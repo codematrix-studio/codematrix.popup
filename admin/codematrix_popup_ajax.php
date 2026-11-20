@@ -23,7 +23,7 @@ if(\Bitrix\Main\Loader::includeModule('codematrix.popup')){
 		return $popupsO->getAvailablePopups(array(
 			'site' => defined('SITE_ID') ? SITE_ID : '',
 			'dateUser' => time(),
-			'pageUrl' => (string)($_SERVER['REQUEST_URI'] ?? '/'),
+			'pageUrl' => (string)($_SERVER['HTTP_REFERER'] ?? '/'),
 			'countPages' => max(1, (int)($_SESSION['codematrix_popup_count_pages'] ?? 1)),
 		));
 	};

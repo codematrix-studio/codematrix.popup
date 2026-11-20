@@ -363,20 +363,32 @@ class CodeMatrixPopup extends \CBitrixComponent{
 		}
 		$timer_array=array('banner','video','action','contact','html','coupon','roulette','discount');
 			if(!empty($popupSetting['view']['type']) && in_array($popupSetting['view']['type'],$timer_array)){
-				$this->arResult['TIMER']=$popupSetting['timer']['enabled'];
-				$this->arResult['TIMER_TEXT']=$popupSetting['timer']['text'];
-				if($this->arResult['TIMER']=='Y'){
-				$format = 'd.m.Y H:i:s';
-				$unixtime=DateTime::createFromFormat($format, $popupSetting['timer']['date']);
-				$nowtime=time();
-				$nowtime=date_create();
-				$unixtime=$nowtime->diff($unixtime);
-				$unixtime=$unixtime->format('%a:%H:%I:%S');
-				$this->arResult['TIMER_DATE']=$unixtime;
-				$this->arResult['TIMER_LEFT']=$popupSetting['timer']['left'];
-				$this->arResult['TIMER_RIGHT']=$popupSetting['timer']['right'];
-				$this->arResult['TIMER_TOP']=$popupSetting['timer']['top'];
-				$this->arResult['TIMER_BOTTOM']=$popupSetting['timer']['bottom'];
+				$timerSettings = is_array($popupSetting['timer'] ?? null) ? $popupSetting['timer'] : array();
+				$this->arResult['TIMER'] = $timerSettings['enabled'] ?? 'N';
+				$this->arResult['TIMER_TEXT'] = $timerSettings['text'] ?? '';
+				if ($this->arResult['TIMER'] === 'Y') {
+					$format = 'd.m.Y H:i:s';
+					$timerDateValue = $timerSettings['date'] ?? null;
+					$timerDate = is_string($timerDateValue)
+						? \DateTime::createFromFormat($format, $timerDateValue)
+						: false;
+					$timerDateErrors = \DateTime::getLastErrors();
+					$timerDateIsValid = $timerDate instanceof \DateTime
+						&& ($timerDateErrors === false || (
+							$timerDateErrors['warning_count'] === 0
+							&& $timerDateErrors['error_count'] === 0
+						));
+					if ($timerDateIsValid) {
+						$now = new \DateTime();
+						$this->arResult['TIMER_DATE'] = $now->diff($timerDate)->format('%a:%H:%I:%S');
+						$this->arResult['TIMER_LEFT'] = $timerSettings['left'] ?? '';
+						$this->arResult['TIMER_RIGHT'] = $timerSettings['right'] ?? '';
+						$this->arResult['TIMER_TOP'] = $timerSettings['top'] ?? '';
+						$this->arResult['TIMER_BOTTOM'] = $timerSettings['bottom'] ?? '';
+					} else {
+						// Не показываем таймер с повреждённой датой в старой записи.
+						$this->arResult['TIMER'] = 'N';
+					}
 				}
 			}
 		if(!empty($popupSetting['view']['type']) && $popupSetting['view']['type']=='roulette'){

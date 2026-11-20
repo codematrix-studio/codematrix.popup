@@ -1,4 +1,4 @@
-<?
+<?php
 //$MESS['codematrix.roulette_res']='Поздравляем, Вы выиграли ';
 $MESS["codematrix.roulette_wrong"]="Неверный E-mail";
 $MESS["codematrix.roulette_coupon_error"]="Не удалось создать купон. Попробуйте позже.";

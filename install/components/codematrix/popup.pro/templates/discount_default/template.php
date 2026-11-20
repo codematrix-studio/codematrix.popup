@@ -1,5 +1,5 @@
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?if($arResult['TIMER']=='Y'){
+<?phpif (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?phpif($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
 			'TIME'=>$arResult['TIMER_DATE'],
@@ -13,16 +13,16 @@
     <link href="https://fonts.googleapis.com/css?family=Old+Standard+TT" rel="stylesheet">
     <div class="background"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="card">
-        <?if(!empty($arResult['IMG_1_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_1_SRC'] ?? ''))?>"><?}?>
-        <div class="number"><?$str=str_replace('#','0',$arResult['DISCOUNT_MASK']); $str=substr_replace($str,'1',-1);?>VIP <?=htmlspecialcharsbx((string)$str)?></div>
+        <?phpif(!empty($arResult['IMG_1_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_1_SRC'] ?? ''))?>"><?php}?>
+        <div class="number"><?php$str=str_replace('#','0',$arResult['DISCOUNT_MASK']); $str=substr_replace($str,'1',-1);?>VIP <?=htmlspecialcharsbx((string)$str)?></div>
     </div>
-    <?if(!empty($arResult['IMG_2_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_2_SRC'] ?? ''))?>"><?}?>
+    <?phpif(!empty($arResult['IMG_2_SRC'])){?><img src="<?=htmlspecialcharsbx((string)($arResult['IMG_2_SRC'] ?? ''))?>"><?php}?>
     <div class="content">
         <h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
         <p><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></p>
         <form method="POST" onsubmit="getCoupon(this);return false;">
         <fieldset>
-			<?
+			<?php
 			if($arResult['NAME_SHOW']=='Y'){
 				if($arResult['NAME_REQUIRED']=='N' || $arResult['NAME_REQUIRED']=='Y'){
 					$arResult['NAME_REQUIRED']=($arResult['NAME_REQUIRED']=='N')?'':'required';
@@ -36,7 +36,7 @@
 				<input <?= (($arResult['NAME_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> name="NAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['NAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['NAME_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
-            <?
+            <?php
 			if($arResult['LASTNAME_SHOW']=='Y'){
 				if($arResult['LASTNAME_REQUIRED']=='N' || $arResult['LASTNAME_REQUIRED']=='Y'){
 					$arResult['LASTNAME_REQUIRED']=($arResult['LASTNAME_REQUIRED']=='N')?'':'required';
@@ -50,7 +50,7 @@
 				<input <?= (($arResult['LASTNAME_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> name="LASTNAME" type="text" value="<?=htmlspecialcharsbx((string)($arResult['LASTNAME'] ?? ''))?>" placeholder="<?=htmlspecialcharsbx((string)($arResult['LASTNAME_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
-			<?
+			<?php
 			if($arResult['PHONE_SHOW']=='Y'){
 				if($arResult['PHONE_REQUIRED']=='N' || $arResult['PHONE_REQUIRED']=='Y'){
 					$arResult['PHONE_REQUIRED']=($arResult['PHONE_REQUIRED']=='N')?'':'required';
@@ -65,7 +65,7 @@
 				<input <?= (($arResult['PHONE_REQUIRED'] ?? '') === 'required') ? 'required' : '' ?> type="text" value="<?=htmlspecialcharsbx((string)($arResult['PHONE'] ?? ''))?>" name="PHONE" placeholder="<?=htmlspecialcharsbx((string)($arResult['PHONE_TITLE'] ?? ''))?>" />
 				<span><sup>*</sup></span>
 			</label>
-			<?
+			<?php
 			if($arResult['EMAIL_SHOW']=='Y'){
 				if($arResult['EMAIL_REQUIRED']=='N' || $arResult['EMAIL_REQUIRED']=='Y'){
 					$arResult['EMAIL_REQUIRED']=($arResult['EMAIL_REQUIRED']=='N')?'':'required';
@@ -86,7 +86,7 @@
 
 			
 			<label class="submit"><input type="submit" onclick=""  value="<?=htmlspecialcharsbx((string)($arResult['BUTTON_TEXT'] ?? ''))?>"></label>
-			<?
+			<?php
 			if($arResult['USE_CONSENT_SHOW']=='N' || $arResult['USE_CONSENT_SHOW']=='Y'){
 				$arResult['USE_CONSENT_SHOW']=($arResult['USE_CONSENT_SHOW']=='N')?'notshow':'';
 			}
@@ -95,7 +95,7 @@
 			<div class="<?= (($arResult['USE_CONSENT_SHOW'] ?? '') === 'notshow') ? 'notshow' : '' ?> consentBlock">
 			<input type="checkbox" name="use_consent" value="Y" checked="checked" required /> <a href="/bitrix/tools/codematrix_agreement.php?ID=<?= (int)($arResult['CONSENT_ID'] ?? 0) ?>" target="_blank"><?=htmlspecialcharsbx((string)($arResult['CONSENT_LIST'] ?? ''))?></a>
 			</div>
-			<?}?>
+			<?php}?>
 			<div class="clear"></div>
 		</fieldset>
         </form>

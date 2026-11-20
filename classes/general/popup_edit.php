@@ -224,7 +224,17 @@ class popupEdit extends popup{
 				}
 				$settings['condition'][$keyNextCond]=(count($tmpProds)==0)?'':$tmpProds;
 			}else{
-				$settings['condition'][$keyNextCond]=$request->getPost($keyNextCond);
+				$conditionValue = $request->getPost($keyNextCond);
+				if (
+					$conditionValue !== null
+					&& (
+						(is_array($nextCond) && !is_array($conditionValue))
+						|| (!is_array($nextCond) && !is_scalar($conditionValue))
+					)
+				) {
+					return array('status' => 'error', 'data' => 'Передано значение недопустимого типа для условия «' . $keyNextCond . '».');
+				}
+				$settings['condition'][$keyNextCond] = $conditionValue;
 			}
 		}
 		
@@ -253,13 +263,25 @@ class popupEdit extends popup{
 		$timer_array=array('banner','video','action','contact','html','coupon','roulette','discount');
 		if(in_array($settings['view']['type'],$timer_array)){
 			$settings['timer']=array();
-			$timerEnabled=$request->getPost("timer_enable");
-			$timerTime=$request->getPost("timer_date");
-			$timerText=$request->getPost("timer_text");
-			$timerLeft=$request->getPost("timer_left");
-			$timerRight=$request->getPost("timer_right");
-			$timerTop=$request->getPost("timer_top");
-			$timerBottom=$request->getPost("timer_bottom");
+			$timerFields = array(
+				'timer_enable', 'timer_date', 'timer_text',
+				'timer_left', 'timer_right', 'timer_top', 'timer_bottom'
+			);
+			$timerValues = array();
+			foreach ($timerFields as $timerField) {
+				$timerValue = $request->getPost($timerField);
+				if ($timerValue !== null && !is_scalar($timerValue)) {
+					return array('status' => 'error', 'data' => 'Некорректное значение параметра таймера.');
+				}
+				$timerValues[$timerField] = $timerValue;
+			}
+			$timerEnabled=$timerValues['timer_enable'];
+			$timerTime=$timerValues['timer_date'];
+			$timerText=$timerValues['timer_text'];
+			$timerLeft=$timerValues['timer_left'];
+			$timerRight=$timerValues['timer_right'];
+			$timerTop=$timerValues['timer_top'];
+			$timerBottom=$timerValues['timer_bottom'];
 			$settings['timer']['enabled']=$timerEnabled;
 			$settings['timer']['date']=$timerTime;
 			$settings['timer']['text']=$timerText;

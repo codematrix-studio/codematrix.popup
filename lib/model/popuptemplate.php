@@ -30,15 +30,15 @@ class PopupTemplateTable extends DataManager
     public static function getMap()
     {
         return [
-            (new IntegerField('id'))
+            (new IntegerField('ID'))
                 ->configurePrimary()
                 ->configureAutocomplete(),
 
-            (new StringField('name'))
+            (new StringField('NAME'))
                 ->configureSize(50)
                 ->configureRequired(),
 
-            (new StringField('type'))
+            (new StringField('TYPE'))
                 ->configureSize(50)
                 ->configureRequired(),
 

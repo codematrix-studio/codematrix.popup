@@ -1513,9 +1513,8 @@ if(empty($idPopup)){
 
 <?php
 if ($request->getPost('save') === GetMessage("codematrix.popup_TAB_BUTTON_SAVE") && !empty($request->getPost('id'))) {
-	$CURRENT_PAGE = ($request->isHttps()) ? "https://" : "http://";
-	$CURRENT_PAGE .= $_SERVER["HTTP_HOST"];
-	$CURRENT_PAGE .= $APPLICATION->GetCurPage(true);
+	// Используем относительный путь, не доверяя заголовку Host при редиректе.
+	$CURRENT_PAGE = $APPLICATION->GetCurPage(true);
 	header('Location: '.$CURRENT_PAGE);
 	exit;
 }

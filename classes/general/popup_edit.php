@@ -466,38 +466,67 @@ class popupEdit extends popup{
 		}
 		$oldPath='/bitrix/components/codematrix/popup.pro/templates/'.$type.'_'.$template;
 		$newPath='/bitrix/components/codematrix/popup.pro/templates/'.$type.'_custom_';
-		if(file_exists($_SERVER["DOCUMENT_ROOT"].$oldPath)){
-			$templates=$this->getTemplatesPreset();
-			foreach($templates[$type] as $nextTemplate){
-				if($nextTemplate['template']==$template){
-					$copyTemplate=$nextTemplate;
-					$copyTemplate['name']=$newname;
-					$copyTemplate['active']=false;
-					$saveResult = \CodeMatrix\Popup\Model\PopupTemplateTable::add(array(
-						'TYPE'=>$type,
-						'NAME'=>$newname,
-						'TEMPLATE'=>'start'
-					));
-					$ID = $saveResult->getId();
-					$copyTemplate['template']='custom_'.$ID;
-					\CodeMatrix\Popup\Model\PopupTemplateTable::update($ID, array(
-						'TEMPLATE'=>serialize($copyTemplate)
-					));
-					CopyDirFiles($_SERVER["DOCUMENT_ROOT"].$oldPath, $_SERVER["DOCUMENT_ROOT"].$newPath.$ID, true, true, false);
-					if(LANG_CHARSET=='windows-1251'){
-						array_walk_recursive($copyTemplate, array($this, 'convertToUtf'));
-					}
-					return array(
-						'popup'=>$copyTemplate,
-						'newPath'=>$newPath.$ID.'/template.php',
-						'code'=>"custom_".$ID,
-						'id'=>$ID
-					);
-				}
+		if (file_exists($_SERVER["DOCUMENT_ROOT"] . $oldPath)) {
+			$templates = $this->getTemplatesPreset();
+			if (!isset($templates[$type]) || !is_array($templates[$type])) {
+				return false;
 			}
-		}else{
+
+			foreach ($templates[$type] as $nextTemplate) {
+				if (($nextTemplate['template'] ?? null) !== $template) {
+					continue;
+				}
+
+				$copyTemplate = $nextTemplate;
+				$copyTemplate['name'] = $newname;
+				$copyTemplate['active'] = false;
+				$saveResult = \CodeMatrix\Popup\Model\PopupTemplateTable::add(array(
+					'TYPE' => $type,
+					'NAME' => $newname,
+					'TEMPLATE' => 'start'
+				));
+				if (!$saveResult->isSuccess()) {
+					return false;
+				}
+
+				$ID = (int)$saveResult->getId();
+				if ($ID <= 0) {
+					return false;
+				}
+
+				$copyTemplate['template'] = 'custom_' . $ID;
+				$updateResult = \CodeMatrix\Popup\Model\PopupTemplateTable::update($ID, array(
+					'TEMPLATE' => serialize($copyTemplate)
+				));
+				if (!$updateResult->isSuccess()) {
+					\CodeMatrix\Popup\Model\PopupTemplateTable::delete($ID);
+					return false;
+				}
+
+				$sourcePath = $_SERVER["DOCUMENT_ROOT"] . $oldPath;
+				$destinationPath = $_SERVER["DOCUMENT_ROOT"] . $newPath . $ID;
+				if (!CopyDirFiles($sourcePath, $destinationPath, true, true, false)) {
+					\CodeMatrix\Popup\Model\PopupTemplateTable::delete($ID);
+					DeleteDirFilesEx($newPath . $ID);
+					return false;
+				}
+
+				if (LANG_CHARSET == 'windows-1251') {
+					array_walk_recursive($copyTemplate, array($this, 'convertToUtf'));
+				}
+
+				return array(
+					'popup' => $copyTemplate,
+					'newPath' => $newPath . $ID . '/template.php',
+					'code' => 'custom_' . $ID,
+					'id' => $ID
+				);
+			}
+
 			return false;
 		}
+
+		return false;
 	}
 	
 	/**
@@ -531,19 +560,35 @@ class popupEdit extends popup{
 			$newname=iconv("UTF-8", LANG_CHARSET, $newname);
 		}
 		$oldPath='/bitrix/components/codematrix/popup.pro/templates/'.$type.'_'.$template.'/themes/'.$colorstyle.'.css';
-		if(file_exists($_SERVER["DOCUMENT_ROOT"].$oldPath)){
-				$saveResult = \CodeMatrix\Popup\Model\PopupColorTable::add(array(
-				'TEMPLATE'=>$type.'_'.$template,
-				'NAME'=>$newname
+		if (is_file($_SERVER["DOCUMENT_ROOT"] . $oldPath)) {
+			$saveResult = \CodeMatrix\Popup\Model\PopupColorTable::add(array(
+				'TEMPLATE' => $type . '_' . $template,
+				'NAME' => $newname
 			));
-			$ID = $saveResult->getId();
-			$newPath=dirname($oldPath).'/custom_'.$ID.'.css';
-			copy($_SERVER["DOCUMENT_ROOT"].$oldPath , $_SERVER["DOCUMENT_ROOT"].$newPath);
+			if (!$saveResult->isSuccess()) {
+				return $retArr;
+			}
 
-			$retArr['status']='success';
-			$retArr['newPath']=$newPath;
-			$retArr['code']='custom_'.$ID;
-			$retArr['id']=$ID;
+			$ID = (int)$saveResult->getId();
+			if ($ID <= 0) {
+				return $retArr;
+			}
+
+			$newPath = dirname($oldPath) . '/custom_' . $ID . '.css';
+			$sourcePath = $_SERVER["DOCUMENT_ROOT"] . $oldPath;
+			$destinationPath = $_SERVER["DOCUMENT_ROOT"] . $newPath;
+			if (!copy($sourcePath, $destinationPath)) {
+				\CodeMatrix\Popup\Model\PopupColorTable::delete($ID);
+				if (is_file($destinationPath)) {
+					unlink($destinationPath);
+				}
+				return $retArr;
+			}
+
+			$retArr['status'] = 'success';
+			$retArr['newPath'] = $newPath;
+			$retArr['code'] = 'custom_' . $ID;
+			$retArr['id'] = $ID;
 		}
 		/*$retArr=array(
 			'code'=>"custom_1",

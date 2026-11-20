@@ -28,7 +28,7 @@ $configuredTiming = (string)($props["TIMING"] ?? "");
 $requestedTiming = $request->get("avaliable");
 $email = $request->get("email");
 $addToTable = $request->get("addtotable");
-$unique = $request->get("unique");
+// Параметр unique от клиента не является источником настроек: ниже используется конфигурация попапа.
 
 if (
 	$ruleId === false
@@ -37,7 +37,8 @@ if (
 	|| !is_string($requestedTiming)
 	|| $requestedTiming !== $configuredTiming
 	|| !in_array($addToTable, array(null, "Y", "N"), true)
-	|| !in_array($unique, array(null, "Y", "N"), true)
+	|| (($props["EMAIL_ADD2BASE"] ?? "N") === "Y" && $addToTable !== "Y")
+	|| (($props["EMAIL_ADD2BASE"] ?? "N") !== "Y" && $addToTable === "Y")
 ) {
 	die();
 }
@@ -52,7 +53,7 @@ if ($addToTable === "Y") {
 	}
 
 	$popup = new popup();
-	if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y" && $unique === "Y") {
+	if (($props["EMAIL_NOT_NEW"] ?? "N") === "Y") {
 		if (!$popup->searchinMailList($email, $popupId)) {
 			echo "not_unique";
 			die();

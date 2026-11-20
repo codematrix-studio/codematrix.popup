@@ -89,8 +89,9 @@ if ($addToTable === "Y") {
 		die();
 	}
 	if ($result !== null) {
-		$popup->insertToMailList($email, "", $popupId);
+		// Сохраняем выданный купон до дополнительных операций со списком рассылки.
 		\CodeMatrix\Popup\PublicRequestGuard::rememberResponse("coupon", $popupId, (string)$result, $requestFingerprint);
+		$popup->insertToMailList($email, "", $popupId);
 		echo $result;
 	}
 	die();

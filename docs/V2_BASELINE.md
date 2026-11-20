@@ -364,3 +364,37 @@
 Во всех случаях `getTableName()` вернул ожидаемое имя таблицы, исключений не возникло. Все три таблицы были пусты. Проверка не выполняла INSERT/UPDATE/DELETE и не меняла данные или структуру БД.
 
 Это подтверждает работу автозагрузки вложенного namespace `CodeMatrix\\Popup\\Model` и базового ORM-чтения на целевом окружении. Проверка записи и сверка метаданных полей остаются отдельными задачами.
+
+
+## Карта прямых SQL-операций V1 для последующей ORM-миграции (20.11.2026)
+
+После проверки ORM SELECT уточнена карта всех найденных обращений к собственным таблицам модуля. Это карта замены, а не изменение поведения.
+
+| Класс / файл | Метод или участок | Операция | Таблица | Что обязательно сохранить |
+|---|---|---|---|---|
+| `popup` | `getCustomTemplates()` | SELECT всех строк, сортировка по `id` | `codematrix_popup_add_templates` | порядок и формат результата; `unserialize(template)` |
+| `popup` | `getCustomColors()` | SELECT всех строк, сортировка `template, id` | `codematrix_popup_add_colors` | порядок и формирование ключей `custom_ID` |
+| `popup` | `getSetting($id)` | SELECT по ID, LIMIT 1 | `codematrix_popup` | возврат `false` при отсутствии записи; legacy-ключи массива и unserialize |
+| `popup` | `getAvailablePopups()` | SELECT `active=Y`, сортировка `sort` | `codematrix_popup` | порядок показа, фильтрация условий и cookies |
+| `popup` | `getComponentResult($idPopup)` | SELECT по ID, LIMIT 1 | `codematrix_popup` | fallback шаблона, подготовка структуры результата |
+| `popup` | `setStatistic()` | SELECT по ID + увеличение одного разрешённого счётчика | `codematrix_popup` | whitelist `stat_show/stat_time/stat_action`, bool-результат и арифметика |
+| `popupEdit` | `editPopup()` | INSERT новой записи или UPDATE существующей | `codematrix_popup` | сериализация settings, необязательные связи iblock/posttemplate, возвращаемый ID и формат статуса |
+| `popupEdit` | `editFromTableList()` | SELECT по ID + UPDATE полей и settings | `codematrix_popup` | синхронизация `active/sort/name` с `settings['condition']` |
+| `popupEdit` | `getAllPopups()` | SELECT всех строк, сортировка по ID | `codematrix_popup` | ассоциативный массив `ID => unserialize(settings)` |
+| `popupEdit` | `setTemplate()` | INSERT заготовки, UPDATE сериализованного описания | `codematrix_popup_add_templates` | ID, код `custom_ID`, пути и копирование файлов; последовательность ошибок |
+| `popupEdit` | `setColorTheme()` | INSERT темы | `codematrix_popup_add_colors` | код, ID, путь CSS и существующий статус ответа |
+| `popupEdit` | `CopyPopup()` | SELECT полей + INSERT копии | `codematrix_popup` | копирование только перечисленных колонок, без ID |
+| `admin/codematrix_popup.php` | групповые действия | SELECT всех ID, DELETE по ID, SELECT/UPDATE активности и settings | `codematrix_popup` | выбранные/все записи, сообщения ошибок, сериализованные условия |
+| `admin/codematrix_popup.php` | построение списка | SELECT с динамическими сортировкой и пагинацией | `codematrix_popup` | совместимость с `CAdminResult`, заголовками, сортировкой и навигацией |
+
+### Важные нюансы переноса
+
+1. Не менять сериализацию: `settings` и `template` остаются PHP-сериализованными строками. Не добавлять JSON и не менять набор ключей.
+2. Для `setTemplate()` запись в БД и копирование каталога — отдельные операции. Нельзя вводить транзакцию, которая создаёт видимость атомарности для файловой системы, или менять последовательность без отдельного анализа поведения при сбое.
+3. `setStatistic()` сейчас выполняет чтение и последующее увеличение счётчика. При переводе важно отдельно решить вопрос конкурентных обновлений, но не менять семантику молча.
+4. Административная сортировка строится из параметров `CAdminSorting`; при переходе на ORM имена колонок и направление должны проходить безопасное сопоставление с разрешёнными полями, не теряя текущую сортировку.
+5. Часть методов возвращает `false`, `true`, ID или массивы с конкретными ключами. Переход на ORM Result/ResultError не должен протечь в публичные ответы legacy-классов.
+
+### Текущий статус
+
+ORM-классы уже загружаются на тестовом стенде, и SELECT по каждой таблице успешно выполняется. Таблицы пусты, поэтому проверка выборки пока не покрывает преобразование реальных строк. Ни одна из перечисленных legacy-операций пока не заменена.

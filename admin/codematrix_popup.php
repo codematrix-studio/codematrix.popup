@@ -110,7 +110,11 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 		}
 
 		if($request['command']=='gettemplate'){
-			$templateName = $request->get('template');
+			// Шаблон передаётся AJAX-запросом методом POST; GET оставлен для обратной совместимости.
+			$templateName = $request->getPost('template');
+			if ($templateName === null) {
+				$templateName = $request->get('template');
+			}
 			if (!is_string($templateName) || !preg_match('/^[a-z0-9_-]+$/iD', $templateName)) {
 				http_response_code(400);
 				die();
@@ -125,7 +129,11 @@ if(!empty($request['ajax']) && $request['ajax']=='y'){
 				)
 			);
 		}elseif($request['command']=='gettemplatepath'){
-			$templateName = $request->get('template');
+			// Шаблон передаётся AJAX-запросом методом POST; GET оставлен для обратной совместимости.
+			$templateName = $request->getPost('template');
+			if ($templateName === null) {
+				$templateName = $request->get('template');
+			}
 			if (!is_string($templateName) || !preg_match('/^[a-z0-9_-]+$/iD', $templateName)) {
 				http_response_code(400);
 				die();

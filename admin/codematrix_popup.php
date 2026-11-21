@@ -520,12 +520,9 @@ if(!empty($editFlag) && $request->isPost()){
 		}else{
 			$tmpMess=GetMessage("codematrix.popup_SUCCESS_UPDATE", array('ID'=>$upd['data']));
 		}
-		// После успешного сохранения возвращаем пользователя в общий список.
-		LocalRedirect(
-			'/bitrix/admin/codematrix_popup.php?lang=' . urlencode(LANG)
-			. '&save_status=success&saved_id=' . (int)$upd['data']
-		);
-		die();
+		// Действие кнопки «Сохранить» обрабатывается после вывода формы;
+		// кнопка «Применить» оставляет пользователя на странице редактирования.
+		$idPopup = (int)$upd['data'];
 	}
 	}
 }

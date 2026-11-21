@@ -103,6 +103,9 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				'CONTENT'=>'#CONTENT#',
 				'LINK_TEXT'=>'#LINK_TEXT#',
 				'LINK_HREF'=>'#LINK_HREF#',
+				// Дополнительные параметры шаблонов акций.
+				'BUTTON_METRIC'=>'#BUTTON_METRIC#',
+				'HREF_TARGET'=>'#HREF_TARGET#',
 				'IMG_1_SRC'=>'#IMG_1_SRC#',
 				'IMG_2_SRC'=>'#IMG_2_SRC#',
 				'LINK_VIDEO'=>'#LINK_VIDEO#',

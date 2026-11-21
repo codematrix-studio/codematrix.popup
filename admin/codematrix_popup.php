@@ -87,7 +87,7 @@ if (in_array($request->getPost('action_button'), array('copy', 'delete_popup'), 
 			$redirectUrl .= '&id=' . $newIdPopup;
 		}
 	} else {
-		$deleteResult = \\CodeMatrix\\Popup\\Model\\PopupTable::delete($sourcePopupId);
+		$deleteResult = \CodeMatrix\Popup\Model\PopupTable::delete($sourcePopupId);
 		$deleteStatus = ($deleteResult->isSuccess()) ? 'success' : 'error';
 		$redirectUrl = '/bitrix/admin/codematrix_popup.php?lang=' . urlencode(LANG)
 			. '&delete_status=' . $deleteStatus;

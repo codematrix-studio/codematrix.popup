@@ -520,9 +520,21 @@ if(!empty($editFlag) && $request->isPost()){
 		}else{
 			$tmpMess=GetMessage("codematrix.popup_SUCCESS_UPDATE", array('ID'=>$upd['data']));
 		}
-		CAdminMessage::ShowMessage(Array("TYPE"=>"OK", "MESSAGE"=>$tmpMess));
+		// После успешного сохранения возвращаем пользователя в общий список.
+		LocalRedirect(
+			'/bitrix/admin/codematrix_popup.php?lang=' . urlencode(LANG)
+			. '&save_status=success&saved_id=' . (int)$upd['data']
+		);
+		die();
 	}
 	}
+}
+
+if ($request->get('save_status') === 'success') {
+	CAdminMessage::ShowMessage(array(
+		'TYPE' => 'OK',
+		'MESSAGE' => 'Попап успешно сохранён. ID: ' . (int)$request->get('saved_id'),
+	));
 }
 
 if ($request->get('delete_status') === 'error') {

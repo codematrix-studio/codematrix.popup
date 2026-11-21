@@ -1608,12 +1608,14 @@ if(empty($idPopup)){
 <?php
 if (
 	$request->isPost()
-	&& $request->getPost('save') === GetMessage("codematrix.popup_TAB_BUTTON_SAVE")
+	&& $request->getPost('apply') === null
+	&& $request->getPost('save') !== null
 	&& !empty($request->getPost('id_popup'))
 	&& isset($upd['status'])
 	&& $upd['status'] === 'success'
 ) {
-	// Кнопка «Сохранить» возвращает в список; «Применить» оставляет форму открытой.
+	// «Применить» имеет приоритет: остаёмся в карточке даже если Bitrix
+	// передал дополнительные submit-параметры от стандартной панели вкладок.
 	LocalRedirect('/bitrix/admin/codematrix_popup.php?lang=' . urlencode(LANG));
 	die();
 }

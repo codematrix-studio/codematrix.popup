@@ -1993,7 +1993,7 @@ class popup{
 
 			// Восстанавливаем стандартные значения шаблона для пустых полей старых записей.
 			// Уже заполненные пользовательские значения не перезаписываем.
-			$availableTemplates = $this->getTemplates();
+			$availableTemplates = $this->getTemplatesPreset();
 			$templateDefaults = array();
 			foreach (($availableTemplates[$settings['view']['type']] ?? array()) as $templateItem) {
 				if (($templateItem['template'] ?? null) === $settings['view']['template']) {

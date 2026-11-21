@@ -1991,22 +1991,6 @@ class popup{
 				}
 			}
 
-			// Восстанавливаем стандартные значения шаблона для пустых полей старых записей.
-			// Уже заполненные пользовательские значения не перезаписываем.
-			$availableTemplates = $this->getTemplatesPreset();
-			$templateDefaults = array();
-			foreach (($availableTemplates[$settings['view']['type']] ?? array()) as $templateItem) {
-				if (($templateItem['template'] ?? null) === $settings['view']['template']) {
-					$templateDefaults = $templateItem['props'] ?? array();
-					break;
-				}
-			}
-			foreach ($templateDefaults as $propName => $defaultValue) {
-				if ((!array_key_exists($propName, $settings['view']['props']) || $settings['view']['props'][$propName] === '' || $settings['view']['props'][$propName] === null) && $defaultValue !== '' && $defaultValue !== null) {
-					$settings['view']['props'][$propName] = $defaultValue;
-				}
-			}
-
 			$settings['view']['props']['THEME']= $settings['view']['color_style'];
 			$settings['view']['props']['TEMPLATE_NAME']= $settings['view']['type'].'_'.$settings['view']['template'];
 

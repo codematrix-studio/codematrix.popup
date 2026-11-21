@@ -10,6 +10,7 @@
 		"CodeMatrix\\Popup\\Model\\LegacyRowMapper" => "lib/model/legacyrowmapper.php",
 		"CodeMatrix\\Popup\\Mail" => "lib/mail.php",
 		"CodeMatrix\\Popup\\FilePath" => "lib/filepath.php",
+		"CodeMatrix\\Popup\\Tools" => "lib/tools.php",
 		"CodeMatrix\\Popup\\PublicRequestGuard" => "lib/publicrequestguard.php"
 	)
 );

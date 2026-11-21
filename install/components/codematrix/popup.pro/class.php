@@ -164,6 +164,10 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				'TIMER_TOP'=>'#timer_top#',
 				'TIMER_BOTTOM'=>'#timer_bottom#',
 			);
+
+			// В режиме демонстрации подключаем выбранный шаблон без загрузки настроек попапа.
+			$this->IncludeComponentTemplate();
+			return;
 		}else{
 			$popup=new popup;
 			$tmpRes=$popup->getComponentResult($this->arParams['ID_POPUP']);

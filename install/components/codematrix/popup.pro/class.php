@@ -444,3 +444,4 @@ class CodeMatrixPopup extends \CBitrixComponent{
 		$this->IncludeComponentTemplate();
 	}
 }
+}

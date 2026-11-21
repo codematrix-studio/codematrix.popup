@@ -57,7 +57,7 @@ function imageBusy($popupArr, $img){
 	}
 	return false;
 }
-if ($request->getPost('action_button') === 'copy') {
+if (in_array($request->getPost('action_button'), array('copy', 'delete_popup'), true)) {
 	if (!$moduleWriteAllowed) {
 		http_response_code(403);
 		die();
@@ -78,12 +78,19 @@ if ($request->getPost('action_button') === 'copy') {
 		die();
 	}
 
-	$editableWindow = new popupEdit();
-	$newIdPopup = (int)$editableWindow->CopyPopup($sourcePopupId);
-	$redirectUrl = '/bitrix/admin/codematrix_popup.php';
+	if ($request->getPost('action_button') === 'copy') {
+		$editableWindow = new popupEdit();
+		$newIdPopup = (int)$editableWindow->CopyPopup($sourcePopupId);
+		$redirectUrl = '/bitrix/admin/codematrix_popup.php?lang=' . urlencode(LANG);
 
-	if ($newIdPopup > 0) {
-		$redirectUrl .= '?id=' . $newIdPopup;
+		if ($newIdPopup > 0) {
+			$redirectUrl .= '&id=' . $newIdPopup;
+		}
+	} else {
+		$deleteResult = \\CodeMatrix\\Popup\\Model\\PopupTable::delete($sourcePopupId);
+		$deleteStatus = ($deleteResult->isSuccess()) ? 'success' : 'error';
+		$redirectUrl = '/bitrix/admin/codematrix_popup.php?lang=' . urlencode(LANG)
+			. '&delete_status=' . $deleteStatus;
 	}
 
 	LocalRedirect($redirectUrl);
@@ -446,10 +453,13 @@ if(!empty($request['id'])){
 			"TEXT"=>GetMessage("codematrix.popup_TABLE_COPY"),
 			"ACTION"=>"if(confirm('".$copyConfirm."')){var copyForm=document.createElement('form');copyForm.method='post';copyForm.action='codematrix_popup.php';var copyFields=[['action_button','copy'],['ID','".$copyPopupId."'],['sessid','".$copySessid."']];for(var i=0;i<copyFields.length;i++){var copyInput=document.createElement('input');copyInput.type='hidden';copyInput.name=copyFields[i][0];copyInput.value=copyFields[i][1];copyForm.appendChild(copyInput);}document.body.appendChild(copyForm);copyForm.submit();}"
 		);
+		$deleteConfirm = CUtil::JSEscape(GetMessage('codematrix.popup_TABLE_DELETE_CONFIRM'));
+		$deletePopupId = (int)$f_id;
+		$deleteSessid = CUtil::JSEscape(bitrix_sessid());
 		$arActions[] = array(
 			"ICON"=>"delete",
 			"TEXT"=>GetMessage("codematrix.popup_TABLE_DELETE"),
-			"ACTION"=>"if(confirm('".GetMessage('codematrix.popup_TABLE_DELETE_CONFIRM')."')) ".$lAdmin->ActionDoGroup($f_id, "delete")
+			"ACTION"=>"if(confirm('".$deleteConfirm."')){var deleteForm=document.createElement('form');deleteForm.method='post';deleteForm.action='codematrix_popup.php';var deleteFields=[['action_button','delete_popup'],['ID','".$deletePopupId."'],['sessid','".$deleteSessid."']];for(var i=0;i<deleteFields.length;i++){var deleteInput=document.createElement('input');deleteInput.type='hidden';deleteInput.name=deleteFields[i][0];deleteInput.value=deleteFields[i][1];deleteForm.appendChild(deleteInput);}document.body.appendChild(deleteForm);deleteForm.submit();}"
 		);
 
 		$row->AddActions($arActions);
@@ -505,6 +515,18 @@ if(!empty($editFlag) && $request->isPost()){
 		CAdminMessage::ShowMessage(Array("TYPE"=>"OK", "MESSAGE"=>$tmpMess));
 	}
 	}
+}
+
+if ($request->get('delete_status') === 'error') {
+	CAdminMessage::ShowMessage(array(
+		'TYPE' => 'ERROR',
+		'MESSAGE' => 'Не удалось удалить попап. Проверьте ошибки ORM и связанные ограничения.',
+	));
+} elseif ($request->get('delete_status') === 'success') {
+	CAdminMessage::ShowMessage(array(
+		'TYPE' => 'OK',
+		'MESSAGE' => 'Попап успешно удалён.',
+	));
 }
 
 // Сообщение об отсутствии настроенных согласий.
@@ -1567,11 +1589,16 @@ if(empty($idPopup)){
 <?php }?>
 
 <?php
-if ($request->getPost('save') === GetMessage("codematrix.popup_TAB_BUTTON_SAVE") && !empty($request->getPost('id'))) {
-	// Используем относительный путь, не доверяя заголовку Host при редиректе.
-	$CURRENT_PAGE = $APPLICATION->GetCurPage(true);
-	header('Location: '.$CURRENT_PAGE);
-	exit;
+if (
+	$request->isPost()
+	&& $request->getPost('save') === GetMessage("codematrix.popup_TAB_BUTTON_SAVE")
+	&& !empty($request->getPost('id_popup'))
+	&& isset($upd['status'])
+	&& $upd['status'] === 'success'
+) {
+	// Кнопка «Сохранить» возвращает в список; «Применить» оставляет форму открытой.
+	LocalRedirect('/bitrix/admin/codematrix_popup.php?lang=' . urlencode(LANG));
+	die();
 }
 ?>
 

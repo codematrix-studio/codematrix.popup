@@ -1991,29 +1991,36 @@ class popup{
 				}
 			}
 
-			// В старых записях акции могли сохраниться пустые текстовые поля шаблона.
-			// Восстанавливаем демонстрационные тексты только если пусты все четыре поля:
-			// частично заполненные пользовательские настройки не затрагиваем.
+			// Восстанавливаем отсутствующие тексты акции из пресета выбранного шаблона.
+			// Уже сохранённые пользовательские значения не перезаписываем.
 			if ($settings['view']['type'] === 'action') {
 				$textFields = array('TITLE', 'CONTENT', 'SUBTITLE', 'LINK_TEXT');
-				$allTextFieldsEmpty = true;
-				foreach ($textFields as $fieldName) {
-					if (!empty($settings['view']['props'][$fieldName])) {
-						$allTextFieldsEmpty = false;
+				$templates = $this->getTemplatesPreset();
+				$defaultTemplate = null;
+
+				foreach (($templates['action'] ?? array()) as $templateItem) {
+					if (($templateItem['template'] ?? null) === $settings['view']['template']) {
+						$defaultTemplate = $templateItem;
 						break;
 					}
 				}
-				if ($allTextFieldsEmpty) {
-					$templates = $this->getTemplatesPreset();
-					foreach (($templates['action'] ?? array()) as $templateItem) {
-						if (($templateItem['template'] ?? null) === $settings['view']['template']) {
-							foreach ($textFields as $fieldName) {
-								$defaultValue = $templateItem['props'][$fieldName] ?? '';
+
+				// Если в старой записи сохранено неизвестное имя шаблона,
+				// используем первый штатный шаблон акции как безопасный fallback.
+				if ($defaultTemplate === null && !empty($templates['action'][0])) {
+					$defaultTemplate = $templates['action'][0];
+				}
+
+				if (is_array($defaultTemplate)) {
+					foreach ($textFields as $fieldName) {
+						if (
+							!isset($settings['view']['props'][$fieldName])
+							|| $settings['view']['props'][$fieldName] === ''
+						) {
+							$defaultValue = $defaultTemplate['props'][$fieldName] ?? '';
 							if ($defaultValue !== '') {
 								$settings['view']['props'][$fieldName] = $defaultValue;
 							}
-							}
-							break;
 						}
 					}
 				}

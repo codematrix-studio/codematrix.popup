@@ -1991,6 +1991,34 @@ class popup{
 				}
 			}
 
+			// В старых записях акции могли сохраниться пустые текстовые поля шаблона.
+			// Восстанавливаем демонстрационные тексты только если пусты все четыре поля:
+			// частично заполненные пользовательские настройки не затрагиваем.
+			if ($settings['view']['type'] === 'action') {
+				$textFields = array('TITLE', 'CONTENT', 'SUBTITLE', 'LINK_TEXT');
+				$allTextFieldsEmpty = true;
+				foreach ($textFields as $fieldName) {
+					if (!empty($settings['view']['props'][$fieldName])) {
+						$allTextFieldsEmpty = false;
+						break;
+					}
+				}
+				if ($allTextFieldsEmpty) {
+					$templates = $this->getTemplatesPreset();
+					foreach (($templates['action'] ?? array()) as $templateItem) {
+						if (($templateItem['template'] ?? null) === $settings['view']['template']) {
+							foreach ($textFields as $fieldName) {
+								$defaultValue = $templateItem['props'][$fieldName] ?? '';
+							if ($defaultValue !== '') {
+								$settings['view']['props'][$fieldName] = $defaultValue;
+							}
+							}
+							break;
+						}
+					}
+				}
+			}
+
 			$settings['view']['props']['THEME']= $settings['view']['color_style'];
 			$settings['view']['props']['TEMPLATE_NAME']= $settings['view']['type'].'_'.$settings['view']['template'];
 

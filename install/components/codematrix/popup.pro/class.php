@@ -175,6 +175,23 @@ class CodeMatrixPopup extends \CBitrixComponent{
 			$popup=new popup;
 			$tmpRes=$popup->getComponentResult($this->arParams['ID_POPUP']);
 			$popupSetting=$popup->getSetting($this->arParams['ID_POPUP']);
+
+			// Гарантируем демонстрационные тексты акции на уровне компонента.
+			// Это резервный слой на случай пустых/не загруженных языковых сообщений
+			// или старых записей, в которых текстовые свойства сохранены пустыми.
+			if (($popupSetting['view']['type'] ?? '') === 'action' && is_array($tmpRes)) {
+				$actionTextDefaults = array(
+					'TITLE' => 'Уже уходите?',
+					'CONTENT' => 'Мы подготовили подарок специально для Вас',
+					'SUBTITLE' => 'Хотите его получить?',
+					'LINK_TEXT' => 'Забрать подарок',
+				);
+				foreach ($actionTextDefaults as $fieldName => $defaultText) {
+					if (!isset($tmpRes[$fieldName]) || trim((string)$tmpRes[$fieldName]) === '') {
+						$tmpRes[$fieldName] = $defaultText;
+					}
+				}
+			}
 			if($popupSetting['view']['type']=='contact'||$popupSetting['view']['type']=='discount'){
 				$contactArr=array('NAME'=>'', 'EMAIL'=>'','LASTNAME'=>'', 'PHONE'=>'', 'DESCRIPTION'=>'');
 				global $USER;

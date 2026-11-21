@@ -356,15 +356,25 @@ class popupEdit extends popup{
 		if(!empty($settings['contact']['iblock'])){
 			$arFieldsInsert['CONT_IBLOCK']=$settings['contact']['iblock'];
 		}
-		if($request->getPost("id_popup")=='new'){
-			$saveResult = \CodeMatrix\Popup\Model\PopupTable::add($arFieldsInsert);
-			$ID = $saveResult->getId();
-		}else{
-			\CodeMatrix\Popup\Model\PopupTable::update($request->getPost("id_popup"), $arFieldsInsert);
-			$ID = $request->getPost("id_popup");
-		}
 		if(strlen($strError)>0){
 			return array('status'=>'error', 'data'=>$strError);
+		}
+
+		if($request->getPost("id_popup")=='new'){
+			$saveResult = \CodeMatrix\Popup\Model\PopupTable::add($arFieldsInsert);
+			if (!$saveResult->isSuccess()) {
+				return array('status' => 'error', 'data' => implode('; ', $saveResult->getErrorMessages()));
+			}
+			$ID = (int)$saveResult->getId();
+			if ($ID <= 0) {
+				return array('status' => 'error', 'data' => 'Битрикс не вернул ID созданного попапа.');
+			}
+		}else{
+			$saveResult = \CodeMatrix\Popup\Model\PopupTable::update($request->getPost("id_popup"), $arFieldsInsert);
+			if (!$saveResult->isSuccess()) {
+				return array('status' => 'error', 'data' => implode('; ', $saveResult->getErrorMessages()));
+			}
+			$ID = (int)$request->getPost("id_popup");
 		}
 		return array('status'=>'success', 'data'=>$ID);
 	}

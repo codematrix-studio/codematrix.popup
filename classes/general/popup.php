@@ -1098,7 +1098,7 @@ class popup{
 		));
 		while($ormRow = $res->fetch()){
 			$row = \CodeMatrix\Popup\Model\LegacyRowMapper::toLegacyRow($ormRow);
-			$additionalColorThemes[$row['template']]['custom_'.$row['id']]=$row['name'].' ['.$row['id'].']';
+			
 			$customTemplate = \CodeMatrix\Popup\Model\LegacyRowMapper::unserializeArray($row['template']);
 			if (!empty($customTemplate)) {
 				$retArr[$row['type']][] = $customTemplate;
@@ -1687,7 +1687,7 @@ class popup{
 	public static function insertPopups(){
 		if(!defined('ADMIN_SECTION') && empty($_SERVER['HTTP_X_REQUESTED_WITH'])){
 			$afterTimeSecond=0;
-			if(!empty($_SESSION['flp_popup_afterTimeSecond'])){
+			if(!empty($_SESSION['skwb24_popup_afterTimeSecond'])){
 				$afterTimeSecond=time()-$_SESSION['flp_popup_afterTimeSecond'];
 			}else{
 				$_SESSION['skwb24_popup_afterTimeSecond']=time();

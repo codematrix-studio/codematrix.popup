@@ -3,7 +3,11 @@
 <?php
 // В заголовке разрешена только базовая HTML-разметка оформления.
 // Атрибуты тегов удаляются, чтобы сохранить форматирование без риска внедрения скриптов.
-$discountTitle = (string)($arResult['TITLE'] ?? '');
+$discountTitle = html_entity_decode(
+    (string)($arResult['TITLE'] ?? ''),
+    ENT_QUOTES | ENT_HTML5,
+    defined('SITE_CHARSET') ? SITE_CHARSET : 'UTF-8'
+);
 $discountTitle = preg_replace_callback(
     '~</?([a-z][a-z0-9]*)\\b[^>]*>~i',
     function ($matches) {

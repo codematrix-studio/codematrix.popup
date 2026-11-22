@@ -186,10 +186,7 @@ $MESS['codematrix.popup_SHARE_CONTENT_MAIN_IMG']='Изображение';
 $MESS['codematrix.popup_SHARE_CONTENT_TITLE']='Понравилась статья?';
 $MESS['codematrix.popup_SHARE_CONTENT_SUBTITLE']='Расскажите о ней друзьям!';
 $MESS['codematrix.popup_SHARE_CONTENT_VK']='Делиться в ВК';
-$MESS['codematrix.popup_SHARE_SERVICE_FB']='Делиться в Facebook';
 $MESS['codematrix.popup_SHARE_SERVICE_OD']='Делиться в Одноклассники';
-$MESS['codematrix.popup_SHARE_SERVICE_TW']='Делиться в Twitter';
-$MESS['codematrix.popup_SHARE_SERVICE_GP']='Делиться в Google+';
 $MESS['codematrix.popup_SHARE_SERVICE_MR']='Делиться в Mail.ru';
 
 /* 7. HTML */

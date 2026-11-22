@@ -409,7 +409,8 @@ class CodeMatrixPopup extends \CBitrixComponent{
 						$responce->addCookie($cookie);
 					}
 				}
-				elseif($popupSetting['view']['type']=='coupon'){
+			}
+			elseif($popupSetting['view']['type']=='coupon'){
 				
 				foreach($popupSetting['view']['props'] as $key=>$prop){
 					if($key!='IMG_1_SRC'&&$key!='EMAIL_PLACEHOLDER')
@@ -436,7 +437,6 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				json_encode($traceValues, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL,
 				FILE_APPEND | LOCK_EX
 			);
-		}
 		$timer_array=array('banner','video','action','contact','html','coupon','roulette','discount');
 			if(!empty($popupSetting['view']['type']) && in_array($popupSetting['view']['type'],$timer_array)){
 				$timerSettings = is_array($popupSetting['timer'] ?? null) ? $popupSetting['timer'] : array();

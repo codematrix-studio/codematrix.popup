@@ -1,4 +1,8 @@
-<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
+<?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+$rouletteElements = (isset($arResult['ELEMENTS']) && is_array($arResult['ELEMENTS'])) ? $arResult['ELEMENTS'] : array();
+$rouletteElementsCount = count($rouletteElements);
+$deg = $rouletteElementsCount > 0 ? 100 / $rouletteElementsCount : 0;
+?>
 <?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(
 			'TITLE'=>$arResult['TIMER_TEXT'],
@@ -10,7 +14,7 @@
 		),$component);
 	}?>
 <div id="codematrix_roulette">
-    <?php $deg=100/$arResult['ELEMENTS_COUNT'];?>
+
     <h2><?=htmlspecialcharsbx((string)($arResult['TITLE'] ?? ''))?></h2>
     <h3><?=htmlspecialcharsbx((string)($arResult['SUBTITLE'] ?? ''))?></h3>
      <div class="contain_roulette">
@@ -42,7 +46,7 @@
         }
 
         var dataset = [
-            <?php foreach($arResult['ELEMENTS'] as $element){?>
+            <?php foreach($rouletteElements as $element){?>
                 {
                     value:<?=$deg?>,
                     color:<?=json_encode((string)$element['color'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>,

@@ -133,7 +133,6 @@ $MESS['codematrix.popup_ACTION_LINK_TEXT']='Забрать подарок';
 $MESS['codematrix.popup_SOCIAL_SERVICE_COLOR_BG']='Цвет фона';
 $MESS['codematrix.popup_SOCIAL_SERVICE_ID_VK']='ID группы в ВК';
 /* $MESS['codematrix.popup_SOCIAL_SERVICE_ID_FB']='ID группы в Facebook'; */
-$MESS['codematrix.popup_SOCIAL_SERVICE_ID_INST']='Имя аккаунта в Instagram';
 $MESS['codematrix.popup_SOCIAL_SERVICE_ID_ODNKL']='ID группы в Одноклассники';
 $MESS['codematrix.popup_SOCIAL_SERVICE_TYPE_VIEW']='Тип показа';
 	$MESS['codematrix.popup_SOCIAL_SERVICE_TYPE_VIEW_ALL']='Оба виджета';

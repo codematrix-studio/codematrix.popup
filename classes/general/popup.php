@@ -2058,11 +2058,14 @@ class popup{
 		if(empty($componentResult['TEMPLATE_NAME'])){
 			return false;
 		}
+		$componentSettings = $this->getSetting($idPopup);
 		global $APPLICATION;
 		$APPLICATION->IncludeComponent(
 			"codematrix:popup.pro", $componentResult['TEMPLATE_NAME'],
 			Array(
-				"ID_POPUP" => $idPopup
+				"ID_POPUP" => $idPopup,
+				"PRELOADED_RESULT" => $componentResult,
+				"PRELOADED_SETTINGS" => $componentSettings
 			)
 		);
 	}

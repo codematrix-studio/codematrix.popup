@@ -4,14 +4,10 @@ $blocks = array();
 if(!empty($arResult['ID_VK'])){
 	$blocks[]='ID_VK';
 }
-if(!empty($arResult['ID_INST'])){
-	$blocks[]='ID_INST';
-}
 if(!empty($arResult['ID_ODNKL'])){
 	$blocks[]='ID_ODNKL';
 }
-$rand = array_rand($blocks,1);
-$choosen = $blocks[$rand];
+$choosen = !empty($blocks) ? $blocks[array_rand($blocks)] : '';
 $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'];
 ?>
 <div id="codematrix_banner_default" style="background:<?=$arResult['COLOR_BG']?>;">
@@ -23,7 +19,7 @@ $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'
 	?>
 		<img src="<?=$templateFolder?>/img/<?=$img?>">
 			<div id="codematrix_vk_groups"></div>
-			<script  type="text/javascript" >
+			<script type="text/javascript">
 				var vk_js = document.createElement("script");
 				document.head.appendChild(vk_js);
 				vk_js.src = "https://vk.com/js/api/openapi.js?146";
@@ -35,17 +31,6 @@ $arResult['COLOR_BG']=(empty($arResult['COLOR_BG']))?'#fff':$arResult['COLOR_BG'
 					VK.Widgets.Group('codematrix_vk_groups', {mode: 5, width:'auto', height:'316'}, '<?=$arResult['ID_VK']?>');
 				}
 			</script>
-	<?php }elseif($choosen == 'ID_INST'){
-			$img='instagram.png';
-			?>
-			<img src="<?=$templateFolder?>/img/<?=$img?>">
-			<iframe 
-			src="//widget.instagramm.ru/?width=auto&imageW=3&imageH=2&thumbnail_size=88&type=0&typetext=<?=$arResult['ID_INST']?>&head_show=1&profile_show=1&shadow_show=0&bg=255,255,255,1&opacity=true&head_bg=46729b&subscribe_bg=46729b&border_color=999999&head_title=" 
-			allowtransparency="true" 
-			frameborder="0" 
-			scrolling="no" 
-			style="border:none;overflow:hidden;width:296px;height:316px;text-align:center;"></iframe>
-			
 	<?php }elseif($choosen=='ID_ODNKL'){
 		$img='odnkl.png';?>
 		<img src="<?=$templateFolder?>/img/<?=$img?>">

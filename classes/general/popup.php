@@ -2055,6 +2055,16 @@ class popup{
 	 */
 	public function getHTMLByPopup($idPopup){
 		$componentResult=$this->getComponentResult($idPopup);
+		$traceFields = array('TITLE', 'CONTENT', 'SUBTITLE', 'LINK_TEXT');
+		$traceValues = array('id' => $idPopup, 'type' => 'getHTMLByPopup');
+		foreach ($traceFields as $traceField) {
+			$traceValues[$traceField] = is_array($componentResult) ? ($componentResult[$traceField] ?? null) : null;
+		}
+		@file_put_contents(
+			sys_get_temp_dir() . '/codematrix_popup_trace.log',
+			json_encode($traceValues, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL,
+			FILE_APPEND | LOCK_EX
+		);
 		if(empty($componentResult['TEMPLATE_NAME'])){
 			return false;
 		}

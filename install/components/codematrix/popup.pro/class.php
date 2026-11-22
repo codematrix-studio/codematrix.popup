@@ -173,8 +173,15 @@ class CodeMatrixPopup extends \CBitrixComponent{
 			return;
 		}else{
 			$popup=new popup;
-			$tmpRes=$popup->getComponentResult($this->arParams['ID_POPUP']);
-			$popupSetting=$popup->getSetting($this->arParams['ID_POPUP']);
+			// Используем тот же результат чтения, по которому выбран шаблон,
+			// чтобы исключить расхождение между двумя запросами настроек.
+			if (is_array($this->arParams['PRELOADED_RESULT'] ?? null)) {
+				$tmpRes = $this->arParams['PRELOADED_RESULT'];
+				$popupSetting = $this->arParams['PRELOADED_SETTINGS'] ?? false;
+			} else {
+				$tmpRes = $popup->getComponentResult($this->arParams['ID_POPUP']);
+				$popupSetting = $popup->getSetting($this->arParams['ID_POPUP']);
+			}
 
 			// Гарантируем демонстрационные тексты акции на уровне компонента.
 			// Это резервный слой на случай пустых/не загруженных языковых сообщений

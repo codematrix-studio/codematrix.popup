@@ -1,19 +1,4 @@
 <?php if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?php
-// Повторно получаем данные акции непосредственно в шаблоне,
-// если компонент передал пустой результат (например, при нестандартном вызове).
-if (
-    (!isset($arResult['TITLE']) || trim((string)$arResult['TITLE']) === '')
-    && !empty($arParams['ID_POPUP'])
-    && class_exists('popup')
-) {
-    $templatePopup = new popup();
-    $templateResult = $templatePopup->getComponentResult((int)$arParams['ID_POPUP']);
-    if (is_array($templateResult)) {
-        $arResult = array_replace($arResult, $templateResult);
-    }
-}
-?>
 <div id="codematrix_popup_action">
 	<?php if($arResult['TIMER']=='Y'){
 		$APPLICATION->IncludeComponent('codematrix:popup.pro.timer','',array(

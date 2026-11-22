@@ -182,6 +182,20 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				$tmpRes = $popup->getComponentResult($this->arParams['ID_POPUP']);
 				$popupSetting = $popup->getSetting($this->arParams['ID_POPUP']);
 			}
+			$traceFields = array('TITLE', 'CONTENT', 'SUBTITLE', 'LINK_TEXT');
+			$traceValues = array(
+				'id' => $this->arParams['ID_POPUP'],
+				'type' => 'executeComponent_after_input',
+				'preloaded' => is_array($this->arParams['PRELOADED_RESULT'] ?? null),
+			);
+			foreach ($traceFields as $traceField) {
+				$traceValues[$traceField] = is_array($tmpRes) ? ($tmpRes[$traceField] ?? null) : null;
+			}
+			@file_put_contents(
+				sys_get_temp_dir() . '/codematrix_popup_trace.log',
+				json_encode($traceValues, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL,
+				FILE_APPEND | LOCK_EX
+			);
 
 			// Гарантируем демонстрационные тексты акции на уровне компонента.
 			// Это резервный слой на случай пустых/не загруженных языковых сообщений
@@ -413,6 +427,15 @@ class CodeMatrixPopup extends \CBitrixComponent{
 				}
 			}
 			$this->arResult=$tmpRes;
+			$traceValues = array('id' => $this->arParams['ID_POPUP'], 'type' => 'executeComponent_before_template');
+			foreach ($traceFields as $traceField) {
+				$traceValues[$traceField] = $this->arResult[$traceField] ?? null;
+			}
+			@file_put_contents(
+				sys_get_temp_dir() . '/codematrix_popup_trace.log',
+				json_encode($traceValues, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL,
+				FILE_APPEND | LOCK_EX
+			);
 		}
 		$timer_array=array('banner','video','action','contact','html','coupon','roulette','discount');
 			if(!empty($popupSetting['view']['type']) && in_array($popupSetting['view']['type'],$timer_array)){

@@ -207,7 +207,6 @@ class popup{
 					'COLOR_BG'=>array('type'=>'service', 'name'=>GetMessage("codematrix.popup_SOCIAL_SERVICE_COLOR_BG")),
 					'ID_VK'=>array('type'=>'service', 'name'=>GetMessage("codematrix.popup_SOCIAL_SERVICE_ID_VK")),
 					/* 'ID_FB'=>array('type'=>'service', 'name'=>GetMessage("codematrix.popup_SOCIAL_SERVICE_ID_FB")), */
-					'ID_INST'=>array('type'=>'service', 'name'=>GetMessage("codematrix.popup_SOCIAL_SERVICE_ID_INST")),
 					'ID_ODNKL'=>array('type'=>'service', 'name'=>GetMessage("codematrix.popup_SOCIAL_SERVICE_ID_ODNKL")),
 					/* 'TYPE_VIEW'=>array('type'=>'service', 'name'=>GetMessage("codematrix.popup_SOCIAL_SERVICE_TYPE_VIEW")), */
 					'HREF_TARGET'=>array(
@@ -650,7 +649,6 @@ class popup{
 						'TITLE'=>GetMessage("codematrix.popup_SOCIAL_TITLE"),
 						'COLOR_BG'=>'',
 						'ID_VK'=>'89371159',
-						'ID_INST'=>'cats_funny_inst',
 						'ID_ODNKL'=>'50582132228315',
 						'POSITION_LEFT'=>'',
 						'POSITION_RIGHT'=>'',
@@ -665,7 +663,6 @@ class popup{
 						'TITLE'=>GetMessage("codematrix.popup_SOCIAL_TITLE"),
 						'COLOR_BG'=>'#1E5799',
 						'ID_VK'=>'89371159',
-						'ID_INST'=>'cats_funny_inst',
 						'ID_ODNKL'=>'50582132228315',
 						'TYPE_VIEW'=>'123',
 						'POSITION_LEFT'=>'',
